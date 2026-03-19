@@ -18,11 +18,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 /* MODE SCREEN */
 #mode-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:0;padding:0;overflow:hidden;}
-#mode-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0d1a 0%,#0f1a2e 40%,#1a0d2e 70%,#0d1a1a 100%);pointer-events:none;}
+#mode-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0d1a 0%,#0f1a2e 40%,#1a0d2e 70%,#0d1a1a 100%);pointer-events:none;z-index:0;}
 #mode-bubbles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
 .mbubble{position:absolute;border-radius:50%;opacity:0.12;animation:mfloat linear infinite;pointer-events:none;}
 @keyframes mfloat{0%{transform:translateY(100vh) scale(0.8);}100%{transform:translateY(-200px) scale(1.2);}}
-#mode-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:32px;padding:24px;width:100%;max-width:900px;}
+#mode-content{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:32px;padding:24px;width:100%;max-width:900px;}
+.mode-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%;position:relative;z-index:10;}
+.mode-card{width:195px;border-radius:20px;padding:24px 18px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-align:center;position:relative;z-index:10;}
+.mode-pw-row{display:flex;gap:8px;margin-top:12px;position:relative;z-index:20;}
+.mode-pw-row input{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:13px;padding:7px 10px;outline:none;position:relative;z-index:20;cursor:text;}
+.mode-pw-row input:focus{border-color:rgba(255,255,255,0.4);}
+.mode-pw-row input::placeholder{color:rgba(255,255,255,0.3);}
+.mode-pw-row button{padding:7px 14px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s;position:relative;z-index:20;}
+.mode-pw-row button:hover{background:rgba(255,255,255,0.25);}
+#pw-error{font-size:12px;color:#ff8080;margin-top:4px;display:none;}
 .mode-brand{display:flex;flex-direction:column;align-items:center;gap:10px;}
 .mode-brand-logo{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:4px;}
 .mode-brand-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 3px;}
@@ -31,9 +40,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .mbi-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);}
 .mode-title{font-size:38px;font-weight:900;text-align:center;letter-spacing:-1px;background:linear-gradient(90deg,#fff 0%,#a8d4ff 50%,#c8a8ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .mode-sub{font-size:15px;color:rgba(255,255,255,0.5);text-align:center;letter-spacing:0.02em;}
-.mode-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%;}
-.mode-card{width:195px;border-radius:20px;padding:24px 18px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-align:center;position:relative;overflow:hidden;}
-.mode-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;}
+.mode-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%;position:relative;z-index:10;}
+.mode-card{width:195px;border-radius:20px;padding:24px 18px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-align:center;position:relative;z-index:10;}
+.mode-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;pointer-events:none;}
 .mode-card:hover{transform:translateY(-4px);}
 .mc-x{background:linear-gradient(145deg,#0d1f35,#0a1825);border:1px solid rgba(29,155,240,0.3);box-shadow:0 4px 24px rgba(29,155,240,0.1);}
 .mc-x:hover{box-shadow:0 8px 32px rgba(29,155,240,0.25);border-color:rgba(29,155,240,0.6);}
