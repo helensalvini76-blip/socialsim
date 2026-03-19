@@ -1152,7 +1152,7 @@ function userPost(pl){
   const ids={x:'x-compose',fb:'fb-compose'};
   const inp=document.getElementById(ids[pl]); if(!inp) return;
   const val=inp.value.trim(); if(!val) return;
-  push(ref(db,'posts'),{name:'Exercise Participant',handle:'@participant',content:val,type:'public',sentiment:'neutral',time:ts(),ts:Date.now(),replies:0});
+  push(ref(db,'posts'),clean({name:'Exercise Participant',handle:'@participant',content:val,type:'public',sentiment:'neutral',time:ts(),ts:Date.now(),replies:0}));
   inp.value='';
   if(pl==='x') document.getElementById('x-chars').textContent='280';
   addLog('Participant posted on '+pl.toUpperCase());
@@ -1235,6 +1235,13 @@ document.getElementById('news-img').addEventListener('input',function(){
 });
 
 // inject post
+// Remove undefined/empty fields so Firebase doesn't reject the object
+function clean(obj){
+  const out={};
+  Object.entries(obj).forEach(([k,v])=>{ if(v!==undefined&&v!==null&&v!=='') out[k]=v; });
+  return out;
+}
+
 document.getElementById('btn-inject').addEventListener('click',()=>{
   const name=document.getElementById('post-name').value.trim()||'Anonymous';
   const handle=document.getElementById('post-handle').value.trim()||'@anon';
@@ -1243,7 +1250,7 @@ document.getElementById('btn-inject').addEventListener('click',()=>{
   const image=document.getElementById('post-img').value.trim()||undefined;
   const photo=selectedPersonaIdx!=null?personas[selectedPersonaIdx]?.photo||undefined:undefined;
   if(!content){alert('Post content is required');return;}
-  push(ref(db,'posts'),{name,handle,content,type:postType,sentiment,replies:eng||ri(0,150),time:ts(),ts:Date.now(),image,photo});
+  push(ref(db,'posts'),clean({name,handle,content,type:postType,sentiment,replies:eng||ri(0,150),time:ts(),ts:Date.now(),image,photo}));
   addLog('Injected '+postType+' post by '+name+(image?' [+image]':''));
   document.getElementById('post-content').value='';
   document.getElementById('post-eng').value='';
@@ -1294,7 +1301,7 @@ document.getElementById('btn-push-news').addEventListener('click',()=>{
   const art=gatherArticle();
   if(!art.headline){alert('Headline is required');return;}
   const handle='@'+art.pub.replace(/\s+/g,'').toLowerCase().slice(0,14);
-  push(ref(db,'posts'),{name:art.pub,handle,content:`BREAKING: ${art.headline} — Read our full report below. #BreakingNews`,type:'media',sentiment:'concerned',replies:ri(20,200),time:ts(),ts:Date.now(),newsArticle:art});
+  push(ref(db,'posts'),clean({name:art.pub,handle,content:`BREAKING: ${art.headline} — Read our full report below. #BreakingNews`,type:'media',sentiment:'concerned',replies:ri(20,200),time:ts(),ts:Date.now(),newsArticle:art}));
   addLog('News article pushed: "'+art.headline.slice(0,50)+'"');
 });
 
@@ -1492,7 +1499,7 @@ function renderPresets(){
     const d=document.createElement('div'); d.className='preset-item';
     d.innerHTML=`<span class="preset-name">${p.name}</span><span class="preset-tag tag-${p.tag}">${p.tag.toUpperCase()}</span>`;
     d.addEventListener('click',()=>{
-      p.posts.forEach((post,j)=>{setTimeout(()=>{push(ref(db,'posts'),{...post,replies:ri(5,200),time:ts(),ts:Date.now()-(p.posts.length-j)*2000});},j*600);});
+      p.posts.forEach((post,j)=>{setTimeout(()=>{push(ref(db,'posts'),clean({...post,replies:ri(5,200),time:ts(),ts:Date.now()-(p.posts.length-j)*2000}));},j*600);});
       push(ref(db,'trending'),{tag:'#'+p.tag+'Alert',count:ri(3000,45000),ts:Date.now()});
       addLog('Preset: '+p.name);
     });
@@ -1682,12 +1689,12 @@ function scriptTick(){
 }
 
 function fireScriptItem(item){
-  push(ref(db,'posts'),{
+  push(ref(db,'posts'),clean({
     name:item.name, handle:item.handle, content:item.content,
     type:item.type, sentiment:item.sentiment,
     replies:ri(0,150), time:ts(), ts:Date.now(),
-    image:item.image||undefined, photo:item.photo||undefined
-  });
+    image:item.image, photo:item.photo
+  }));
   addLog('Auto-fired: '+item.name+' — "'+item.content.slice(0,40)+'"');
 }
 
