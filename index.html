@@ -17,29 +17,53 @@
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
 
 /* MODE SCREEN */
-#mode-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:28px;padding:20px;}
-.mode-logo{width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.mode-logo svg{width:32px;height:32px;fill:#fff;}
-.mode-title{font-size:28px;font-weight:800;text-align:center;}
-.mode-sub{font-size:15px;color:var(--muted);text-align:center;}
-.mode-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
-.mode-card{width:190px;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:22px 18px;cursor:pointer;transition:border-color 0.2s,transform 0.15s;text-align:center;}
-.mode-card:hover{border-color:var(--accent);transform:translateY(-2px);}
-.mode-card-icon{font-size:30px;margin-bottom:10px;}
-.mode-card-title{font-size:15px;font-weight:700;margin-bottom:5px;}
-.mode-card-desc{font-size:12px;color:var(--muted);line-height:1.5;}
-.mode-badge{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:0.06em;text-transform:uppercase;}
-.badge-red{background:rgba(244,33,46,0.15);color:var(--danger);}
-.badge-blue{background:rgba(29,155,240,0.15);color:var(--accent);}
-.badge-fb{background:rgba(24,119,242,0.15);color:#1877f2;}
-.badge-ig{background:rgba(225,48,108,0.15);color:#e1306c;}
+#mode-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:0;padding:0;overflow:hidden;}
+#mode-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0d1a 0%,#0f1a2e 40%,#1a0d2e 70%,#0d1a1a 100%);}
+#mode-bubbles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.mbubble{position:absolute;border-radius:50%;opacity:0.12;animation:mfloat linear infinite;}
+@keyframes mfloat{0%{transform:translateY(100vh) scale(0.8);}100%{transform:translateY(-200px) scale(1.2);}}
+#mode-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:32px;padding:24px;width:100%;max-width:900px;}
+.mode-brand{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.mode-brand-logo{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:4px;}
+.mode-brand-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 3px;}
+.mbi-x{background:linear-gradient(135deg,#1d9bf0,#0f6eb5);}
+.mbi-fb{background:linear-gradient(135deg,#1877f2,#0d5cb8);}
+.mbi-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);}
+.mode-title{font-size:38px;font-weight:900;text-align:center;letter-spacing:-1px;background:linear-gradient(90deg,#fff 0%,#a8d4ff 50%,#c8a8ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.mode-sub{font-size:15px;color:rgba(255,255,255,0.5);text-align:center;letter-spacing:0.02em;}
+.mode-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%;}
+.mode-card{width:195px;border-radius:20px;padding:24px 18px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-align:center;position:relative;overflow:hidden;}
+.mode-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;}
+.mode-card:hover{transform:translateY(-4px);}
+.mc-x{background:linear-gradient(145deg,#0d1f35,#0a1825);border:1px solid rgba(29,155,240,0.3);box-shadow:0 4px 24px rgba(29,155,240,0.1);}
+.mc-x:hover{box-shadow:0 8px 32px rgba(29,155,240,0.25);border-color:rgba(29,155,240,0.6);}
+.mc-fb{background:linear-gradient(145deg,#0d1a35,#0a1428);border:1px solid rgba(24,119,242,0.3);box-shadow:0 4px 24px rgba(24,119,242,0.1);}
+.mc-fb:hover{box-shadow:0 8px 32px rgba(24,119,242,0.25);border-color:rgba(24,119,242,0.6);}
+.mc-ig{background:linear-gradient(145deg,#2d0d1f,#1a0a14);border:1px solid rgba(225,48,108,0.3);box-shadow:0 4px 24px rgba(225,48,108,0.1);}
+.mc-ig:hover{box-shadow:0 8px 32px rgba(225,48,108,0.25);border-color:rgba(225,48,108,0.6);}
+.mc-admin{background:linear-gradient(145deg,#1a1a2e,#12121f);border:1px solid rgba(255,255,255,0.12);box-shadow:0 4px 24px rgba(0,0,0,0.3);}
+.mc-admin:hover{box-shadow:0 8px 32px rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.25);}
+.mode-card-plat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;}
+.mcpi-x{background:linear-gradient(135deg,#1d9bf0,#0f6eb5);}
+.mcpi-fb{background:linear-gradient(135deg,#1877f2,#0d5cb8);}
+.mcpi-ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366);}
+.mcpi-admin{background:linear-gradient(135deg,#444,#222);}
+.mode-card-title{font-size:15px;font-weight:700;margin-bottom:5px;color:#fff;}
+.mode-card-desc{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;}
+.mode-badge{display:inline-block;margin-top:10px;font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:0.08em;text-transform:uppercase;}
+.badge-x{background:rgba(29,155,240,0.2);color:#1d9bf0;border:1px solid rgba(29,155,240,0.3);}
+.badge-fb{background:rgba(24,119,242,0.2);color:#5b9cf6;border:1px solid rgba(24,119,242,0.3);}
+.badge-ig{background:rgba(225,48,108,0.2);color:#e1306c;border:1px solid rgba(225,48,108,0.3);}
+.badge-red{background:rgba(244,33,46,0.15);color:var(--danger);border:1px solid rgba(244,33,46,0.25);}
 .mode-pw-row{display:flex;gap:8px;margin-top:12px;}
-.mode-pw-row input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;padding:7px 10px;outline:none;}
-.mode-pw-row input:focus{border-color:var(--accent);}
-.mode-pw-row button{padding:7px 12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;}
-#pw-error{font-size:12px;color:var(--danger);margin-top:4px;display:none;}
-.connecting-msg{font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px;}
-.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+.mode-pw-row input{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:13px;padding:7px 10px;outline:none;}
+.mode-pw-row input:focus{border-color:rgba(255,255,255,0.4);}
+.mode-pw-row input::placeholder{color:rgba(255,255,255,0.3);}
+.mode-pw-row button{padding:7px 14px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s;}
+.mode-pw-row button:hover{background:rgba(255,255,255,0.25);}
+#pw-error{font-size:12px;color:#ff8080;margin-top:4px;display:none;}
+.connecting-msg{font-size:14px;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:8px;}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.7);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* APP LAYOUT */
@@ -327,20 +351,54 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 <!-- MODE SCREEN -->
 <div id="mode-screen">
-  <div class="mode-logo"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.26 5.632 5.905-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
-  <div><div class="mode-title">SocialSim</div><div class="mode-sub">Emergency Exercise Social Media Platform</div></div>
-  <div class="mode-cards">
-    <div class="mode-card" id="card-x"><div class="mode-card-icon">𝕏</div><div class="mode-card-title">X / Twitter</div><div class="mode-card-desc">Live feed, trending topics, breaking alerts.</div><span class="mode-badge badge-blue">PUBLIC</span></div>
-    <div class="mode-card" id="card-fb"><div class="mode-card-icon" style="color:#1877f2;font-size:34px;font-weight:900;">f</div><div class="mode-card-title">Facebook</div><div class="mode-card-desc">Community posts, reactions, shares.</div><span class="mode-badge badge-fb">PUBLIC</span></div>
-    <div class="mode-card" id="card-ig"><div class="mode-card-icon">📸</div><div class="mode-card-title">Instagram</div><div class="mode-card-desc">Stories, posts, image cards.</div><span class="mode-badge badge-ig">PUBLIC</span></div>
-    <div class="mode-card" id="card-admin">
-      <div class="mode-card-icon">🎛️</div><div class="mode-card-title">Exercise Control</div><div class="mode-card-desc">Inject posts to all platforms. Directors only.</div>
-      <span class="mode-badge badge-red">ADMIN</span>
-      <div class="mode-pw-row"><input type="password" id="pw-input" placeholder="Password"/><button id="pw-btn">Go</button></div>
-      <div id="pw-error">Incorrect password</div>
-    </div>
+  <div id="mode-bg"></div>
+  <div id="mode-bubbles">
+    <div class="mbubble" style="width:300px;height:300px;background:radial-gradient(circle,#1d9bf0,transparent);left:-80px;animation-duration:18s;animation-delay:0s;"></div>
+    <div class="mbubble" style="width:200px;height:200px;background:radial-gradient(circle,#1877f2,transparent);right:10%;animation-duration:22s;animation-delay:3s;"></div>
+    <div class="mbubble" style="width:250px;height:250px;background:radial-gradient(circle,#e1306c,transparent);right:-60px;top:20%;animation-duration:16s;animation-delay:6s;"></div>
+    <div class="mbubble" style="width:180px;height:180px;background:radial-gradient(circle,#7856ff,transparent);left:15%;top:10%;animation-duration:20s;animation-delay:2s;"></div>
+    <div class="mbubble" style="width:220px;height:220px;background:radial-gradient(circle,#f09433,transparent);left:40%;animation-duration:25s;animation-delay:8s;"></div>
   </div>
-  <div class="connecting-msg" id="conn-msg" style="display:none;"><div class="spinner"></div> Connecting…</div>
+  <div id="mode-content">
+    <div class="mode-brand">
+      <div class="mode-brand-logo">
+        <div class="mode-brand-icon mbi-x">💬</div>
+        <div class="mode-brand-icon mbi-fb">👥</div>
+        <div class="mode-brand-icon mbi-ig">📸</div>
+      </div>
+      <div class="mode-title">SocialSim</div>
+      <div class="mode-sub">Emergency Exercise Social Media Simulator</div>
+    </div>
+    <div class="mode-cards">
+      <div class="mode-card mc-x" id="card-x">
+        <div class="mode-card-plat-icon mcpi-x">💬</div>
+        <div class="mode-card-title">X / Twitter</div>
+        <div class="mode-card-desc">Live feed, trending topics, breaking alerts.</div>
+        <span class="mode-badge badge-x">PUBLIC VIEW</span>
+      </div>
+      <div class="mode-card mc-fb" id="card-fb">
+        <div class="mode-card-plat-icon mcpi-fb">👥</div>
+        <div class="mode-card-title">Facebook</div>
+        <div class="mode-card-desc">Community posts, reactions, shares.</div>
+        <span class="mode-badge badge-fb">PUBLIC VIEW</span>
+      </div>
+      <div class="mode-card mc-ig" id="card-ig">
+        <div class="mode-card-plat-icon mcpi-ig">📸</div>
+        <div class="mode-card-title">Instagram</div>
+        <div class="mode-card-desc">Stories, posts, image cards.</div>
+        <span class="mode-badge badge-ig">PUBLIC VIEW</span>
+      </div>
+      <div class="mode-card mc-admin" id="card-admin">
+        <div class="mode-card-plat-icon mcpi-admin">🎛️</div>
+        <div class="mode-card-title">Exercise Control</div>
+        <div class="mode-card-desc">Inject posts to all platforms. Directors only.</div>
+        <span class="mode-badge badge-red">ADMIN ONLY</span>
+        <div class="mode-pw-row"><input type="password" id="pw-input" placeholder="Enter password"/><button id="pw-btn">→</button></div>
+        <div id="pw-error">Incorrect password</div>
+      </div>
+    </div>
+    <div class="connecting-msg" id="conn-msg" style="display:none;"><div class="spinner"></div> Connecting to live feed…</div>
+  </div>
 </div>
 
 <!-- APP -->
@@ -1100,67 +1158,71 @@ document.getElementById('news-overlay').addEventListener('click',e=>{if(e.target
 // PERSONA ROSTER
 // ─────────────────────────────────────────────
 const DEFAULT_PERSONAS=[
-  {name:'Environment Agency',handle:'@EnvAgencyUK',type:'official',bio:'Flood & environmental alerts'},
-  {name:'Fire & Rescue Service',handle:'@CountyFireRescue',type:'official',bio:'Fire, rescue, hazmat'},
-  {name:'District Council',handle:'@DistrictCouncil',type:'official',bio:'Local authority comms'},
-  {name:'Emergency Services',handle:'@EmergencyServices',type:'official',bio:'Joint emergency comms'},
-  {name:'Public Health England',handle:'@PHE_uk',type:'official',bio:'Health protection & alerts'},
-  {name:'NHS Trust',handle:'@NHSTrust',type:'official',bio:'Health service updates'},
-  {name:'National Grid',handle:'@NationalGrid',type:'official',bio:'Energy infrastructure'},
-  {name:'Network Rail',handle:'@NetworkRail',type:'official',bio:'Rail network disruption'},
-  {name:'Police Service',handle:'@PoliceService',type:'official',bio:'Law enforcement updates'},
-  {name:'Highways England',handle:'@HighwaysEngland',type:'official',bio:'Road closures & traffic'},
-  {name:'Met Office',handle:'@MetOffice',type:'official',bio:'Weather warnings'},
-  {name:'Cabinet Office',handle:'@CabinetOffice',type:'official',bio:'Central government'},
-  {name:'Local News Network',handle:'@LocalNewsNow',type:'media',bio:'Regional TV & online news'},
-  {name:'Northshire Gazette',handle:'@NorthshireGaz',type:'media',bio:'Local newspaper'},
-  {name:'BBC Regional News',handle:'@BBCRegional',type:'media',bio:'Public broadcaster'},
-  {name:'Sky News',handle:'@SkyNews',type:'media',bio:'National broadcaster'},
-  {name:'The Guardian',handle:'@guardian',type:'media',bio:'National newspaper'},
-  {name:'Air Quality Watch',handle:'@AirQualityWatch',type:'media',bio:'Environmental monitoring'},
-  {name:'Tech Observer',handle:'@techobserver',type:'media',bio:'Technology & cyber journalist'},
-  {name:'Freelance Journalist',handle:'@presspack_jen',type:'media',bio:'Independent reporter'},
-  {name:'Concerned Resident',handle:'@concerned_resident',type:'public',bio:'Local resident'},
-  {name:'Sarah Mitchell',handle:'@sarah_81',type:'public',bio:'Worried local'},
-  {name:'Dave Briggs',handle:'@davemk2',type:'public',bio:'Eyewitness'},
-  {name:'Worried Parent',handle:'@worried_mum_uk',type:'public',bio:'Parent near incident'},
-  {name:'John Dobson',handle:'@jdobson92',type:'public',bio:'Local resident'},
-  {name:'Cllr James Walsh',handle:'@cllr_james_w',type:'public',bio:'Elected councillor'},
-  {name:'Mike Tanner',handle:'@miketanner77',type:'public',bio:'Frustrated resident'},
-  {name:'Local Business Owner',handle:'@shopkeeper_north',type:'public',bio:'Affected business'},
-  {name:'Exercise Participant',handle:'@participant',type:'public',bio:'Generic participant account'},
-  {name:'Eyewitness 1',handle:'@eyewitness_1',type:'public',bio:'On scene eyewitness'},
-  {name:'Eyewitness 2',handle:'@eyewitness_2',type:'public',bio:'Second eyewitness account'},
-  {name:'Community Group',handle:'@northfield_community',type:'public',bio:'Local community group'},
-  {name:'Karen Whitfield',handle:'@karen_whitfield',type:'public',bio:'School governor, local activist'},
-  {name:'Paul Okafor',handle:'@paulokafor_uk',type:'public',bio:'NHS worker, commuter'},
-  {name:'Tracy Hobbs',handle:'@tracyhobbs77',type:'public',bio:'Childminder, nearby street'},
-  {name:'Mohammed Iqbal',handle:'@m_iqbal_local',type:'public',bio:'Shop owner, town centre'},
-  {name:'Diane Fletcher',handle:'@diane_f_uk',type:'public',bio:'Retired teacher, long-term resident'},
-  {name:'Ryan Stephens',handle:'@ryanstephens_',type:'public',bio:'Young professional, first-time poster'},
-  {name:'Janet & Bill Norris',handle:'@norris_family',type:'public',bio:'Elderly couple, sheltering in place'},
-  {name:'Liam Carr',handle:'@liamcarr92',type:'public',bio:'Delivery driver, on the road nearby'},
-  {name:'Priya Sharma',handle:'@priyasharma_nw',type:'public',bio:'GP receptionist, worried about patients'},
-  {name:'Gary Bolton',handle:'@garybolton_fc',type:'public',bio:'Football coach, training nearby'},
-  {name:'Nikki Rhodes',handle:'@nikkiRhodes_',type:'public',bio:'Hairdresser, salon affected'},
-  {name:'Tom Ashworth',handle:'@tom_ashworth',type:'public',bio:'Student, livestreaming from scene'},
-  {name:'Fiona MacLeod',handle:'@fionamacleod_',type:'public',bio:'Community nurse, worried about vulnerable clients'},
-  {name:'Darren Stubbs',handle:'@darrenstubbs',type:'public',bio:'Van driver, stuck in road closure'},
-  {name:'Amelia Cross',handle:'@ameliacross_uk',type:'public',bio:'Mum of three, school run disrupted'},
-  {name:'Kevin Park',handle:'@kev_park_',type:'public',bio:'Security guard, works on industrial estate'},
-  {name:'Sandra Yates',handle:'@sandra_yates',type:'public',bio:'Parish councillor, fielding local calls'},
-  {name:'Owen Hughes',handle:'@owen_h_wales',type:'public',bio:'Cyclist, witnessed incident'},
-  {name:'Fatima Al-Hassan',handle:'@fatima_local',type:'public',bio:'Community centre manager'},
-  {name:'Steve Rowlands',handle:'@steverowlands_',type:'public',bio:'Ex-firefighter, offering advice online'},
-  {name:'Becky Turner',handle:'@beckyturner81',type:'public',bio:'Blogger, sharing updates to followers'},
-  {name:'Angry Local',handle:'@fed_up_with_it',type:'public',bio:'Frustrated, demanding answers'},
-  {name:'Sceptical Resident',handle:'@not_buying_it_uk',type:'public',bio:'Questions official statements'},
-  {name:'Helpful Neighbour',handle:'@helping_out_local',type:'public',bio:'Organising community support'},
-  {name:'Local Watch Account',handle:'@northfield_watch',type:'rumour',bio:'Unverified local alerts'},
-  {name:'Conspiracy Account',handle:'@truth_seeker_uk',type:'rumour',bio:'Misinformation spreader'},
-  {name:'Anonymous Tip',handle:'@anon_tip_uk',type:'rumour',bio:'Unverified anonymous source'},
-  {name:'Concerned Sceptic',handle:'@dont_trust_them',type:'rumour',bio:'Anti-authority account'},
-  {name:'Viral Rumour Account',handle:'@sharethis_now',type:'rumour',bio:'Amplifies unverified claims'},
+  // ── OFFICIAL ──
+  {name:'Environment Agency',    handle:'@EnvAgencyUK',         type:'official', bio:'Flood & environmental alerts',               photo:''},
+  {name:'Fire & Rescue Service', handle:'@CountyFireRescue',    type:'official', bio:'Fire, rescue, hazmat',                       photo:''},
+  {name:'District Council',      handle:'@DistrictCouncil',     type:'official', bio:'Local authority comms',                      photo:''},
+  {name:'Emergency Services',    handle:'@EmergencyServices',   type:'official', bio:'Joint emergency comms',                      photo:''},
+  {name:'Public Health England', handle:'@PHE_uk',              type:'official', bio:'Health protection & alerts',                 photo:''},
+  {name:'NHS Trust',             handle:'@NHSTrust',            type:'official', bio:'Health service updates',                     photo:''},
+  {name:'National Grid',         handle:'@NationalGrid',        type:'official', bio:'Energy infrastructure',                      photo:''},
+  {name:'Network Rail',          handle:'@NetworkRail',         type:'official', bio:'Rail network disruption',                    photo:''},
+  {name:'Police Service',        handle:'@PoliceService',       type:'official', bio:'Law enforcement updates',                    photo:''},
+  {name:'Highways England',      handle:'@HighwaysEngland',     type:'official', bio:'Road closures & traffic',                    photo:''},
+  {name:'Met Office',            handle:'@MetOffice',           type:'official', bio:'Weather warnings',                           photo:''},
+  {name:'Cabinet Office',        handle:'@CabinetOffice',       type:'official', bio:'Central government',                         photo:''},
+  // ── MEDIA ──
+  {name:'Local News Network',    handle:'@LocalNewsNow',        type:'media',    bio:'Regional TV & online news',                  photo:''},
+  {name:'Northshire Gazette',    handle:'@NorthshireGaz',       type:'media',    bio:'Local newspaper',                            photo:''},
+  {name:'BBC Regional News',     handle:'@BBCRegional',         type:'media',    bio:'Public broadcaster',                         photo:''},
+  {name:'Sky News',              handle:'@SkyNews',             type:'media',    bio:'National broadcaster',                       photo:''},
+  {name:'The Guardian',          handle:'@guardian',            type:'media',    bio:'National newspaper',                         photo:''},
+  {name:'Air Quality Watch',     handle:'@AirQualityWatch',     type:'media',    bio:'Environmental monitoring',                   photo:''},
+  {name:'Tech Observer',         handle:'@techobserver',        type:'media',    bio:'Technology & cyber journalist',              photo:''},
+  {name:'Freelance Journalist',  handle:'@presspack_jen',       type:'media',    bio:'Independent reporter',                       photo:''},
+  // ── PUBLIC ──
+  {name:'Concerned Resident',    handle:'@concerned_resident',  type:'public',   bio:'Local resident',                             photo:''},
+  {name:'Sarah Mitchell',        handle:'@sarah_81',            type:'public',   bio:'Worried local',                              photo:''},
+  {name:'Dave Briggs',           handle:'@davemk2',             type:'public',   bio:'Eyewitness',                                 photo:''},
+  {name:'Worried Parent',        handle:'@worried_mum_uk',      type:'public',   bio:'Parent near incident',                       photo:''},
+  {name:'John Dobson',           handle:'@jdobson92',           type:'public',   bio:'Local resident',                             photo:''},
+  {name:'Cllr James Walsh',      handle:'@cllr_james_w',        type:'public',   bio:'Elected councillor',                         photo:''},
+  {name:'Mike Tanner',           handle:'@miketanner77',        type:'public',   bio:'Frustrated resident',                        photo:''},
+  {name:'Local Business Owner',  handle:'@shopkeeper_north',    type:'public',   bio:'Affected business',                          photo:''},
+  {name:'Exercise Participant',  handle:'@participant',         type:'public',   bio:'Generic participant account',                photo:''},
+  {name:'Eyewitness 1',          handle:'@eyewitness_1',        type:'public',   bio:'On scene eyewitness',                        photo:''},
+  {name:'Eyewitness 2',          handle:'@eyewitness_2',        type:'public',   bio:'Second eyewitness account',                  photo:''},
+  {name:'Community Group',       handle:'@northfield_community',type:'public',   bio:'Local community group',                      photo:''},
+  {name:'Karen Whitfield',       handle:'@karen_whitfield',     type:'public',   bio:'School governor, local activist',            photo:''},
+  {name:'Paul Okafor',           handle:'@paulokafor_uk',       type:'public',   bio:'NHS worker, commuter',                       photo:''},
+  {name:'Tracy Hobbs',           handle:'@tracyhobbs77',        type:'public',   bio:'Childminder, nearby street',                 photo:''},
+  {name:'Mohammed Iqbal',        handle:'@m_iqbal_local',       type:'public',   bio:'Shop owner, town centre',                    photo:''},
+  {name:'Diane Fletcher',        handle:'@diane_f_uk',          type:'public',   bio:'Retired teacher, long-term resident',        photo:''},
+  {name:'Ryan Stephens',         handle:'@ryanstephens_',       type:'public',   bio:'Young professional, first-time poster',      photo:''},
+  {name:'Janet & Bill Norris',   handle:'@norris_family',       type:'public',   bio:'Elderly couple, sheltering in place',        photo:''},
+  {name:'Liam Carr',             handle:'@liamcarr92',          type:'public',   bio:'Delivery driver, on the road nearby',        photo:''},
+  {name:'Priya Sharma',          handle:'@priyasharma_nw',      type:'public',   bio:'GP receptionist, worried about patients',    photo:''},
+  {name:'Gary Bolton',           handle:'@garybolton_fc',       type:'public',   bio:'Football coach, training nearby',            photo:''},
+  {name:'Nikki Rhodes',          handle:'@nikkiRhodes_',        type:'public',   bio:'Hairdresser, salon affected',                photo:''},
+  {name:'Tom Ashworth',          handle:'@tom_ashworth',        type:'public',   bio:'Student, livestreaming from scene',          photo:''},
+  {name:'Fiona MacLeod',         handle:'@fionamacleod_',       type:'public',   bio:'Community nurse, worried about vulnerable clients', photo:''},
+  {name:'Darren Stubbs',         handle:'@darrenstubbs',        type:'public',   bio:'Van driver, stuck in road closure',          photo:''},
+  {name:'Amelia Cross',          handle:'@ameliacross_uk',      type:'public',   bio:'Mum of three, school run disrupted',         photo:''},
+  {name:'Kevin Park',            handle:'@kev_park_',           type:'public',   bio:'Security guard, works on industrial estate', photo:''},
+  {name:'Sandra Yates',          handle:'@sandra_yates',        type:'public',   bio:'Parish councillor, fielding local calls',    photo:''},
+  {name:'Owen Hughes',           handle:'@owen_h_wales',        type:'public',   bio:'Cyclist, witnessed incident',                photo:''},
+  {name:'Fatima Al-Hassan',      handle:'@fatima_local',        type:'public',   bio:'Community centre manager',                   photo:''},
+  {name:'Steve Rowlands',        handle:'@steverowlands_',      type:'public',   bio:'Ex-firefighter, offering advice online',     photo:''},
+  {name:'Becky Turner',          handle:'@beckyturner81',       type:'public',   bio:'Blogger, sharing updates to followers',      photo:''},
+  {name:'Angry Local',           handle:'@fed_up_with_it',      type:'public',   bio:'Frustrated, demanding answers',              photo:''},
+  {name:'Sceptical Resident',    handle:'@not_buying_it_uk',    type:'public',   bio:'Questions official statements',              photo:''},
+  {name:'Helpful Neighbour',     handle:'@helping_out_local',   type:'public',   bio:'Organising community support',               photo:''},
+  // ── RUMOUR ──
+  {name:'Local Watch Account',   handle:'@northfield_watch',    type:'rumour',   bio:'Unverified local alerts',                    photo:''},
+  {name:'Conspiracy Account',    handle:'@truth_seeker_uk',     type:'rumour',   bio:'Misinformation spreader',                    photo:''},
+  {name:'Anonymous Tip',         handle:'@anon_tip_uk',         type:'rumour',   bio:'Unverified anonymous source',                photo:''},
+  {name:'Concerned Sceptic',     handle:'@dont_trust_them',     type:'rumour',   bio:'Anti-authority account',                     photo:''},
+  {name:'Viral Rumour Account',  handle:'@sharethis_now',       type:'rumour',   bio:'Amplifies unverified claims',                photo:''},
 ];
 
 function savePersonas(){try{localStorage.setItem('ss_personas',JSON.stringify(personas.slice(DEFAULT_PERSONAS.length)));}catch(e){}}
