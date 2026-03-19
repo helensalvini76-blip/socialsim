@@ -407,6 +407,30 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .exercise-watermark{position:fixed;bottom:10px;right:10px;z-index:500;background:rgba(255,212,0,0.15);border:1px solid rgba(255,212,0,0.4);border-radius:7px;padding:4px 9px;font-size:10px;font-weight:700;color:var(--warning);letter-spacing:0.1em;text-transform:uppercase;pointer-events:none;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 
+/* PARTICIPANT REPLIES MONITOR */
+.replies-feed{display:flex;flex-direction:column;gap:5px;max-height:280px;overflow-y:auto;}
+.replies-feed::-webkit-scrollbar{width:3px;}
+.replies-feed::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.reply-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;animation:fadeIn 0.3s ease;}
+.reply-item.unread{border-color:var(--accent);background:rgba(29,155,240,0.06);}
+.reply-item-header{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.reply-item-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+.reply-item-name{font-size:12px;font-weight:600;flex:1;}
+.reply-item-handle{font-size:10px;color:var(--muted);}
+.reply-item-time{font-size:10px;color:var(--muted);}
+.reply-item-platform{font-size:9px;padding:1px 5px;border-radius:6px;font-weight:700;flex-shrink:0;}
+.rip-x{background:rgba(255,255,255,0.08);color:var(--text);}
+.rip-fb{background:rgba(24,119,242,0.15);color:#5b9cf6;}
+.rip-ig{background:rgba(225,48,108,0.15);color:#e1306c);}
+.reply-item-replyto{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.reply-item-replyto strong{color:var(--accent);}
+.reply-item-content{font-size:12px;color:var(--text);line-height:1.4;word-break:break-word;}
+.reply-item-actions{display:flex;gap:5px;margin-top:6px;}
+.reply-quick-btn{padding:3px 9px;border-radius:12px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:10px;cursor:pointer;transition:all 0.15s;}
+.reply-quick-btn:hover{border-color:var(--accent);color:var(--accent);}
+.replies-empty{font-size:12px;color:var(--muted);text-align:center;padding:16px 0;}
+.replies-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;background:var(--danger);border-radius:8px;font-size:9px;font-weight:700;color:#fff;padding:0 4px;margin-left:6px;}
+
 /* ── NAME PICKER OVERLAY ── */
 #name-picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;}
 #name-picker-overlay.open{display:flex;}
@@ -746,6 +770,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
 
       <div class="card">
+        <div class="card-title" id="replies-card-title">
+          👥 Participant Replies
+          <span class="replies-badge" id="replies-badge" style="display:none;">0</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+          <button class="btn-sm" id="btn-mark-read">✓ Mark all read</button>
+          <button class="btn-sm" id="btn-clear-replies">Clear</button>
+        </div>
+        <div class="replies-feed" id="replies-feed">
+          <div class="replies-empty">No participant replies yet</div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-title">Activity Log</div>
         <div class="feed-log" id="activity-log"></div>
       </div>
@@ -1060,6 +1098,27 @@ function initListeners(){
     el.className='incident-status-val '+cfg.c; el.textContent=cfg.l;
     if(dot){dot.style.background=cfg.col;dot.style.animation=cfg.a;}
   });
+
+  // Replies — sync from all devices to admin monitor
+  onValue(ref(db,'replies'),snap=>{
+    const data=snap.val();
+    const newReplies = data
+      ? Object.entries(data).map(([k,v])=>({...v,_key:k})).sort((a,b)=>(b.ts||0)-(a.ts||0))
+      : [];
+    // Only add genuinely new ones (not already in repliesData)
+    const existingKeys = new Set(repliesData.map(r=>r._key).filter(Boolean));
+    let added=0;
+    newReplies.forEach(r=>{
+      if(!existingKeys.has(r._key)){
+        repliesData.unshift({...r, unread:true});
+        added++;
+      }
+    });
+    if(added>0){
+      unreadCount+=added;
+      renderRepliesMonitor();
+    }
+  });
 }
 
 function showNotif(pl){const ids={x:'x-ndot',fb:'fb-ndot',ig:'ig-ndot'};const el=document.getElementById(ids[pl]);if(el)el.style.display='block';}
@@ -1140,6 +1199,7 @@ function buildX(p){
     const val=rb.querySelector('input').value.trim(); if(!val) return;
     push(ref(db,'posts'),clean({name:participantName,handle:'@'+participantName.toLowerCase().replace(/\s+/g,'_'),content:val,type:'public',sentiment:'neutral',replies:0,time:ts(),ts:Date.now(),replyTo:p.handle||'@user'}));
     rb.querySelector('input').value=''; rb.classList.remove('open');
+    push(ref(db,'replies'),clean({name:participantName,content:val,replyTo:p.handle,platform:'x',time:ts(),ts:Date.now()}));
     addLog('Participant replied on X to '+p.handle);
   });
   wrap.appendChild(right);
@@ -1197,6 +1257,7 @@ function buildFb(p){
     const val=replyInp.value.trim(); if(!val) return;
     addFbComment(commentsDiv, participantName, val, p._key);
     replyInp.value='';
+    push(ref(db,'replies'),clean({name:participantName,content:val,replyTo:p.name,platform:'fb',time:ts(),ts:Date.now()}));
     addLog('Participant commented on FB post by '+p.name);
   });
   replyInp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ replySend.click(); } });
@@ -1281,6 +1342,7 @@ function buildIg(p){
       item.appendChild(av2); item.appendChild(bd);
       cmtList.appendChild(item);
       cmtInp.value='';
+      push(ref(db,'replies'),clean({name:participantName,content:val,replyTo:p.name,platform:'ig',time:ts(),ts:Date.now()}));
       addLog('Participant commented on IG post by '+p.name);
     });
   };
@@ -1324,6 +1386,7 @@ function userPost(pl){
   push(ref(db,'posts'),clean({name:'Exercise Participant',handle:'@participant',content:val,type:'public',sentiment:'neutral',time:ts(),ts:Date.now(),replies:0}));
   inp.value='';
   if(pl==='x') document.getElementById('x-chars').textContent='280';
+  push(ref(db,'replies'),clean({name:'Exercise Participant',content:val,replyTo:'(compose)',platform:pl,time:ts(),ts:Date.now()}));
   addLog('Participant posted on '+pl.toUpperCase());
 }
 
@@ -1444,6 +1507,7 @@ document.getElementById('btn-reset').addEventListener('click',()=>{
   if(!confirm('Clear ALL posts and reset? This cannot be undone.')) return;
   set(ref(db,'posts'),null); set(ref(db,'banner'),{active:false}); set(ref(db,'trending'),null);
   set(ref(db,'incident'),{status:'offline',name:'',ts:Date.now()});
+  set(ref(db,'replies'),null);
   Object.keys(rendered).forEach(k=>rendered[k].clear());
   storySet.clear(); Object.keys(newsStore).forEach(k=>delete newsStore[k]);
   const ig=document.getElementById('ig-stories');
@@ -2031,6 +2095,94 @@ document.getElementById('name-picker-overlay').addEventListener('click',e=>{
     document.getElementById('name-picker-overlay').classList.remove('open');
     pickerCallback=null;
   }
+});
+
+// ─────────────────────────────────────────────
+// PARTICIPANT REPLIES MONITOR
+// ─────────────────────────────────────────────
+let repliesData = [];
+let unreadCount = 0;
+
+function renderRepliesMonitor(){
+  const feed = document.getElementById('replies-feed'); if(!feed) return;
+  const badge = document.getElementById('replies-badge');
+
+  // Update badge
+  if(badge){
+    if(unreadCount > 0){
+      badge.style.display='inline-flex';
+      badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+    } else {
+      badge.style.display='none';
+    }
+  }
+
+  if(repliesData.length === 0){
+    feed.innerHTML='<div class="replies-empty">No participant replies yet</div>';
+    return;
+  }
+
+  feed.innerHTML='';
+  repliesData.forEach(r=>{
+    const platLabel = {x:'𝕏 X', fb:'FB', ig:'IG'}[r.platform]||r.platform.toUpperCase();
+    const platCls = {x:'rip-x', fb:'rip-fb', ig:'rip-ig'}[r.platform]||'rip-x';
+    const isReply = r.replyTo && r.replyTo !== '(compose)';
+
+    const div = document.createElement('div');
+    div.className = 'reply-item' + (r.unread ? ' unread' : '');
+
+    div.innerHTML = `
+      <div class="reply-item-header">
+        <div class="reply-item-av" style="background:${avc(r.name||'P')}">${ini(r.name||'P')}</div>
+        <span class="reply-item-name">${r.name||'Participant'}</span>
+        <span class="reply-item-platform ${platCls}">${platLabel}</span>
+        <span class="reply-item-time">${r.time||''}</span>
+      </div>
+      ${isReply ? `<div class="reply-item-replyto">↩ replying to <strong>${r.replyTo}</strong></div>` : ''}
+      <div class="reply-item-content">${r.content||''}</div>
+      <div class="reply-item-actions">
+        <button class="reply-quick-btn" data-respond="${r.id}">↩ Respond</button>
+        <button class="reply-quick-btn" data-dismiss="${r.id}">✓ Noted</button>
+      </div>`;
+
+    // Respond button — pre-fills the inject form with the participant's handle as replyTo
+    div.querySelector('[data-respond]').addEventListener('click',()=>{
+      // Switch to inject card and pre-fill
+      document.getElementById('post-content').value = '';
+      document.getElementById('post-name').focus();
+      document.getElementById('post-content').placeholder = `Replying to ${r.name}…`;
+      // scroll admin panel to inject card
+      document.getElementById('post-content').scrollIntoView({behavior:'smooth', block:'center'});
+      // Mark as read
+      r.unread = false;
+      if(unreadCount > 0) unreadCount--;
+      renderRepliesMonitor();
+    });
+
+    // Dismiss/mark as read
+    div.querySelector('[data-dismiss]').addEventListener('click',()=>{
+      r.unread = false;
+      if(unreadCount > 0) unreadCount--;
+      div.classList.remove('unread');
+      renderRepliesMonitor();
+    });
+
+    feed.appendChild(div);
+  });
+}
+
+document.getElementById('btn-mark-read').addEventListener('click',()=>{
+  repliesData.forEach(r=>r.unread=false);
+  unreadCount=0;
+  renderRepliesMonitor();
+});
+
+document.getElementById('btn-clear-replies').addEventListener('click',()=>{
+  repliesData=[];
+  unreadCount=0;
+  set(ref(db,'replies'),null);
+  renderRepliesMonitor();
+  addLog('Replies monitor cleared');
 });
 
 function addLog(msg){
