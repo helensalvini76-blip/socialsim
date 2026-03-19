@@ -236,11 +236,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .x-logo{width:26px;height:26px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;}
 .x-logo svg{width:15px;height:15px;fill:#fff;}
 .x-search{flex:1;max-width:260px;margin:0 12px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:13px;display:flex;align-items:center;gap:5px;}
-.x-body{display:flex;flex:1;overflow:hidden;}
-.x-main{flex:1;overflow-y:auto;border-right:1px solid var(--border2);}
+.x-body{display:flex;flex:1;overflow:hidden;justify-content:center;}
+.x-main{width:100%;max-width:600px;overflow-y:auto;border-right:1px solid var(--border2);border-left:1px solid var(--border2);}
 .x-main::-webkit-scrollbar{width:3px;}
 .x-main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-.x-sidebar{width:230px;padding:11px;overflow-y:auto;flex-shrink:0;}
+.x-sidebar{width:280px;padding:11px;overflow-y:auto;flex-shrink:0;}
+@media(max-width:900px){.x-sidebar{display:none;}.x-main{border-left:none;border-right:none;}}
 .x-compose{padding:10px 13px;border-bottom:1px solid var(--border2);display:flex;gap:8px;flex-shrink:0;}
 .x-compose-av{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0;}
 .x-compose input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:14px;font-family:var(--font);padding:7px 0;outline:none;margin-bottom:7px;}
@@ -260,7 +261,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .tweet-body .h{color:var(--accent);}
 .tweet-sbar{height:2px;border-radius:1px;margin-bottom:6px;}
 .tweet-sbar.panic{background:var(--danger);}.tweet-sbar.concerned{background:var(--warning);}.tweet-sbar.positive{background:var(--success);}
-.tweet-img{width:100%;border-radius:10px;object-fit:cover;max-height:300px;display:block;margin-bottom:8px;border:1px solid var(--border);}
+.tweet-img{width:100%;max-width:100%;border-radius:12px;object-fit:cover;aspect-ratio:16/9;display:block;margin-bottom:8px;border:1px solid var(--border);}
+.tweet-img.square{aspect-ratio:1/1;}
 .tweet-actions{display:flex;}
 .tweet-action{display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;border:none;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all 0.15s;}
 .tweet-action:hover{background:rgba(29,155,240,0.1);color:var(--accent);}
@@ -1160,7 +1162,18 @@ function buildX(p){
   // Reply-to indicator
   const replyTo = p.replyTo ? `<div class="tweet-reply-to">Replying to <span class="h">${p.replyTo}</span></div>` : '';
   right.innerHTML=`<div class="tweet-hdr"><span class="tweet-name">${p.name||'User'}</span>${ver}<span class="tweet-handle">${p.handle||'@user'}</span><span class="tweet-time">· ${p.time||ts()}</span>${badge}</div>${bar}${replyTo}<div class="tweet-body">${hl(p.content||'')}</div>`;
-  if(p.image){const img=document.createElement('img');img.src=p.image;img.className='tweet-img';img.onerror=()=>img.remove();right.appendChild(img);}
+  if(p.image){
+    const img=document.createElement('img');
+    img.src=p.image;
+    img.className='tweet-img';
+    img.onerror=()=>img.remove();
+    img.onload=function(){
+      // If image is roughly square (within 20%) use square crop, otherwise 16:9
+      const ratio=this.naturalWidth/this.naturalHeight;
+      if(ratio>0.8&&ratio<1.25) img.classList.add('square');
+    };
+    right.appendChild(img);
+  }
   if(p.newsArticle||newsStore[p._key]){
     const art=p.newsArticle||newsStore[p._key];
     const nc=document.createElement('div'); nc.className='news-card';
