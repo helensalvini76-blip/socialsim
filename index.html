@@ -120,7 +120,53 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .btn-toggle-add{width:100%;padding:5px;background:transparent;border:1px dashed var(--border2);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;margin-top:4px;}
 .btn-toggle-add:hover{border-color:var(--success);color:var(--success);}
 
-.incident-controls{display:flex;flex-direction:column;gap:7px;}
+/* ── Post image preview in admin ── */
+.img-url-preview{width:100%;height:80px;border-radius:7px;object-fit:cover;margin-top:6px;display:none;border:1px solid var(--border);}
+.img-url-preview.show{display:block;}
+
+/* ── Post image cards on feeds ── */
+.post-img{width:100%;border-radius:10px;object-fit:cover;max-height:320px;display:block;margin-bottom:8px;border:1px solid var(--border);}
+.fb-post-img{width:100%;object-fit:cover;max-height:350px;display:block;}
+
+/* ── News article overlay ── */
+#news-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
+#news-overlay.open{display:flex;}
+.news-modal{background:#fff;color:#111;border-radius:12px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;font-family:Georgia,serif;}
+.news-modal::-webkit-scrollbar{width:4px;}
+.news-modal::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px;}
+.news-masthead{background:#1a1a1a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;}
+.news-masthead-name{font-size:20px;font-weight:900;font-family:Georgia,serif;letter-spacing:-0.5px;}
+.news-masthead-tag{font-size:10px;color:#aaa;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px;}
+.news-close{background:none;border:none;color:#aaa;font-size:22px;cursor:pointer;line-height:1;}
+.news-close:hover{color:#fff;}
+.news-breaking{background:#c0392b;color:#fff;font-size:11px;font-weight:700;padding:5px 20px;letter-spacing:0.08em;text-transform:uppercase;}
+.news-hero{width:100%;height:260px;object-fit:cover;display:block;}
+.news-hero-placeholder{width:100%;height:260px;background:#222;display:flex;align-items:center;justify-content:center;color:#555;font-size:14px;font-family:sans-serif;}
+.news-body{padding:20px 24px;}
+.news-category{font-size:11px;font-weight:700;color:#c0392b;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.news-headline{font-size:26px;font-weight:900;line-height:1.25;margin-bottom:10px;font-family:Georgia,serif;}
+.news-standfirst{font-size:15px;color:#444;line-height:1.6;margin-bottom:12px;font-weight:400;}
+.news-byline{font-size:12px;color:#888;border-top:1px solid #eee;border-bottom:1px solid #eee;padding:8px 0;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.news-byline-name{font-weight:700;color:#333;}
+.news-article-text{font-size:15px;line-height:1.75;color:#222;}
+.news-article-text p{margin-bottom:14px;}
+.news-pull-quote{border-left:4px solid #c0392b;padding:10px 16px;margin:16px 0;font-size:17px;font-style:italic;color:#333;background:#fafafa;}
+.news-ex-badge{display:inline-block;background:#ffd400;color:#111;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;}
+/* News article link in posts */
+.news-link{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s;text-decoration:none;}
+.news-link:hover{border-color:var(--accent);}
+.news-link-icon{font-size:20px;flex-shrink:0;}
+.news-link-text{flex:1;min-width:0;}
+.news-link-title{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.news-link-source{font-size:10px;color:var(--muted);}
+/* FB news link */
+.fb-news-link{display:flex;gap:10px;background:#3a3b3c;border-radius:0 0 10px 10px;padding:10px 13px;cursor:pointer;border-top:1px solid #4a4b4c;}
+.fb-news-link:hover{background:#4a4b4c;}
+.fb-news-source{font-size:10px;color:#b0b3b8;text-transform:uppercase;letter-spacing:0.05em;}
+.fb-news-headline{font-size:14px;font-weight:700;color:#e4e6eb;margin-top:2px;line-height:1.3;}
+
+/* ── News admin card ── */
+#news-admin-card{}{display:flex;flex-direction:column;gap:7px;}
 .incident-status{padding:8px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);}
 .incident-status-label{font-size:10px;color:var(--muted);}
 .incident-status-val{font-size:13px;font-weight:600;margin-top:2px;}
@@ -366,7 +412,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             </select>
             <input type="text" id="new-persona-bio" placeholder="Bio / role (optional)"/>
           </div>
-          <button class="btn-add-persona" onclick="addPersona()">Save Persona</button>
+          <div class="persona-add-row">
+            <input type="text" id="new-persona-photo" placeholder="Photo URL (optional — paste from thispersondoesnotexist.com)"/>
+          </div>
+        <button class="btn-add-persona" onclick="addPersona()">Save Persona</button>
         </div>
       </div>
 
@@ -393,7 +442,27 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </div>
         </div>
         <div class="form-row"><label>Engagement (optional)</label><input type="number" id="post-eng" placeholder="23" min="0"/></div>
+        <div class="form-row">
+          <label>Attach Image URL (optional)</label>
+          <input type="text" id="post-img" placeholder="https://…/photo.jpg" oninput="previewPostImg()"/>
+          <img id="post-img-preview" class="img-url-preview" alt="preview"/>
+        </div>
         <button class="btn-primary" onclick="injectPost()">⬆ Inject to All Platforms</button>
+      </div>
+
+      <div class="card" id="news-admin-card">
+        <div class="card-title">Fake News Article</div>
+        <div class="form-row"><label>Publication Name</label><input type="text" id="news-pub" placeholder="Northshire Gazette" value="Northshire Gazette"/></div>
+        <div class="form-row"><label>Headline</label><input type="text" id="news-headline" placeholder="BREAKING: Emergency at Northfield Road as fire breaks out"/></div>
+        <div class="form-row"><label>Standfirst (intro sentence)</label><input type="text" id="news-standfirst" placeholder="Emergency services rushed to the scene after reports of…"/></div>
+        <div class="form-row"><label>Article Body (use | to separate paragraphs)</label><textarea id="news-body" rows="4" placeholder="Fire crews arrived at 09:00… | A spokesperson said… | Residents in the area…"></textarea></div>
+        <div class="form-row"><label>Pull Quote (optional)</label><input type="text" id="news-quote" placeholder="We urge residents to remain calm — Fire Service"/></div>
+        <div class="form-row"><label>Hero Image URL (optional)</label><input type="text" id="news-img" placeholder="https://…/scene.jpg" oninput="previewNewsImg()"/><img id="news-img-preview" class="img-url-preview" alt="preview"/></div>
+        <div class="form-row"><label>Reporter Name</label><input type="text" id="news-reporter" placeholder="J. Whitfield, Local Affairs Reporter" value="J. Whitfield, Local Affairs Reporter"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+          <button class="btn-primary" onclick="pushNewsArticle()">📰 Push Article Link</button>
+          <button class="btn-primary" style="background:var(--surface2);color:var(--text);" onclick="previewNews()">👁 Preview</button>
+        </div>
       </div>
       <div class="card">
         <div class="card-title">Scenario Presets</div>
@@ -521,7 +590,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   </div>
 </div>
 
-<script type="module">
+<!-- NEWS ARTICLE OVERLAY -->
+<div id="news-overlay" onclick="if(event.target===this)closeNews()">
+  <div class="news-modal" id="news-modal">
+    <div class="news-masthead">
+      <div>
+        <div class="news-masthead-name" id="nm-pub">Northshire Gazette</div>
+        <div class="news-masthead-tag">Local News · Breaking Coverage</div>
+      </div>
+      <button class="news-close" onclick="closeNews()">✕</button>
+    </div>
+    <div class="news-breaking">⚡ Breaking News</div>
+    <div id="nm-hero-wrap"></div>
+    <div class="news-body">
+      <div class="news-ex-badge">⚠ Exercise Only — Fictional Content</div>
+      <div class="news-category" id="nm-cat">Local News</div>
+      <div class="news-headline" id="nm-headline"></div>
+      <div class="news-standfirst" id="nm-standfirst"></div>
+      <div class="news-byline">
+        <span>By <span class="news-byline-name" id="nm-reporter"></span></span>
+        <span id="nm-time"></span>
+      </div>
+      <div class="news-article-text" id="nm-body"></div>
+    </div>
+  </div>
+</div>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
@@ -644,11 +737,17 @@ function buildX(p){
   const badge=isO?'<span class="off-badge">OFFICIAL</span>':(p.sentiment==='panic'?'<span class="alert-badge">ALERT</span>':'');
   const ver=(isO||isM)?'<span class="tweet-ver"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>':'';
   const bar=p.sentiment&&p.sentiment!=='neutral'?`<div class="tweet-sbar ${p.sentiment}"></div>`:'';
+  const avEl=p.photo
+    ?`<img src="${p.photo}" class="tweet-av" style="object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt=""/><div class="tweet-av" style="background:${av};display:none">${ini(p.name)}</div>`
+    :`<div class="tweet-av" style="background:${av}">${ini(p.name)}</div>`;
+  const imgEl=p.image?`<img src="${p.image}" class="post-img" onerror="this.style.display='none'" alt=""/>`:
+    p.newsArticle?`<div class="news-link" onclick='openNewsFromPost(${JSON.stringify(p.newsArticle).replace(/'/g,"&#39;")})'><span class="news-link-icon">📰</span><div class="news-link-text"><div class="news-link-title">${p.newsArticle.headline||'Breaking News'}</div><div class="news-link-source">${p.newsArticle.pub||'Local News'} · Read article</div></div><span style="color:var(--accent);font-size:12px;">→</span></div>`:'';
   return `<div class="tweet" id="x_${p._key}" data-ts="${p.ts||0}">
-    <div class="tweet-av" style="background:${av}">${ini(p.name)}</div>
+    ${avEl}
     <div class="tweet-right">
       <div class="tweet-hdr"><span class="tweet-name">${p.name||'User'}</span>${ver}<span class="tweet-handle">${p.handle||'@user'}</span><span class="tweet-time">· ${p.time||ts()}</span>${badge}</div>
       ${bar}<div class="tweet-body">${hl(p.content||'')}</div>
+      ${imgEl}
       <div class="tweet-actions">
         <button class="tweet-action" onclick="this.classList.toggle('liked')"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 7.879 3.77 7.879 8.276 0 4.422-3.455 8.107-7.879 8.107h-2.35c-1.381 0-2.447.994-2.447 2.193v2.07c0 .383-.302.654-.682.654-.148 0-.285-.038-.401-.11l-4.76-2.956A9.01 9.01 0 0 1 1.75 10zm8.005-5.999c-3.202 0-5.753 2.524-5.753 5.999A6.76 6.76 0 0 0 5.55 14.63l3.47 2.154v-.938c0-2.478 1.928-4.446 4.7-4.446h2.35c2.967 0 5.627-2.615 5.627-5.854 0-3.235-2.574-6.047-5.627-6.047h-4.314z"/></svg>${fmt(rep)}</button>
         <button class="tweet-action"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V19.5H7.75C5.681 19.5 4 17.819 4 15.75V8.38L2.853 9.91.147 8.09l4.603-6.3zm14.5 16.42l-4.603-4.3 1.706-1.82L17.5 15.62V8.25c0-.97-.784-1.75-1.75-1.75H11V4.5h4.75c2.069 0 3.75 1.681 3.75 3.75v7.37l1.147-1.53 2.706 1.82-4.603 6.3z"/></svg>${fmt(rt)}</button>
@@ -665,9 +764,16 @@ function buildFb(p){
   const ver=(isO||isM)?'✓ ':'';
   const emojis=['👍','❤️','😮','😢','😡'];
   const icons=emojis.slice(0,ri(2,4)).map(e=>`<div class="fb-react-icon" style="background:${e==='👍'?'#1877f2':e==='❤️'?'#e0245e':'#ffd400'}">${e}</div>`).join('');
+  const avEl=p.photo
+    ?`<img src="${p.photo}" class="fb-post-av" style="object-fit:cover;" onerror="this.outerHTML='<div class=\\"fb-post-av\\" style=\\"background:${av}\\">${ini(p.name)}</div>'" alt=""/>`
+    :`<div class="fb-post-av" style="background:${av}">${ini(p.name)}</div>`;
+  const imgEl=p.image?`<img src="${p.image}" class="fb-post-img" onerror="this.style.display='none'" alt=""/>`:
+    p.newsArticle?`<div class="fb-news-link" onclick='openNewsFromPost(${JSON.stringify(p.newsArticle).replace(/'/g,"&#39;")})'>
+      <div style="flex:1;"><div class="fb-news-source">${p.newsArticle.pub||'Local News'} · Breaking</div><div class="fb-news-headline">${p.newsArticle.headline||'Breaking News'}</div></div>
+      <span style="font-size:24px;flex-shrink:0;">📰</span></div>`:'';
   return `<div class="fb-post" id="fb_${p._key}" data-ts="${p.ts||0}">
     <div class="fb-post-hdr">
-      <div class="fb-post-av" style="background:${av}">${ini(p.name)}</div>
+      ${avEl}
       <div class="fb-post-meta">
         <div class="fb-post-name">${ver}${p.name||'User'}${badge}</div>
         <div class="fb-post-time">🌐 ${p.time||ts()} · Public</div>
@@ -675,6 +781,7 @@ function buildFb(p){
       <button class="fb-post-more-btn">···</button>
     </div>
     <div class="fb-post-body">${hl(p.content||'')}</div>
+    ${imgEl}
     <div class="fb-react-bar">
       <div class="fb-react-left"><div class="fb-react-icons">${icons}</div>&nbsp;${fmt(lk)}</div>
       <div class="fb-react-right">${cmt} comments · ${sh} shares</div>
@@ -696,13 +803,24 @@ function buildIg(p){
   const offBadge=isO?'<span class="ig-off-badge">OFFICIAL</span>':'';
   const handle=(p.handle||'@user').replace('@','');
   const ringCls=isO?'ig-av-ring off':'ig-av-ring';
+  const avInner=p.photo
+    ?`<img src="${p.photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid #000;" onerror="this.outerHTML='<div class=\\"ig-av\\" style=\\"background:${av}\\">${ini(p.name)}</div>'" alt=""/>`
+    :`<div class="ig-av" style="background:${av}">${ini(p.name)}</div>`;
+  const imgEl=p.image
+    ?`<div class="ig-img"><img src="${p.image}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display='none'" alt=""/></div>`
+    :p.newsArticle
+      ?`<div class="ig-img" style="cursor:pointer;" onclick='openNewsFromPost(${JSON.stringify(p.newsArticle).replace(/'/g,"&#39;")})'>
+          <div class="ig-img-grad" style="background:linear-gradient(135deg,#1a1a2e,#c0392b);"></div>
+          <div class="ig-img-lbl">📰 BREAKING<br/><span style="font-size:14px;font-weight:400;line-height:1.4;">${(p.newsArticle.headline||'').slice(0,60)}${(p.newsArticle.headline||'').length>60?'…':''}</span></div>
+        </div>`
+      :`<div class="ig-img"><div class="ig-img-grad" style="background:linear-gradient(135deg,${c1},${c2});"></div><div class="ig-img-lbl">${lbl}</div></div>`;
   return `<div class="ig-post" id="ig_${p._key}" data-ts="${p.ts||0}">
     <div class="ig-post-hdr">
-      <div class="${ringCls}"><div class="ig-av" style="background:${av}">${ini(p.name)}</div></div>
+      <div class="${ringCls}">${avInner}</div>
       <div class="ig-post-meta"><div class="ig-post-user">${handle}${ver}${offBadge}</div><div class="ig-post-sub">${p.name||'User'}</div></div>
       <button class="ig-post-more-btn">···</button>
     </div>
-    <div class="ig-img"><div class="ig-img-grad" style="background:linear-gradient(135deg,${c1},${c2});"></div><div class="ig-img-lbl">${lbl}</div></div>
+    ${imgEl}
     <div class="ig-post-actions">
       <div class="ig-act-left">
         <button class="ig-act-btn" onclick="this.classList.toggle('liked');this.textContent=this.classList.contains('liked')?'❤️':'🤍'">🤍</button>
@@ -763,11 +881,16 @@ window.injectPost=function(){
   const handle=document.getElementById('post-handle').value.trim()||'@anon';
   const content=document.getElementById('post-content').value.trim();
   const eng=parseInt(document.getElementById('post-eng').value)||undefined;
+  const image=document.getElementById('post-img').value.trim()||undefined;
   if(!content){alert('Post content is required');return;}
-  push(ref(db,'posts'),{name,handle,content,type:postType,sentiment,replies:eng||ri(0,150),time:ts(),ts:Date.now()});
-  addLog('Injected '+postType+' post by '+name);
+  // carry photo from selected persona
+  const photo=selectedPersonaIdx!=null&&personas[selectedPersonaIdx]?.photo||undefined;
+  push(ref(db,'posts'),{name,handle,content,type:postType,sentiment,replies:eng||ri(0,150),time:ts(),ts:Date.now(),image,photo});
+  addLog('Injected '+postType+' post by '+name+(image?' [+image]':''));
   document.getElementById('post-content').value='';
   document.getElementById('post-eng').value='';
+  document.getElementById('post-img').value='';
+  const prev=document.getElementById('post-img-preview');if(prev){prev.classList.remove('show');}
 };
 window.setStatus=function(s){const name=document.getElementById('inc-name')?.value||'Incident';set(ref(db,'incident'),{status:s,name,ts:Date.now()});addLog('Status: '+s+(name?' — '+name:''));};
 window.pushBanner=function(){const text=document.getElementById('banner-txt').value.trim();if(!text) return;set(ref(db,'banner'),{text,active:true,ts:Date.now()});addLog('Banner: "'+text+'"');};
@@ -937,7 +1060,7 @@ window.filterPersonas = function() {
         const typeClass = {official:'pt-official',media:'pt-media',public:'pt-public',rumour:'pt-rumour'}[p.type]||'pt-public';
         const isSelected = selectedPersonaIdx === realIdx;
         return `<div class="persona-card${isSelected?' selected':''}" onclick="selectPersona(${realIdx})">
-          <div class="persona-av" style="background:${avc(p.name)}">${ini(p.name)}</div>
+          <div class="persona-av" style="background:${avc(p.name)};overflow:hidden;">${p.photo?`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'" alt=""/>`:''}${p.photo?'':ini(p.name)}</div>
           <div class="persona-info">
             <div class="persona-name">${p.name}</div>
             <div class="persona-handle">${p.handle}${p.bio?' · <span style="color:var(--muted)">'+p.bio+'</span>':''}</div>
@@ -959,19 +1082,26 @@ window.selectPersona = function(idx) {
   selectedPersonaIdx = idx;
   const p = personas[idx];
   if(!p) return;
-  // Fill in the inject form
   document.getElementById('post-name').value = p.name;
   document.getElementById('post-handle').value = p.handle;
-  // Set post type to match persona type
-  const typeMap = {official:'official', media:'media', public:'public', rumour:'rumour'};
-  const t = typeMap[p.type]||'public';
+  const t = p.type||'public';
   postType = t;
-  document.querySelectorAll('.tab-btn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.type===t);
-  });
-  updatePrev();
-  filterPersonas(); // re-render to show selection highlight
-  // Scroll to inject form
+  document.querySelectorAll('.tab-btn').forEach(b=>{ b.classList.toggle('active', b.dataset.type===t); });
+  // Update avatar preview — show photo if available
+  const av=document.getElementById('av-prev');
+  if(av){
+    if(p.photo){
+      av.style.backgroundImage=`url(${p.photo})`;
+      av.style.backgroundSize='cover';
+      av.style.backgroundPosition='center';
+      av.textContent='';
+    } else {
+      av.style.backgroundImage='';
+      av.style.background=avc(p.name);
+      av.textContent=ini(p.name);
+    }
+  }
+  filterPersonas();
   document.getElementById('post-content').focus();
   addLog('Persona selected: '+p.name+' ('+p.handle+')');
 };
@@ -986,13 +1116,15 @@ window.addPersona = function() {
   let handle = document.getElementById('new-persona-handle').value.trim();
   const type = document.getElementById('new-persona-type').value;
   const bio = document.getElementById('new-persona-bio').value.trim();
+  const photo = document.getElementById('new-persona-photo').value.trim();
   if(!name || !handle) { alert('Name and handle are required'); return; }
   if(!handle.startsWith('@')) handle = '@'+handle;
-  personas.push({ name, handle, type, bio });
+  personas.push({ name, handle, type, bio, photo:photo||undefined });
   savePersonas();
   document.getElementById('new-persona-name').value='';
   document.getElementById('new-persona-handle').value='';
   document.getElementById('new-persona-bio').value='';
+  document.getElementById('new-persona-photo').value='';
   document.getElementById('persona-add-form').classList.remove('open');
   filterPersonas();
   addLog('Persona added: '+name);
@@ -1004,6 +1136,101 @@ window.deletePersona = function(idx) {
   if(selectedPersonaIdx===idx) selectedPersonaIdx=null;
   savePersonas();
   filterPersonas();
+};
+
+// ── Image preview helpers ──
+window.previewPostImg = function(){
+  const url=document.getElementById('post-img').value.trim();
+  const prev=document.getElementById('post-img-preview');
+  if(!prev) return;
+  if(url){ prev.src=url; prev.classList.add('show'); }
+  else { prev.classList.remove('show'); }
+};
+window.previewNewsImg = function(){
+  const url=document.getElementById('news-img').value.trim();
+  const prev=document.getElementById('news-img-preview');
+  if(!prev) return;
+  if(url){ prev.src=url; prev.classList.add('show'); }
+  else { prev.classList.remove('show'); }
+};
+
+// ── News article system ──
+let currentNewsArticle = null;
+
+function gatherNewsArticle(){
+  return {
+    pub:    document.getElementById('news-pub')?.value.trim()||'Local News',
+    headline: document.getElementById('news-headline')?.value.trim()||'Breaking News',
+    standfirst: document.getElementById('news-standfirst')?.value.trim()||'',
+    body:   document.getElementById('news-body')?.value.trim()||'',
+    quote:  document.getElementById('news-quote')?.value.trim()||'',
+    image:  document.getElementById('news-img')?.value.trim()||'',
+    reporter: document.getElementById('news-reporter')?.value.trim()||'Staff Reporter',
+  };
+}
+
+window.previewNews = function(){
+  const article = gatherNewsArticle();
+  openNewsOverlay(article);
+};
+
+window.pushNewsArticle = function(){
+  const article = gatherNewsArticle();
+  if(!article.headline){ alert('Headline is required'); return; }
+  // Inject a post from the media account that links to the article
+  const pub = article.pub;
+  const handle = '@'+pub.replace(/\s+/g,'').toLowerCase().slice(0,14);
+  push(ref(db,'posts'),{
+    name: pub,
+    handle,
+    content: `BREAKING: ${article.headline} — Read our full report below. #BreakingNews`,
+    type: 'media',
+    sentiment: 'concerned',
+    replies: ri(20,200),
+    time: ts(),
+    ts: Date.now(),
+    newsArticle: article,
+  });
+  addLog('News article pushed: "'+article.headline.slice(0,50)+'"');
+};
+
+window.openNewsFromPost = function(article){
+  openNewsOverlay(article);
+};
+
+function openNewsOverlay(article){
+  currentNewsArticle = article;
+  document.getElementById('nm-pub').textContent = article.pub||'Local News';
+  document.getElementById('nm-headline').textContent = article.headline||'';
+  document.getElementById('nm-standfirst').textContent = article.standfirst||'';
+  document.getElementById('nm-reporter').textContent = article.reporter||'Staff Reporter';
+  document.getElementById('nm-time').textContent = new Date().toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  // Hero image
+  const heroWrap = document.getElementById('nm-hero-wrap');
+  if(article.image){
+    heroWrap.innerHTML=`<img src="${article.image}" class="news-hero" onerror="this.outerHTML='<div class=\\"news-hero-placeholder\\">📷 Image not available</div>'" alt=""/>`;
+  } else {
+    heroWrap.innerHTML=`<div class="news-hero-placeholder">📷 No image attached</div>`;
+  }
+  // Body paragraphs
+  const bodyEl = document.getElementById('nm-body');
+  const paras = (article.body||'').split('|').map(s=>s.trim()).filter(Boolean);
+  let html = paras.map(s=>`<p>${s}</p>`).join('');
+  if(article.quote){
+    // Insert pull quote after first paragraph
+    const firstP = html.indexOf('</p>');
+    if(firstP>-1){
+      html = html.slice(0,firstP+4)+`<div class="news-pull-quote">"${article.quote}"</div>`+html.slice(firstP+4);
+    } else {
+      html += `<div class="news-pull-quote">"${article.quote}"</div>`;
+    }
+  }
+  bodyEl.innerHTML = html || '<p>Full article content will appear here.</p>';
+  document.getElementById('news-overlay').classList.add('open');
+}
+
+window.closeNews = function(){
+  document.getElementById('news-overlay').classList.remove('open');
 };
 
 function addLog(msg){const t=ts();actLog.unshift(`<span>[${t}]</span> ${msg}`);if(actLog.length>30)actLog.pop();const el=document.getElementById('activity-log');if(el)el.innerHTML=actLog.map(l=>`<div class="log-item">${l}</div>`).join('');}
