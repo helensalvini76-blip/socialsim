@@ -491,6 +491,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ig-comment-item-name{font-size:12px;font-weight:700;color:#fff;margin-right:5px;}
 .ig-comment-item-text{font-size:13px;color:#e0e0e0;word-break:break-word;}
 .ig-comment-item-time{font-size:10px;color:#888;margin-top:1px;}
+
+/* THREADED INLINE REPLIES ON X */
+.x-replies{border-top:1px solid var(--border);}
+.x-reply{display:flex;gap:8px;padding:9px 13px;border-bottom:1px solid var(--border);animation:fadeIn 0.25s ease;}
+.x-reply:last-child{border-bottom:none;}
+.x-reply-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+.x-reply-body{flex:1;min-width:0;}
+.x-reply-hdr{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:2px;}
+.x-reply-name{font-size:12px;font-weight:700;}
+.x-reply-handle,.x-reply-time{font-size:11px;color:var(--muted);}
+.x-reply-text{font-size:12px;line-height:1.5;word-break:break-word;}
 </style>
 </head>
 <body>
@@ -1099,26 +1110,8 @@ function initListeners(){
     if(dot){dot.style.background=cfg.col;dot.style.animation=cfg.a;}
   });
 
-  // Replies — sync from all devices to admin monitor
-  onValue(ref(db,'replies'),snap=>{
-    const data=snap.val();
-    const newReplies = data
-      ? Object.entries(data).map(([k,v])=>({...v,_key:k})).sort((a,b)=>(b.ts||0)-(a.ts||0))
-      : [];
-    // Only add genuinely new ones (not already in repliesData)
-    const existingKeys = new Set(repliesData.map(r=>r._key).filter(Boolean));
-    let added=0;
-    newReplies.forEach(r=>{
-      if(!existingKeys.has(r._key)){
-        repliesData.unshift({...r, unread:true});
-        added++;
-      }
-    });
-    if(added>0){
-      unreadCount+=added;
-      renderRepliesMonitor();
-    }
-  });
+  // Per-post reply listeners are set up in buildX/buildFb/buildIg
+  // The admin monitor is updated directly from those listeners
 }
 
 function showNotif(pl){const ids={x:'x-ndot',fb:'fb-ndot',ig:'ig-ndot'};const el=document.getElementById(ids[pl]);if(el)el.style.display='block';}
@@ -1197,10 +1190,34 @@ function buildX(p){
   rb.querySelector('.reply-cancel').addEventListener('click',()=>rb.classList.remove('open'));
   rb.querySelector('.reply-send').addEventListener('click',()=>{
     const val=rb.querySelector('input').value.trim(); if(!val) return;
-    push(ref(db,'posts'),clean({name:participantName,handle:'@'+participantName.toLowerCase().replace(/\s+/g,'_'),content:val,type:'public',sentiment:'neutral',replies:0,time:ts(),ts:Date.now(),replyTo:p.handle||'@user'}));
+    const replyData=clean({name:participantName,handle:'@'+participantName.toLowerCase().replace(/\s+/g,'_'),content:val,platform:'x',replyTo:p.handle,time:ts(),ts:Date.now()});
+    push(ref(db,'replies/'+p._key), replyData);
     rb.querySelector('input').value=''; rb.classList.remove('open');
-    push(ref(db,'replies'),clean({name:participantName,content:val,replyTo:p.handle,platform:'x',time:ts(),ts:Date.now()}));
     addLog('Participant replied on X to '+p.handle);
+  });
+  // Threaded replies container — listens to Firebase for this post's replies
+  const xReplies=document.createElement('div'); xReplies.className='x-replies'; xReplies.id='x-replies-'+p._key;
+  wrap.appendChild(xReplies);
+  onValue(ref(db,'replies/'+p._key),snap=>{
+    const data=snap.val(); xReplies.innerHTML='';
+    if(!data) return;
+    Object.values(data).sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(r=>{
+      const d=document.createElement('div'); d.className='x-reply';
+      const av=document.createElement('div'); av.className='x-reply-av'; av.style.background=avc(r.name||'P'); av.textContent=ini(r.name||'P');
+      const body=document.createElement('div'); body.className='x-reply-body';
+      body.innerHTML=`<div class="x-reply-hdr"><span class="x-reply-name">${r.name||'Participant'}</span><span class="x-reply-handle">${r.handle||''}</span><span class="x-reply-time">· ${r.time||''}</span></div><div class="x-reply-text">${hl(r.content||'')}</div>`;
+      d.appendChild(av); d.appendChild(body); xReplies.appendChild(d);
+    });
+    // update admin monitor too
+    const snap2=snap.val();
+    if(snap2) Object.entries(snap2).forEach(([k,r])=>{
+      if(!repliesData.find(x=>x._key===k)){
+        const isFirst=repliesData.length===0;
+        repliesData.unshift({...r,_key:k,unread:!isFirst});
+        if(!isFirst) unreadCount++;
+        renderRepliesMonitor();
+      }
+    });
   });
   wrap.appendChild(right);
   return wrap;
@@ -1255,27 +1272,48 @@ function buildFb(p){
   });
   replySend.addEventListener('click',()=>{
     const val=replyInp.value.trim(); if(!val) return;
-    addFbComment(commentsDiv, participantName, val, p._key);
+    const replyData=clean({name:participantName,content:val,platform:'fb',replyTo:p.name,time:ts(),ts:Date.now()});
+    push(ref(db,'replies/'+p._key), replyData);
     replyInp.value='';
-    push(ref(db,'replies'),clean({name:participantName,content:val,replyTo:p.name,platform:'fb',time:ts(),ts:Date.now()}));
     addLog('Participant commented on FB post by '+p.name);
   });
   replyInp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ replySend.click(); } });
+  // Listen for replies from Firebase and render inline
+  onValue(ref(db,'replies/'+p._key),snap=>{
+    const data=snap.val();
+    // clear existing comments (not the reply row)
+    Array.from(commentsDiv.querySelectorAll('.fb-comment')).forEach(el=>el.remove());
+    if(!data){ const cnt=document.getElementById('fb-cmt-count-'+p._key); if(cnt) cnt.textContent=cnt.textContent.replace(/\d+ comments/,cmt+' comments'); return; }
+    const replies=Object.entries(data).map(([k,v])=>({...v,_key:k})).sort((a,b)=>(a.ts||0)-(b.ts||0));
+    replies.forEach(r=>addFbComment(commentsDiv,r.name||'Participant',r.content||'',p._key,false));
+    // update comment count
+    const cnt=document.getElementById('fb-cmt-count-'+p._key);
+    if(cnt) cnt.textContent=cnt.textContent.replace(/\d+ comments/,replies.length+' comments');
+    // update admin monitor
+    replies.forEach(r=>{
+      if(!repliesData.find(x=>x._key===r._key)){
+        const isFirst=repliesData.length===0;
+        repliesData.unshift({...r,unread:!isFirst});
+        if(!isFirst) unreadCount++;
+        renderRepliesMonitor();
+      }
+    });
+  });
   return wrap;
 }
 
-function addFbComment(container, name, text, postKey){
+function addFbComment(container, name, text, postKey, updateCount=true){
   const div=document.createElement('div'); div.className='fb-comment';
   const av=document.createElement('div'); av.className='fb-comment-av'; av.style.background=avc(name); av.textContent=ini(name);
   const bubble=document.createElement('div'); bubble.className='fb-comment-bubble';
   bubble.innerHTML=`<div class="fb-comment-name">${name}</div><div class="fb-comment-text">${text}</div><div class="fb-comment-time">Just now · Like · Reply</div>`;
   div.appendChild(av); div.appendChild(bubble);
-  // insert before the reply row
   const replyRow=container.querySelector('.fb-reply-row');
   container.insertBefore(div, replyRow);
-  // update comment count display
-  const countEl=document.getElementById('fb-cmt-count-'+postKey);
-  if(countEl){ const m=countEl.textContent.match(/(\d+) comments/); if(m) countEl.textContent=countEl.textContent.replace(m[0],(parseInt(m[1])+1)+' comments'); }
+  if(updateCount){
+    const countEl=document.getElementById('fb-cmt-count-'+postKey);
+    if(countEl){ const m=countEl.textContent.match(/(\d+) comments/); if(m) countEl.textContent=countEl.textContent.replace(m[0],(parseInt(m[1])+1)+' comments'); }
+  }
 }
 
 function buildIg(p){
@@ -1335,19 +1373,35 @@ function buildIg(p){
     const val=cmtInp.value.trim(); if(!val) return;
     openNamePicker(()=>{
       cmtAv.style.background=avc(participantName); cmtAv.textContent=ini(participantName);
-      const item=document.createElement('div'); item.className='ig-comment-item';
-      const av2=document.createElement('div'); av2.className='ig-comment-item-av'; av2.style.background=avc(participantName); av2.textContent=ini(participantName);
-      const bd=document.createElement('div'); bd.className='ig-comment-item-body';
-      bd.innerHTML=`<span class="ig-comment-item-name">${participantName.toLowerCase().replace(/\s+/g,'_')}</span><span class="ig-comment-item-text">${val}</span><div class="ig-comment-item-time">Just now · Like · Reply</div>`;
-      item.appendChild(av2); item.appendChild(bd);
-      cmtList.appendChild(item);
+      push(ref(db,'replies/'+p._key),clean({name:participantName,content:val,platform:'ig',replyTo:p.name,time:ts(),ts:Date.now()}));
       cmtInp.value='';
-      push(ref(db,'replies'),clean({name:participantName,content:val,replyTo:p.name,platform:'ig',time:ts(),ts:Date.now()}));
       addLog('Participant commented on IG post by '+p.name);
     });
   };
   cmtPost.addEventListener('click',sendIgComment);
   cmtInp.addEventListener('keydown',e=>{ if(e.key==='Enter') sendIgComment(); });
+  // Listen for replies from Firebase and render inline
+  onValue(ref(db,'replies/'+p._key),snap=>{
+    const data=snap.val();
+    cmtList.innerHTML='';
+    if(!data) return;
+    Object.entries(data).map(([k,v])=>({...v,_key:k})).sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(r=>{
+      const item=document.createElement('div'); item.className='ig-comment-item';
+      const av2=document.createElement('div'); av2.className='ig-comment-item-av'; av2.style.background=avc(r.name||'P'); av2.textContent=ini(r.name||'P');
+      const bd=document.createElement('div'); bd.className='ig-comment-item-body';
+      bd.innerHTML=`<span class="ig-comment-item-name">${(r.name||'participant').toLowerCase().replace(/\s+/g,'_')}</span> <span class="ig-comment-item-text">${r.content||''}</span><div class="ig-comment-item-time">${r.time||'Just now'} · Like · Reply</div>`;
+      item.appendChild(av2); item.appendChild(bd); cmtList.appendChild(item);
+    });
+    // update admin monitor
+    Object.entries(data).forEach(([k,r])=>{
+      if(!repliesData.find(x=>x._key===k)){
+        const isFirst=repliesData.length===0;
+        repliesData.unshift({...r,_key:k,unread:!isFirst});
+        if(!isFirst) unreadCount++;
+        renderRepliesMonitor();
+      }
+    });
+  });
   return wrap;
 }
 
@@ -1386,7 +1440,6 @@ function userPost(pl){
   push(ref(db,'posts'),clean({name:'Exercise Participant',handle:'@participant',content:val,type:'public',sentiment:'neutral',time:ts(),ts:Date.now(),replies:0}));
   inp.value='';
   if(pl==='x') document.getElementById('x-chars').textContent='280';
-  push(ref(db,'replies'),clean({name:'Exercise Participant',content:val,replyTo:'(compose)',platform:pl,time:ts(),ts:Date.now()}));
   addLog('Participant posted on '+pl.toUpperCase());
 }
 
@@ -1508,6 +1561,7 @@ document.getElementById('btn-reset').addEventListener('click',()=>{
   set(ref(db,'posts'),null); set(ref(db,'banner'),{active:false}); set(ref(db,'trending'),null);
   set(ref(db,'incident'),{status:'offline',name:'',ts:Date.now()});
   set(ref(db,'replies'),null);
+  repliesData=[]; unreadCount=0; renderRepliesMonitor();
   Object.keys(rendered).forEach(k=>rendered[k].clear());
   storySet.clear(); Object.keys(newsStore).forEach(k=>delete newsStore[k]);
   const ig=document.getElementById('ig-stories');
@@ -2107,14 +2161,9 @@ function renderRepliesMonitor(){
   const feed = document.getElementById('replies-feed'); if(!feed) return;
   const badge = document.getElementById('replies-badge');
 
-  // Update badge
   if(badge){
-    if(unreadCount > 0){
-      badge.style.display='inline-flex';
-      badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
-    } else {
-      badge.style.display='none';
-    }
+    if(unreadCount > 0){ badge.style.display='inline-flex'; badge.textContent=unreadCount>99?'99+':String(unreadCount); }
+    else badge.style.display='none';
   }
 
   if(repliesData.length === 0){
@@ -2123,50 +2172,39 @@ function renderRepliesMonitor(){
   }
 
   feed.innerHTML='';
-  repliesData.forEach(r=>{
-    const platLabel = {x:'𝕏 X', fb:'FB', ig:'IG'}[r.platform]||r.platform.toUpperCase();
-    const platCls = {x:'rip-x', fb:'rip-fb', ig:'rip-ig'}[r.platform]||'rip-x';
-    const isReply = r.replyTo && r.replyTo !== '(compose)';
-
-    const div = document.createElement('div');
-    div.className = 'reply-item' + (r.unread ? ' unread' : '');
-
-    div.innerHTML = `
+  repliesData.forEach((r,idx)=>{
+    const platLabel={x:'𝕏 X',fb:'FB',ig:'IG'}[r.platform]||(r.platform||'').toUpperCase();
+    const platCls={x:'rip-x',fb:'rip-fb',ig:'rip-ig'}[r.platform]||'rip-x';
+    const isReply=r.replyTo&&r.replyTo!=='(compose)';
+    const div=document.createElement('div');
+    div.className='reply-item'+(r.unread?' unread':'');
+    div.innerHTML=`
       <div class="reply-item-header">
         <div class="reply-item-av" style="background:${avc(r.name||'P')}">${ini(r.name||'P')}</div>
         <span class="reply-item-name">${r.name||'Participant'}</span>
         <span class="reply-item-platform ${platCls}">${platLabel}</span>
         <span class="reply-item-time">${r.time||''}</span>
       </div>
-      ${isReply ? `<div class="reply-item-replyto">↩ replying to <strong>${r.replyTo}</strong></div>` : ''}
+      ${isReply?`<div class="reply-item-replyto">↩ replying to <strong>${r.replyTo}</strong></div>`:''}
       <div class="reply-item-content">${r.content||''}</div>
       <div class="reply-item-actions">
-        <button class="reply-quick-btn" data-respond="${r.id}">↩ Respond</button>
-        <button class="reply-quick-btn" data-dismiss="${r.id}">✓ Noted</button>
+        <button class="reply-quick-btn" data-idx="${idx}" data-action="respond">↩ Respond</button>
+        <button class="reply-quick-btn" data-idx="${idx}" data-action="dismiss">✓ Noted</button>
       </div>`;
 
-    // Respond button — pre-fills the inject form with the participant's handle as replyTo
-    div.querySelector('[data-respond]').addEventListener('click',()=>{
-      // Switch to inject card and pre-fill
-      document.getElementById('post-content').value = '';
-      document.getElementById('post-name').focus();
-      document.getElementById('post-content').placeholder = `Replying to ${r.name}…`;
-      // scroll admin panel to inject card
-      document.getElementById('post-content').scrollIntoView({behavior:'smooth', block:'center'});
-      // Mark as read
-      r.unread = false;
-      if(unreadCount > 0) unreadCount--;
+    div.querySelector('[data-action="respond"]').addEventListener('click',()=>{
+      document.getElementById('post-content').value='';
+      document.getElementById('post-content').placeholder=`Replying to ${r.name}…`;
+      document.getElementById('post-content').scrollIntoView({behavior:'smooth',block:'center'});
+      repliesData[idx].unread=false;
+      if(unreadCount>0) unreadCount--;
       renderRepliesMonitor();
     });
-
-    // Dismiss/mark as read
-    div.querySelector('[data-dismiss]').addEventListener('click',()=>{
-      r.unread = false;
-      if(unreadCount > 0) unreadCount--;
-      div.classList.remove('unread');
+    div.querySelector('[data-action="dismiss"]').addEventListener('click',()=>{
+      repliesData[idx].unread=false;
+      if(unreadCount>0) unreadCount--;
       renderRepliesMonitor();
     });
-
     feed.appendChild(div);
   });
 }
