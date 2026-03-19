@@ -406,6 +406,67 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 .exercise-watermark{position:fixed;bottom:10px;right:10px;z-index:500;background:rgba(255,212,0,0.15);border:1px solid rgba(255,212,0,0.4);border-radius:7px;padding:4px 9px;font-size:10px;font-weight:700;color:var(--warning);letter-spacing:0.1em;text-transform:uppercase;pointer-events:none;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── NAME PICKER OVERLAY ── */
+#name-picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;}
+#name-picker-overlay.open{display:flex;}
+.name-picker-modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:22px;width:100%;max-width:360px;}
+.name-picker-title{font-size:15px;font-weight:700;margin-bottom:4px;}
+.name-picker-sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
+.name-picker-roles{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;max-height:240px;overflow-y:auto;}
+.name-picker-roles::-webkit-scrollbar{width:3px;}
+.name-picker-roles::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.name-picker-role{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color 0.15s;}
+.name-picker-role:hover{border-color:var(--accent);}
+.name-picker-role.selected{border-color:var(--accent);background:rgba(29,155,240,0.08);}
+.name-picker-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+.name-picker-role-name{font-size:12px;font-weight:600;}
+.name-picker-role-handle{font-size:10px;color:var(--muted);}
+.name-picker-divider{text-align:center;font-size:11px;color:var(--muted);margin:8px 0;}
+.name-picker-custom{display:flex;gap:6px;margin-bottom:12px;}
+.name-picker-custom input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;font-family:var(--font);padding:6px 9px;outline:none;}
+.name-picker-custom input:focus{border-color:var(--accent);}
+.name-picker-btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.name-picker-confirm{padding:8px;background:var(--accent);border:none;border-radius:20px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;}
+.name-picker-confirm:hover{background:var(--accent2);}
+.name-picker-cancel{padding:8px;background:transparent;border:1px solid var(--border2);border-radius:20px;color:var(--muted);font-size:13px;cursor:pointer;}
+.name-picker-cancel:hover{color:var(--text);}
+
+/* ── REPLY STYLES ── */
+.reply-box{border-top:1px solid var(--border);padding:8px 12px;background:rgba(29,155,240,0.03);display:none;}
+.reply-box.open{display:flex;gap:8px;align-items:flex-start;}
+.reply-box-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;overflow:hidden;}
+.reply-box-right{flex:1;}
+.reply-to-label{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.reply-to-label strong{color:var(--accent);}
+.reply-box input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;font-family:var(--font);padding:4px 0 6px;outline:none;margin-bottom:6px;}
+.reply-box input::placeholder{color:var(--muted);}
+.reply-box-btns{display:flex;justify-content:flex-end;gap:6px;}
+.reply-cancel{background:transparent;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:4px 8px;}
+.reply-cancel:hover{color:var(--text);}
+.reply-send{background:var(--accent);border:none;border-radius:20px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;padding:5px 13px;}
+.reply-send:hover{background:var(--accent2);}
+.tweet-reply-to{font-size:11px;color:var(--muted);margin-bottom:3px;}
+.tweet-reply-to .h{color:var(--accent);}
+/* FB comments */
+.fb-comments{background:#1a1b1c;padding:8px 13px 4px;}
+.fb-comment{display:flex;gap:8px;margin-bottom:8px;animation:fadeIn 0.25s ease;}
+.fb-comment-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+.fb-comment-bubble{background:#3a3b3c;border-radius:0 12px 12px 12px;padding:6px 10px;flex:1;}
+.fb-comment-name{font-size:11px;font-weight:700;color:#e4e6eb;}
+.fb-comment-text{font-size:13px;color:#e4e6eb;line-height:1.4;word-break:break-word;}
+.fb-comment-time{font-size:10px;color:#888;margin-top:2px;}
+.fb-reply-row{display:flex;align-items:center;gap:8px;padding:7px 13px;border-top:1px solid #3a3b3c;}
+.fb-reply-inp{flex:1;background:#3a3b3c;border:none;border-radius:20px;color:#e4e6eb;font-size:13px;font-family:var(--font);padding:6px 13px;outline:none;}
+.fb-reply-inp::placeholder{color:#888;}
+.fb-reply-send{background:#1877f2;border:none;border-radius:20px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;padding:6px 12px;white-space:nowrap;}
+/* IG comments */
+.ig-comments-list{padding:0 12px 4px;}
+.ig-comment-item{display:flex;gap:8px;margin-bottom:5px;animation:fadeIn 0.25s ease;}
+.ig-comment-item-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+.ig-comment-item-name{font-size:12px;font-weight:700;color:#fff;margin-right:5px;}
+.ig-comment-item-text{font-size:13px;color:#e0e0e0;word-break:break-word;}
+.ig-comment-item-time{font-size:10px;color:#888;margin-top:1px;}
 </style>
 </head>
 <body>
@@ -814,6 +875,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   </div>
 </div>
 
+<!-- NAME PICKER OVERLAY -->
+<div id="name-picker-overlay">
+  <div class="name-picker-modal">
+    <div class="name-picker-title">Who are you?</div>
+    <div class="name-picker-sub">Choose your role for this reply. This will show as your name on all platforms.</div>
+    <div class="name-picker-roles" id="name-picker-roles"></div>
+    <div class="name-picker-divider">or type your own</div>
+    <div class="name-picker-custom">
+      <input type="text" id="picker-custom-name" placeholder="Your name e.g. Sarah — Comms Team"/>
+    </div>
+    <div class="name-picker-btns">
+      <button class="name-picker-cancel" id="picker-cancel-btn">Cancel</button>
+      <button class="name-picker-confirm" id="picker-confirm-btn">Confirm →</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
@@ -1027,7 +1105,9 @@ function buildX(p){
   const bar=p.sentiment&&p.sentiment!=='neutral'?`<div class="tweet-sbar ${p.sentiment}"></div>`:'';
   wrap.appendChild(makeAvatar(p,36,'tweet-av'));
   const right=document.createElement('div'); right.className='tweet-right';
-  right.innerHTML=`<div class="tweet-hdr"><span class="tweet-name">${p.name||'User'}</span>${ver}<span class="tweet-handle">${p.handle||'@user'}</span><span class="tweet-time">· ${p.time||ts()}</span>${badge}</div>${bar}<div class="tweet-body">${hl(p.content||'')}</div>`;
+  // Reply-to indicator
+  const replyTo = p.replyTo ? `<div class="tweet-reply-to">Replying to <span class="h">${p.replyTo}</span></div>` : '';
+  right.innerHTML=`<div class="tweet-hdr"><span class="tweet-name">${p.name||'User'}</span>${ver}<span class="tweet-handle">${p.handle||'@user'}</span><span class="tweet-time">· ${p.time||ts()}</span>${badge}</div>${bar}${replyTo}<div class="tweet-body">${hl(p.content||'')}</div>`;
   if(p.image){const img=document.createElement('img');img.src=p.image;img.className='tweet-img';img.onerror=()=>img.remove();right.appendChild(img);}
   if(p.newsArticle||newsStore[p._key]){
     const art=p.newsArticle||newsStore[p._key];
@@ -1037,11 +1117,31 @@ function buildX(p){
     right.appendChild(nc);
   }
   right.insertAdjacentHTML('beforeend',`<div class="tweet-actions">
-    <button class="tweet-action" data-action="like"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 7.879 3.77 7.879 8.276 0 4.422-3.455 8.107-7.879 8.107h-2.35c-1.381 0-2.447.994-2.447 2.193v2.07c0 .383-.302.654-.682.654-.148 0-.285-.038-.401-.11l-4.76-2.956A9.01 9.01 0 0 1 1.75 10z"/></svg>${fmt(rep)}</button>
+    <button class="tweet-action reply-trigger"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 7.879 3.77 7.879 8.276 0 4.422-3.455 8.107-7.879 8.107h-2.35c-1.381 0-2.447.994-2.447 2.193v2.07c0 .383-.302.654-.682.654-.148 0-.285-.038-.401-.11l-4.76-2.956A9.01 9.01 0 0 1 1.75 10zm8.005-5.999c-3.202 0-5.753 2.524-5.753 5.999A6.76 6.76 0 0 0 5.55 14.63l3.47 2.154v-.938c0-2.478 1.928-4.446 4.7-4.446h2.35c2.967 0 5.627-2.615 5.627-5.854 0-3.235-2.574-6.047-5.627-6.047h-4.314z"/></svg>${fmt(rep)}</button>
     <button class="tweet-action"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V19.5H7.75C5.681 19.5 4 17.819 4 15.75V8.38L2.853 9.91.147 8.09l4.603-6.3zm14.5 16.42l-4.603-4.3 1.706-1.82L17.5 15.62V8.25c0-.97-.784-1.75-1.75-1.75H11V4.5h4.75c2.069 0 3.75 1.681 3.75 3.75v7.37l1.147-1.53 2.706 1.82-4.603 6.3z"/></svg>${fmt(rt)}</button>
     <button class="tweet-action" data-action="heart"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91z"/></svg>${fmt(lk)}</button>
   </div>`);
   wrap.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('liked')));
+  // X reply box — posts as new top-level tweet with replyTo field
+  const rb=document.createElement('div'); rb.className='reply-box';
+  const rbAv=document.createElement('div'); rbAv.className='reply-box-av'; rbAv.style.background=avc(participantName||'Y'); rbAv.textContent=ini(participantName||'Y');
+  const rbRight=document.createElement('div'); rbRight.className='reply-box-right';
+  rbRight.innerHTML=`<div class="reply-to-label">Replying to <strong>${p.handle||'@user'}</strong></div><input type="text" placeholder="Post your reply…"/><div class="reply-box-btns"><button class="reply-cancel">Cancel</button><button class="reply-send">Reply</button></div>`;
+  rb.appendChild(rbAv); rb.appendChild(rbRight); wrap.appendChild(rb);
+  right.querySelector('.reply-trigger').addEventListener('click',()=>{
+    openNamePicker(()=>{
+      rbAv.style.background=avc(participantName); rbAv.textContent=ini(participantName);
+      rb.classList.toggle('open');
+      if(rb.classList.contains('open')) rb.querySelector('input').focus();
+    });
+  });
+  rb.querySelector('.reply-cancel').addEventListener('click',()=>rb.classList.remove('open'));
+  rb.querySelector('.reply-send').addEventListener('click',()=>{
+    const val=rb.querySelector('input').value.trim(); if(!val) return;
+    push(ref(db,'posts'),clean({name:participantName,handle:'@'+participantName.toLowerCase().replace(/\s+/g,'_'),content:val,type:'public',sentiment:'neutral',replies:0,time:ts(),ts:Date.now(),replyTo:p.handle||'@user'}));
+    rb.querySelector('input').value=''; rb.classList.remove('open');
+    addLog('Participant replied on X to '+p.handle);
+  });
   wrap.appendChild(right);
   return wrap;
 }
@@ -1068,10 +1168,53 @@ function buildFb(p){
     nc.addEventListener('click',()=>openNews(art));
     wrap.appendChild(nc);
   }
-  wrap.insertAdjacentHTML('beforeend',`<div class="fb-react-bar"><div class="fb-react-left"><div class="fb-react-icons">${icons}</div>&nbsp;${fmt(lk)}</div><div class="fb-react-right">${cmt} comments · ${sh} shares</div></div>
-  <div class="fb-acts"><button class="fb-act" id="fbl_${p._key}">👍 Like</button><button class="fb-act">💬 Comment</button><button class="fb-act">↗ Share</button></div>`);
-  wrap.querySelector('#fbl_'+p._key).addEventListener('click',function(){this.style.color='#1877f2';this.textContent='👍 Liked';});
+  wrap.insertAdjacentHTML('beforeend',`<div class="fb-react-bar"><div class="fb-react-left"><div class="fb-react-icons">${icons}</div>&nbsp;${fmt(lk)}</div><div class="fb-react-right" id="fb-cmt-count-${p._key}">${cmt} comments · ${sh} shares</div></div>`);
+  // action buttons
+  const acts=document.createElement('div'); acts.className='fb-acts';
+  const likeBtn=document.createElement('button'); likeBtn.className='fb-act'; likeBtn.textContent='👍 Like';
+  likeBtn.addEventListener('click',function(){this.style.color='#1877f2';this.textContent='👍 Liked';});
+  const commentBtn=document.createElement('button'); commentBtn.className='fb-act'; commentBtn.textContent='💬 Comment';
+  const shareBtn=document.createElement('button'); shareBtn.className='fb-act'; shareBtn.textContent='↗ Share';
+  acts.appendChild(likeBtn); acts.appendChild(commentBtn); acts.appendChild(shareBtn);
+  wrap.appendChild(acts);
+  // Comments section (threaded)
+  const commentsDiv=document.createElement('div'); commentsDiv.className='fb-comments'; commentsDiv.id='fb-cmts-'+p._key;
+  // Reply input row
+  const replyRow=document.createElement('div'); replyRow.className='fb-reply-row'; replyRow.style.display='none';
+  const replyInp=document.createElement('input'); replyInp.className='fb-reply-inp'; replyInp.placeholder='Write a comment…'; replyInp.type='text';
+  const replySend=document.createElement('button'); replySend.className='fb-reply-send'; replySend.textContent='Post';
+  replyRow.appendChild(replyInp); replyRow.appendChild(replySend);
+  commentsDiv.appendChild(replyRow);
+  wrap.appendChild(commentsDiv);
+
+  commentBtn.addEventListener('click',()=>{
+    openNamePicker(()=>{
+      replyRow.style.display='flex';
+      replyInp.focus();
+    });
+  });
+  replySend.addEventListener('click',()=>{
+    const val=replyInp.value.trim(); if(!val) return;
+    addFbComment(commentsDiv, participantName, val, p._key);
+    replyInp.value='';
+    addLog('Participant commented on FB post by '+p.name);
+  });
+  replyInp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ replySend.click(); } });
   return wrap;
+}
+
+function addFbComment(container, name, text, postKey){
+  const div=document.createElement('div'); div.className='fb-comment';
+  const av=document.createElement('div'); av.className='fb-comment-av'; av.style.background=avc(name); av.textContent=ini(name);
+  const bubble=document.createElement('div'); bubble.className='fb-comment-bubble';
+  bubble.innerHTML=`<div class="fb-comment-name">${name}</div><div class="fb-comment-text">${text}</div><div class="fb-comment-time">Just now · Like · Reply</div>`;
+  div.appendChild(av); div.appendChild(bubble);
+  // insert before the reply row
+  const replyRow=container.querySelector('.fb-reply-row');
+  container.insertBefore(div, replyRow);
+  // update comment count display
+  const countEl=document.getElementById('fb-cmt-count-'+postKey);
+  if(countEl){ const m=countEl.textContent.match(/(\d+) comments/); if(m) countEl.textContent=countEl.textContent.replace(m[0],(parseInt(m[1])+1)+' comments'); }
 }
 
 function buildIg(p){
@@ -1114,9 +1257,35 @@ function buildIg(p){
 
   const heartBtn=document.createElement('button'); heartBtn.className='ig-act-btn'; heartBtn.textContent='🤍';
   heartBtn.addEventListener('click',()=>{heartBtn.classList.toggle('liked');heartBtn.textContent=heartBtn.classList.contains('liked')?'❤️':'🤍';});
-  wrap.insertAdjacentHTML('beforeend',`<div class="ig-post-actions"><div class="ig-act-left"></div><button class="ig-save">🔖</button></div><div class="ig-likes">${fmt(lk)} likes</div><div class="ig-caption"><strong>${handle}</strong> ${hl(p.content||'').replace(/class="h"/g,'style="color:#00b4d8"')}</div><div class="ig-view-comments">View all ${ri(3,80)} comments</div><div class="ig-time">${p.time||ts()}</div><div class="ig-comment-row"><div class="ig-comment-av">Y</div><input class="ig-comment-inp" placeholder="Add a comment…" type="text"/><span style="color:#0095f6;font-size:13px;font-weight:600;cursor:pointer;">Post</span></div>`);
+  wrap.insertAdjacentHTML('beforeend',`<div class="ig-post-actions"><div class="ig-act-left"></div><button class="ig-save">🔖</button></div><div class="ig-likes">${fmt(lk)} likes</div><div class="ig-caption"><strong>${handle}</strong> ${hl(p.content||'').replace(/class="h"/g,'style="color:#00b4d8"')}</div><div class="ig-view-comments">View all ${ri(3,80)} comments</div><div class="ig-time">${p.time||ts()}</div>`);
   wrap.querySelector('.ig-act-left').appendChild(heartBtn);
   ['💬','📤'].forEach(e=>{const b=document.createElement('button');b.className='ig-act-btn';b.textContent=e;wrap.querySelector('.ig-act-left').appendChild(b);});
+  // Threaded comments list
+  const cmtList=document.createElement('div'); cmtList.className='ig-comments-list'; cmtList.id='ig-cmts-'+p._key;
+  wrap.appendChild(cmtList);
+  // Comment row — real input
+  const cmtRow=document.createElement('div'); cmtRow.className='ig-comment-row';
+  const cmtAv=document.createElement('div'); cmtAv.className='ig-comment-av'; cmtAv.style.background=avc(participantName||'Y'); cmtAv.textContent=ini(participantName||'Y');
+  const cmtInp=document.createElement('input'); cmtInp.className='ig-comment-inp'; cmtInp.placeholder='Add a comment…'; cmtInp.type='text';
+  const cmtPost=document.createElement('span'); cmtPost.style.cssText='color:#0095f6;font-size:13px;font-weight:600;cursor:pointer;'; cmtPost.textContent='Post';
+  cmtRow.appendChild(cmtAv); cmtRow.appendChild(cmtInp); cmtRow.appendChild(cmtPost);
+  wrap.appendChild(cmtRow);
+  const sendIgComment=()=>{
+    const val=cmtInp.value.trim(); if(!val) return;
+    openNamePicker(()=>{
+      cmtAv.style.background=avc(participantName); cmtAv.textContent=ini(participantName);
+      const item=document.createElement('div'); item.className='ig-comment-item';
+      const av2=document.createElement('div'); av2.className='ig-comment-item-av'; av2.style.background=avc(participantName); av2.textContent=ini(participantName);
+      const bd=document.createElement('div'); bd.className='ig-comment-item-body';
+      bd.innerHTML=`<span class="ig-comment-item-name">${participantName.toLowerCase().replace(/\s+/g,'_')}</span><span class="ig-comment-item-text">${val}</span><div class="ig-comment-item-time">Just now · Like · Reply</div>`;
+      item.appendChild(av2); item.appendChild(bd);
+      cmtList.appendChild(item);
+      cmtInp.value='';
+      addLog('Participant commented on IG post by '+p.name);
+    });
+  };
+  cmtPost.addEventListener('click',sendIgComment);
+  cmtInp.addEventListener('keydown',e=>{ if(e.key==='Enter') sendIgComment(); });
   return wrap;
 }
 
@@ -1789,6 +1958,80 @@ function renderTimeline(){
 
   updateScriptUI();
 }
+
+// ─────────────────────────────────────────────
+// NAME PICKER — identifies participants before replying
+// ─────────────────────────────────────────────
+let participantName = '';
+let pickerCallback = null;
+let selectedPickerRole = null;
+
+// Participant roles shown in the picker
+const PARTICIPANT_ROLES = [
+  { name:'Communications Lead',    handle:'@comms_lead',      color:'#1d9bf0' },
+  { name:'Social Media Officer',   handle:'@social_media',    color:'#7856ff' },
+  { name:'Press Officer',          handle:'@press_officer',   color:'#00ba7c' },
+  { name:'Duty Manager',           handle:'@duty_manager',    color:'#e0245e' },
+  { name:'Community Engagement',   handle:'@community_eng',   color:'#f09433' },
+  { name:'Chief Executive',        handle:'@chief_exec',      color:'#1877f2' },
+  { name:'Operations Lead',        handle:'@operations',      color:'#17bf63' },
+  { name:'Media Adviser',          handle:'@media_adviser',   color:'#ff6b35' },
+];
+
+function openNamePicker(callback){
+  // If participant already identified this session, skip picker
+  if(participantName){ callback(); return; }
+  pickerCallback = callback;
+  selectedPickerRole = null;
+  renderPickerRoles();
+  document.getElementById('name-picker-overlay').classList.add('open');
+  document.getElementById('picker-custom-name').value='';
+}
+
+function renderPickerRoles(){
+  const container=document.getElementById('name-picker-roles'); if(!container) return;
+  container.innerHTML='';
+  PARTICIPANT_ROLES.forEach((r,i)=>{
+    const div=document.createElement('div'); div.className='name-picker-role';
+    const av=document.createElement('div'); av.className='name-picker-av'; av.style.background=r.color; av.textContent=ini(r.name);
+    const info=document.createElement('div');
+    info.innerHTML=`<div class="name-picker-role-name">${r.name}</div><div class="name-picker-role-handle">${r.handle}</div>`;
+    div.appendChild(av); div.appendChild(info);
+    div.addEventListener('click',()=>{
+      selectedPickerRole=i;
+      document.getElementById('picker-custom-name').value='';
+      container.querySelectorAll('.name-picker-role').forEach(el=>el.classList.remove('selected'));
+      div.classList.add('selected');
+    });
+    container.appendChild(div);
+  });
+}
+
+document.getElementById('picker-confirm-btn').addEventListener('click',()=>{
+  const custom=document.getElementById('picker-custom-name').value.trim();
+  if(custom){
+    participantName=custom;
+  } else if(selectedPickerRole!==null){
+    participantName=PARTICIPANT_ROLES[selectedPickerRole].name;
+  } else {
+    alert('Please choose a role or type your name.');
+    return;
+  }
+  document.getElementById('name-picker-overlay').classList.remove('open');
+  if(pickerCallback){ pickerCallback(); pickerCallback=null; }
+});
+
+document.getElementById('picker-cancel-btn').addEventListener('click',()=>{
+  document.getElementById('name-picker-overlay').classList.remove('open');
+  pickerCallback=null; selectedPickerRole=null;
+});
+
+document.getElementById('name-picker-overlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('name-picker-overlay')){
+    document.getElementById('name-picker-overlay').classList.remove('open');
+    pickerCallback=null;
+  }
+});
 
 function addLog(msg){
   const t=ts(); actLog.unshift(`<span>[${t}]</span> ${msg}`);
