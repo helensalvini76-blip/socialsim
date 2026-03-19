@@ -160,13 +160,66 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .btn-toggle-add{width:100%;padding:5px;background:transparent;border:1px dashed var(--border2);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;margin-top:4px;}
 .btn-toggle-add:hover{border-color:var(--success);color:var(--success);}
 
+/* SCRIPT BUILDER */
+.script-run-box{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-bottom:10px;}
+.script-status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.script-status-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.script-status-val{font-size:12px;font-weight:700;color:var(--muted);}
+.script-status-val.running{color:var(--success);}
+.script-status-val.paused{color:var(--warning);}
+.script-next{font-size:11px;color:var(--muted);margin-bottom:8px;min-height:16px;}
+.script-next strong{color:var(--text);}
+.script-next .countdown{color:var(--warning);font-weight:700;}
+.script-ctrl-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.btn-script{padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s;text-align:center;}
+.btn-script:hover{border-color:var(--border2);}
+.btn-script.start{border-color:var(--success);color:var(--success);}
+.btn-script.start:hover{background:rgba(0,186,124,0.1);}
+.btn-script.stop{border-color:var(--danger);color:var(--danger);}
+.btn-script.stop:hover{background:rgba(244,33,46,0.1);}
+.btn-script:disabled{opacity:0.35;cursor:not-allowed;}
+.script-add-form{margin-bottom:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;}
+.script-add-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px;}
+.script-add-row{display:flex;gap:6px;margin-bottom:6px;align-items:flex-end;}
+.script-add-row .form-row{flex:1;margin-bottom:0;}
+.script-delay-input{width:70px!important;flex-shrink:0;}
+.script-timeline{display:flex;flex-direction:column;gap:5px;max-height:300px;overflow-y:auto;}
+.script-timeline::-webkit-scrollbar{width:3px;}
+.script-timeline::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.script-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;transition:border-color 0.15s;}
+.script-item.fired{opacity:0.45;border-style:dashed;}
+.script-item.next{border-color:var(--warning);background:rgba(255,212,0,0.05);}
+.script-item.next .script-item-delay{color:var(--warning);}
+.script-item-delay{font-size:11px;font-weight:700;color:var(--accent);width:36px;flex-shrink:0;padding-top:1px;}
+.script-item-body{flex:1;min-width:0;}
+.script-item-who{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.script-item-content{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.script-item-badges{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap;}
+.script-item-badge{font-size:9px;padding:1px 5px;border-radius:6px;font-weight:600;}
+.sib-official{background:rgba(0,186,124,0.15);color:var(--success);}
+.sib-media{background:rgba(29,155,240,0.15);color:var(--accent);}
+.sib-public{background:rgba(122,127,150,0.12);color:var(--muted);}
+.sib-rumour{background:rgba(244,33,46,0.12);color:var(--danger);}
+.sib-panic{background:rgba(244,33,46,0.12);color:var(--danger);}
+.sib-concerned{background:rgba(255,212,0,0.1);color:var(--warning);}
+.sib-positive{background:rgba(0,186,124,0.12);color:var(--success);}
+.script-item-actions{display:flex;gap:3px;flex-shrink:0;}
+.script-item-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:2px 4px;border-radius:4px;line-height:1;}
+.script-item-btn:hover{color:var(--text);background:var(--border);}
+.script-empty{font-size:12px;color:var(--muted);text-align:center;padding:16px 0;}
+
 /* PLATFORM SWITCHER */
-.platform-switcher{display:flex;background:var(--surface);border-bottom:1px solid var(--border2);flex-shrink:0;}
-.plat-btn{flex:1;padding:11px 6px;border:none;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.platform-switcher{display:flex;background:var(--surface);border-bottom:1px solid var(--border2);flex-shrink:0;align-items:center;padding:0 6px;gap:4px;}
+.plat-btn{flex:1;padding:10px 6px;border:none;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .plat-btn:hover{color:var(--text);}
 .plat-btn.active-x{color:var(--text);border-bottom-color:var(--text);}
 .plat-btn.active-fb{color:#1877f2;border-bottom-color:#1877f2;}
 .plat-btn.active-ig{color:#e1306c;border-bottom-color:#e1306c;}
+/* back-to-home button — only shown in feed mode */
+.back-home-btn{display:none;align-items:center;gap:5px;padding:6px 10px;background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s;margin-right:4px;}
+.back-home-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2);}
+.feed-mode .back-home-btn{display:flex;}
+.feed-mode .plat-btn{font-size:12px;}
 
 /* X FEED */
 .x-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
@@ -520,6 +573,89 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
 
       <div class="card">
+        <div class="card-title">⏱ Auto Script</div>
+
+        <!-- Run controls -->
+        <div class="script-run-box">
+          <div class="script-status-row">
+            <span class="script-status-label">Status</span>
+            <span class="script-status-val" id="script-status-val">Not started</span>
+          </div>
+          <div class="script-next" id="script-next-label">No script loaded</div>
+          <div class="script-ctrl-row">
+            <button class="btn-script start" id="btn-script-start">▶ Start</button>
+            <button class="btn-script" id="btn-script-skip" disabled>⏭ Skip next</button>
+            <button class="btn-script stop" id="btn-script-stop" disabled>■ Stop</button>
+          </div>
+        </div>
+
+        <!-- Add inject form -->
+        <div class="script-add-form">
+          <div class="script-add-title">Add Scheduled Inject</div>
+          <div class="script-add-row">
+            <div class="form-row">
+              <label>Delay (mins after Start)</label>
+              <input type="number" id="sc-delay" placeholder="5" min="0" class="script-delay-input"/>
+            </div>
+            <div class="form-row" style="flex:2;">
+              <label>Persona</label>
+              <select id="sc-persona">
+                <option value="">— type manually below —</option>
+              </select>
+            </div>
+          </div>
+          <div class="script-add-row">
+            <div class="form-row" style="flex:1;">
+              <label>Name (if not using persona)</label>
+              <input type="text" id="sc-name" placeholder="John Dobson"/>
+            </div>
+            <div class="form-row" style="flex:1;">
+              <label>Handle</label>
+              <input type="text" id="sc-handle" placeholder="@jdobson92"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Post Content</label>
+            <textarea id="sc-content" rows="2" placeholder="What's happening? Use #hashtags..."></textarea>
+          </div>
+          <div class="script-add-row">
+            <div class="form-row" style="flex:1;">
+              <label>Type</label>
+              <select id="sc-type">
+                <option value="public">Public</option>
+                <option value="official">Official</option>
+                <option value="media">Media</option>
+                <option value="rumour">Rumour</option>
+              </select>
+            </div>
+            <div class="form-row" style="flex:1;">
+              <label>Sentiment</label>
+              <select id="sc-sentiment">
+                <option value="concerned">Concerned</option>
+                <option value="panic">Panic</option>
+                <option value="neutral">Neutral</option>
+                <option value="positive">Positive</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Image URL (optional)</label>
+            <input type="text" id="sc-image" placeholder="https://…/photo.jpg"/>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <button class="btn-primary" id="btn-sc-add">＋ Add to Script</button>
+            <button class="btn-primary" id="btn-sc-clear" style="background:var(--surface2);color:var(--text);">🗑 Clear Script</button>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="script-timeline" id="script-timeline">
+          <div class="script-empty">No injects scheduled yet</div>
+        </div>
+
+      </div>
+
+      <div class="card">
         <div class="card-title">Scenario Presets</div>
         <div class="preset-list" id="preset-list"></div>
       </div>
@@ -550,8 +686,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   <!-- FEED AREA -->
   <div id="feed-area" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
     <div class="platform-switcher" id="plat-switcher" style="display:none;">
-      <button class="plat-btn" id="btn-plat-x">𝕏 &nbsp;X / Twitter</button>
-      <button class="plat-btn" id="btn-plat-fb">f &nbsp;Facebook</button>
+      <button class="back-home-btn" id="btn-back-home">← Home</button>
+      <button class="plat-btn" id="btn-plat-x">💬 &nbsp;X / Twitter</button>
+      <button class="plat-btn" id="btn-plat-fb">👥 &nbsp;Facebook</button>
       <button class="plat-btn" id="btn-plat-ig">📸 Instagram</button>
     </div>
 
@@ -717,6 +854,7 @@ function launch(mode, plat){
   renderBaseStories();
   loadPersonas();
   renderPersonas();
+  loadScriptFromFirebase();
   updateClock();
   setInterval(updateClock,1000);
   addLog('Connected to live exercise feed');
@@ -760,6 +898,19 @@ function switchPlat(p){
 document.getElementById('btn-plat-x').addEventListener('click',()=>switchPlat('x'));
 document.getElementById('btn-plat-fb').addEventListener('click',()=>switchPlat('fb'));
 document.getElementById('btn-plat-ig').addEventListener('click',()=>switchPlat('ig'));
+document.getElementById('btn-back-home').addEventListener('click',()=>{
+  // Hide the app, show the mode screen again
+  document.getElementById('app').className='app';
+  document.getElementById('plat-switcher').style.display='none';
+  document.getElementById('mode-screen').style.display='flex';
+  document.getElementById('conn-msg').style.display='none';
+  // Clear feeds so they reload fresh next time
+  ['x','fb','ig'].forEach(pl=>{
+    const f=document.getElementById(pl+'-posts');
+    if(f) f.innerHTML='';
+  });
+  Object.keys(rendered).forEach(k=>rendered[k].clear());
+});
 
 // ─────────────────────────────────────────────
 // FIREBASE LISTENERS
@@ -1296,7 +1447,7 @@ document.getElementById('btn-save-persona').addEventListener('click',()=>{
   savePersonas();
   ['new-p-name','new-p-handle','new-p-bio','new-p-photo'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('persona-add-form').classList.remove('open');
-  renderPersonas(); addLog('Persona added: '+name);
+  renderPersonas(); populatePersonaSelect(); addLog('Persona added: '+name);
 });
 
 // ─────────────────────────────────────────────
@@ -1353,6 +1504,276 @@ function renderSuggested(){
 // ─────────────────────────────────────────────
 // UTILITIES
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// AUTO SCRIPT BUILDER
+// ─────────────────────────────────────────────
+let scriptItems = [];       // array of {id, delayMins, name, handle, type, sentiment, content, image, photo, fired}
+let scriptRunning = false;
+let scriptStartTime = null; // Date.now() when started
+let scriptTimer = null;     // setInterval handle
+let scriptNextIdx = null;   // index of next unfired item
+
+function saveScript(){
+  try{ set(ref(db,'script'), scriptItems.length ? scriptItems : null); } catch(e){}
+}
+
+function loadScriptFromFirebase(){
+  onValue(ref(db,'script'), snap=>{
+    const data = snap.val();
+    if(data && Array.isArray(data)){
+      scriptItems = data;
+    } else if(data && typeof data === 'object'){
+      scriptItems = Object.values(data);
+    } else {
+      scriptItems = [];
+    }
+    renderTimeline();
+    populatePersonaSelect();
+  });
+}
+
+function populatePersonaSelect(){
+  const sel = document.getElementById('sc-persona'); if(!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— type manually below —</option>';
+  personas.forEach((p,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = p.name + ' (' + p.handle + ')';
+    sel.appendChild(opt);
+  });
+  sel.value = cur;
+}
+
+// When persona selected from dropdown, fill name/handle/type
+document.getElementById('sc-persona').addEventListener('change', function(){
+  const idx = parseInt(this.value);
+  if(isNaN(idx)) return;
+  const p = personas[idx];
+  if(!p) return;
+  document.getElementById('sc-name').value = p.name;
+  document.getElementById('sc-handle').value = p.handle;
+  document.getElementById('sc-type').value = p.type||'public';
+});
+
+document.getElementById('btn-sc-add').addEventListener('click', ()=>{
+  const delayMins = parseFloat(document.getElementById('sc-delay').value);
+  const name = document.getElementById('sc-name').value.trim();
+  const handle = document.getElementById('sc-handle').value.trim();
+  const content = document.getElementById('sc-content').value.trim();
+  const type = document.getElementById('sc-type').value;
+  const sentiment = document.getElementById('sc-sentiment').value;
+  const image = document.getElementById('sc-image').value.trim()||undefined;
+  // get photo from persona if selected
+  const pIdx = parseInt(document.getElementById('sc-persona').value);
+  const photo = !isNaN(pIdx) && personas[pIdx] ? personas[pIdx].photo||undefined : undefined;
+
+  if(isNaN(delayMins)||delayMins<0){ alert('Enter a valid delay in minutes (0 or more)'); return; }
+  if(!name||!content){ alert('Name and content are required'); return; }
+
+  const item = {
+    id: Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    delayMins,
+    name, handle:handle||'@user', type, sentiment, content,
+    image, photo, fired:false
+  };
+  scriptItems.push(item);
+  scriptItems.sort((a,b)=>a.delayMins-b.delayMins);
+  saveScript();
+  renderTimeline();
+  addLog('Script inject added: +'+delayMins+'min — '+name);
+
+  // clear form
+  document.getElementById('sc-delay').value='';
+  document.getElementById('sc-content').value='';
+  document.getElementById('sc-image').value='';
+  document.getElementById('sc-persona').value='';
+  document.getElementById('sc-name').value='';
+  document.getElementById('sc-handle').value='';
+});
+
+document.getElementById('btn-sc-clear').addEventListener('click', ()=>{
+  if(!confirm('Clear the entire script? This cannot be undone.')) return;
+  scriptItems=[];
+  saveScript();
+  stopScript();
+  renderTimeline();
+  addLog('Script cleared');
+});
+
+document.getElementById('btn-script-start').addEventListener('click', ()=>{
+  const unfired = scriptItems.filter(i=>!i.fired);
+  if(unfired.length===0){ alert('No injects in the script — add some first.'); return; }
+  scriptRunning=true;
+  scriptStartTime=Date.now();
+  // reset fired flags
+  scriptItems.forEach(i=>i.fired=false);
+  saveScript();
+  updateScriptUI();
+  startScriptTick();
+  addLog('Auto script STARTED');
+});
+
+document.getElementById('btn-script-skip').addEventListener('click', ()=>{
+  if(!scriptRunning) return;
+  const next = scriptItems.find(i=>!i.fired);
+  if(!next) return;
+  next.fired=true;
+  saveScript();
+  renderTimeline();
+  addLog('Skipped inject: '+next.name+' (+'+next.delayMins+'min)');
+  updateNextLabel();
+});
+
+document.getElementById('btn-script-stop').addEventListener('click', ()=>{
+  stopScript();
+  addLog('Auto script STOPPED');
+});
+
+function stopScript(){
+  scriptRunning=false;
+  scriptStartTime=null;
+  if(scriptTimer){ clearInterval(scriptTimer); scriptTimer=null; }
+  updateScriptUI();
+}
+
+function startScriptTick(){
+  if(scriptTimer) clearInterval(scriptTimer);
+  scriptTimer = setInterval(scriptTick, 1000);
+  scriptTick(); // fire immediately
+}
+
+function scriptTick(){
+  if(!scriptRunning||!scriptStartTime) return;
+  const elapsedMs = Date.now()-scriptStartTime;
+  const elapsedMins = elapsedMs/60000;
+
+  // Fire any items whose time has come
+  let fired=false;
+  scriptItems.forEach(item=>{
+    if(!item.fired && item.delayMins <= elapsedMins){
+      item.fired=true;
+      fired=true;
+      fireScriptItem(item);
+    }
+  });
+  if(fired){ saveScript(); renderTimeline(); }
+
+  // Check if all done
+  const allFired = scriptItems.every(i=>i.fired);
+  if(allFired){
+    stopScript();
+    document.getElementById('script-status-val').textContent='Complete ✓';
+    document.getElementById('script-next-label').textContent='All injects have fired.';
+    addLog('Auto script complete — all injects fired');
+    return;
+  }
+
+  updateNextLabel(elapsedMins);
+}
+
+function fireScriptItem(item){
+  push(ref(db,'posts'),{
+    name:item.name, handle:item.handle, content:item.content,
+    type:item.type, sentiment:item.sentiment,
+    replies:ri(0,150), time:ts(), ts:Date.now(),
+    image:item.image||undefined, photo:item.photo||undefined
+  });
+  addLog('Auto-fired: '+item.name+' — "'+item.content.slice(0,40)+'"');
+}
+
+function updateNextLabel(elapsedMins){
+  const label = document.getElementById('script-next-label'); if(!label) return;
+  const next = scriptItems.find(i=>!i.fired);
+  if(!next){ label.textContent='All injects fired.'; return; }
+  if(elapsedMins===undefined){
+    label.innerHTML='Next: <strong>'+next.name+'</strong> at +'+next.delayMins+'min';
+    return;
+  }
+  const remainingSecs = Math.max(0, Math.round((next.delayMins - elapsedMins)*60));
+  const mm = Math.floor(remainingSecs/60);
+  const ss = String(remainingSecs%60).padStart(2,'0');
+  const countdown = mm>0 ? mm+'m '+ss+'s' : ss+'s';
+  label.innerHTML='Next: <strong>'+next.name+'</strong> — <span class="countdown">'+countdown+'</span>';
+}
+
+function updateScriptUI(){
+  const statusVal = document.getElementById('script-status-val');
+  const startBtn = document.getElementById('btn-script-start');
+  const skipBtn = document.getElementById('btn-script-skip');
+  const stopBtn = document.getElementById('btn-script-stop');
+  if(!statusVal) return;
+  if(scriptRunning){
+    statusVal.textContent='Running'; statusVal.className='script-status-val running';
+    startBtn.disabled=true; skipBtn.disabled=false; stopBtn.disabled=false;
+  } else {
+    statusVal.textContent='Not started'; statusVal.className='script-status-val';
+    startBtn.disabled=false; skipBtn.disabled=true; stopBtn.disabled=true;
+    document.getElementById('script-next-label').textContent = scriptItems.length ? scriptItems.filter(i=>!i.fired).length+' inject(s) ready' : 'No script loaded';
+  }
+}
+
+function renderTimeline(){
+  const container = document.getElementById('script-timeline'); if(!container) return;
+  if(scriptItems.length===0){
+    container.innerHTML='<div class="script-empty">No injects scheduled yet</div>';
+    updateScriptUI(); return;
+  }
+  const nextItem = scriptItems.find(i=>!i.fired);
+  container.innerHTML='';
+  scriptItems.forEach((item, idx)=>{
+    const isNext = item===nextItem && scriptRunning;
+    const div=document.createElement('div');
+    div.className='script-item'+(item.fired?' fired':'')+(isNext?' next':'');
+    div.dataset.id=item.id;
+
+    const typeCls={official:'sib-official',media:'sib-media',public:'sib-public',rumour:'sib-rumour'}[item.type]||'sib-public';
+    const sentCls={panic:'sib-panic',concerned:'sib-concerned',positive:'sib-positive'}[item.sentiment]||'';
+
+    div.innerHTML=`
+      <div class="script-item-delay">+${item.delayMins}m</div>
+      <div class="script-item-body">
+        <div class="script-item-who">${item.name} <span style="color:var(--muted);font-weight:400;">${item.handle}</span></div>
+        <div class="script-item-content">${item.content}</div>
+        <div class="script-item-badges">
+          <span class="script-item-badge ${typeCls}">${item.type}</span>
+          ${sentCls?`<span class="script-item-badge ${sentCls}">${item.sentiment}</span>`:''}
+          ${item.image?`<span class="script-item-badge" style="background:rgba(122,127,150,0.12);color:var(--muted);">📷 image</span>`:''}
+          ${item.fired?`<span class="script-item-badge" style="background:rgba(0,186,124,0.1);color:var(--success);">✓ fired</span>`:''}
+        </div>
+      </div>
+      <div class="script-item-actions">
+        ${!item.fired&&scriptRunning?`<button class="script-item-btn" data-fire="${item.id}" title="Fire now">▶</button>`:''}
+        <button class="script-item-btn" data-del="${item.id}" title="Delete">✕</button>
+      </div>`;
+
+    container.appendChild(div);
+  });
+
+  // wire fire-now and delete buttons
+  container.querySelectorAll('[data-fire]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      const id=btn.dataset.fire;
+      const item=scriptItems.find(i=>i.id===id); if(!item) return;
+      item.fired=true;
+      fireScriptItem(item);
+      saveScript(); renderTimeline();
+    });
+  });
+  container.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      const id=btn.dataset.del;
+      scriptItems=scriptItems.filter(i=>i.id!==id);
+      saveScript(); renderTimeline();
+      addLog('Script inject removed');
+    });
+  });
+
+  updateScriptUI();
+}
+
 function addLog(msg){
   const t=ts(); actLog.unshift(`<span>[${t}]</span> ${msg}`);
   if(actLog.length>30) actLog.pop();
