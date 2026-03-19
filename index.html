@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocialSim — Live Exercise Platform</title>
+<style>
+:root {
+  --bg:#0f1117; --surface:#1a1d27; --surface2:#222536;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --text:#e8eaf0; --muted:#7a7f96;
+  --accent:#1d9bf0; --accent2:#0f6eb5;
+  --danger:#f4212e; --warning:#ffd400; --success:#00ba7c;
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+
+/* ── Mode screen ── */
+#mode-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:28px;padding:20px;}
+.mode-logo{width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.mode-logo svg{width:32px;height:32px;fill:#fff;}
+.mode-title{font-size:28px;font-weight:800;text-align:center;}
+.mode-sub{font-size:15px;color:var(--muted);text-align:center;}
+.mode-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+.mode-card{width:190px;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:22px 18px;cursor:pointer;transition:border-color 0.2s,transform 0.15s;text-align:center;}
+.mode-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.mode-card-icon{font-size:30px;margin-bottom:10px;}
+.mode-card-title{font-size:15px;font-weight:700;margin-bottom:5px;}
+.mode-card-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.mode-badge{display:inline-block;margin-top:10px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:0.06em;text-transform:uppercase;}
+.badge-red{background:rgba(244,33,46,0.15);color:var(--danger);}
+.badge-blue{background:rgba(29,155,240,0.15);color:var(--accent);}
+.badge-fb{background:rgba(24,119,242,0.15);color:#1877f2;}
+.badge-ig{background:rgba(225,48,108,0.15);color:#e1306c;}
+.mode-pw-row{display:flex;gap:8px;margin-top:12px;}
+.mode-pw-row input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;padding:7px 10px;outline:none;}
+.mode-pw-row input:focus{border-color:var(--accent);}
+.mode-pw-row button{padding:7px 12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;}
+#pw-error{font-size:12px;color:var(--danger);margin-top:4px;display:none;}
+.connecting-msg{font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── App layout ── */
+.app{display:none;}
+.app.admin-mode{display:grid;grid-template-columns:370px 1fr;height:100vh;overflow:hidden;}
+.app.feed-mode{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+/* ── Admin panel ── */
+.admin-panel{background:var(--surface);border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden;}
+.panel-header{padding:11px 15px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);background:var(--surface);flex-shrink:0;}
+.panel-header .dot{width:8px;height:8px;border-radius:50%;}
+.live-pill{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:rgba(0,186,124,0.15);color:var(--success);letter-spacing:0.06em;}
+.admin-scroll{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:12px;}
+.admin-scroll::-webkit-scrollbar{width:3px;}
+.admin-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:12px;}
+.card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;}
+.inject-type-tabs{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;}
+.tab-btn{padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;transition:all 0.15s;}
+.tab-btn:hover{border-color:var(--accent);color:var(--accent);}
+.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.form-row{margin-bottom:8px;}
+.form-row label{display:block;font-size:10px;color:var(--muted);margin-bottom:3px;}
+.form-row input,.form-row textarea,.form-row select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;font-family:var(--font);padding:7px 9px;outline:none;transition:border-color 0.15s;resize:vertical;}
+.form-row input:focus,.form-row textarea:focus{border-color:var(--accent);}
+.handle-row{display:flex;gap:7px;align-items:flex-end;}
+.avatar-preview{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--accent);color:#fff;flex-shrink:0;margin-bottom:8px;}
+.sentiment-row{display:flex;gap:5px;margin-bottom:8px;}
+.sent-btn{flex:1;padding:5px 3px;border-radius:7px;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:11px;transition:all 0.15s;text-align:center;}
+.sent-btn.active-panic{background:rgba(244,33,46,0.15);border-color:var(--danger);color:var(--danger);}
+.sent-btn.active-concerned{background:rgba(255,212,0,0.12);border-color:var(--warning);color:var(--warning);}
+.sent-btn.active-neutral{background:rgba(122,127,150,0.15);border-color:var(--muted);color:var(--muted);}
+.sent-btn.active-positive{background:rgba(0,186,124,0.12);border-color:var(--success);color:var(--success);}
+.btn-primary{width:100%;padding:8px;background:var(--accent);border:none;border-radius:20px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.15s;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-primary:active{transform:scale(0.98);}
+.btn-danger{background:var(--danger)!important;}
+.btn-danger:hover{background:#c4101b!important;}
+.preset-list{display:flex;flex-direction:column;gap:5px;}
+.preset-item{padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:border-color 0.15s;display:flex;align-items:center;justify-content:space-between;}
+.preset-item:hover{border-color:var(--accent);}
+.preset-name{font-size:12px;font-weight:500;}
+.preset-tag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;}
+.tag-flood{background:rgba(29,155,240,0.15);color:var(--accent);}
+.tag-fire{background:rgba(244,33,46,0.15);color:var(--danger);}
+.tag-cyber{background:rgba(255,212,0,0.12);color:var(--warning);}
+.tag-medical{background:rgba(0,186,124,0.12);color:var(--success);}
+.incident-controls{display:flex;flex-direction:column;gap:7px;}
+.incident-status{padding:8px 10px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);}
+.incident-status-label{font-size:10px;color:var(--muted);}
+.incident-status-val{font-size:13px;font-weight:600;margin-top:2px;}
+.status-offline{color:var(--muted);}.status-live{color:var(--success);}.status-escalating{color:var(--warning);}.status-critical{color:var(--danger);}
+.ctrl-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.btn-sm{padding:7px 8px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s;text-align:center;}
+.btn-sm:hover{border-color:var(--border2);}
+.btn-sm.live{border-color:var(--success);color:var(--success);}
+.btn-sm.warn{border-color:var(--warning);color:var(--warning);}
+.btn-sm.danger{border-color:var(--danger);color:var(--danger);}
+.feed-log{display:flex;flex-direction:column;gap:3px;max-height:130px;overflow-y:auto;}
+.log-item{font-size:10px;color:var(--muted);padding:3px 6px;background:var(--surface2);border-radius:4px;}
+.log-item span{color:var(--accent);}
+
+/* ── Platform switcher ── */
+.platform-switcher{display:flex;background:var(--surface);border-bottom:1px solid var(--border2);flex-shrink:0;}
+.plat-btn{flex:1;padding:11px 6px;border:none;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.plat-btn:hover{color:var(--text);}
+.plat-btn.active-x{color:var(--text);border-bottom-color:var(--text);}
+.plat-btn.active-fb{color:#1877f2;border-bottom-color:#1877f2;}
+.plat-btn.active-ig{color:#e1306c;border-bottom-color:#e1306c;}
+
+/* ═══════ X FEED ═══════ */
+.x-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+.x-topbar{background:var(--surface);border-bottom:1px solid var(--border2);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.x-logo{width:26px;height:26px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.x-logo svg{width:15px;height:15px;fill:#fff;}
+.x-search{flex:1;max-width:260px;margin:0 12px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--muted);font-size:13px;display:flex;align-items:center;gap:5px;}
+.x-body{display:flex;flex:1;overflow:hidden;}
+.x-main{flex:1;overflow-y:auto;border-right:1px solid var(--border2);}
+.x-main::-webkit-scrollbar{width:3px;}
+.x-main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.x-sidebar{width:230px;padding:11px;overflow-y:auto;flex-shrink:0;}
+.x-compose{padding:10px 13px;border-bottom:1px solid var(--border2);display:flex;gap:8px;flex-shrink:0;}
+.x-compose-av{width:36px;height:36px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0;}
+.x-compose input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:14px;font-family:var(--font);padding:7px 0;outline:none;margin-bottom:7px;}
+.x-compose input::placeholder{color:var(--muted);}
+.x-post-btn{padding:5px 13px;background:var(--accent);border:none;border-radius:20px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;}
+.tweet{padding:11px 13px;border-bottom:1px solid var(--border2);display:flex;gap:9px;animation:fadeIn 0.3s ease;}
+.tweet:hover{background:rgba(255,255,255,0.02);}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.tweet-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;color:#fff;}
+.tweet-right{flex:1;min-width:0;}
+.tweet-hdr{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:2px;}
+.tweet-name{font-size:13px;font-weight:700;}
+.tweet-handle,.tweet-time{font-size:12px;color:var(--muted);}
+.tweet-ver{width:14px;height:14px;background:var(--accent);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tweet-ver svg{width:8px;height:8px;fill:#fff;}
+.tweet-body{font-size:13px;line-height:1.5;margin-bottom:7px;word-break:break-word;}
+.tweet-body .h{color:var(--accent);}
+.tweet-sbar{height:2px;border-radius:1px;margin-bottom:6px;}
+.tweet-sbar.panic{background:var(--danger);}.tweet-sbar.concerned{background:var(--warning);}.tweet-sbar.positive{background:var(--success);}
+.tweet-actions{display:flex;}
+.tweet-action{display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;border:none;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;transition:all 0.15s;}
+.tweet-action:hover{background:rgba(29,155,240,0.1);color:var(--accent);}
+.tweet-action svg{width:14px;height:14px;}
+.off-badge{font-size:9px;padding:1px 6px;border-radius:10px;background:rgba(0,186,124,0.15);color:var(--success);font-weight:700;}
+.alert-badge{font-size:9px;padding:1px 6px;border-radius:10px;background:rgba(244,33,46,0.15);color:var(--danger);font-weight:700;}
+.x-trend-box{background:var(--surface);border-radius:11px;padding:11px;margin-bottom:10px;border:1px solid var(--border);}
+.x-trend-box h3{font-size:14px;font-weight:700;margin-bottom:9px;}
+.x-trend-item{padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.x-trend-item:last-child{border-bottom:none;}
+.x-trend-item:hover{padding-left:4px;transition:padding 0.1s;}
+.x-trend-cat{font-size:10px;color:var(--muted);}
+.x-trend-tag{font-size:13px;font-weight:700;}
+.x-trend-count{font-size:11px;color:var(--muted);}
+.x-alert{background:rgba(244,33,46,0.12);border-bottom:1px solid rgba(244,33,46,0.3);padding:8px 13px;display:flex;align-items:center;gap:8px;font-size:12px;border-left:3px solid var(--danger);flex-shrink:0;}
+
+/* ═══════ FACEBOOK FEED ═══════ */
+.fb-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#18191a;color:#e4e6eb;}
+.fb-nav{background:#242526;border-bottom:1px solid #3a3b3c;padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:50px;flex-shrink:0;}
+.fb-logo{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900;color:#1877f2;}
+.fb-logo-mark{width:34px;height:34px;background:#1877f2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;}
+.fb-nav-right{display:flex;gap:6px;}
+.fb-nav-btn{width:38px;height:38px;border-radius:50%;background:#3a3b3c;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#b0b3b8;position:relative;}
+.fb-nav-btn:hover{background:#4a4b4c;}
+.fb-body{flex:1;overflow-y:auto;display:flex;justify-content:center;padding:12px;}
+.fb-body::-webkit-scrollbar{width:3px;}
+.fb-body::-webkit-scrollbar-thumb{background:#3a3b3c;border-radius:2px;}
+.fb-inner{width:100%;max-width:560px;}
+.fb-compose{background:#242526;border-radius:10px;padding:11px;margin-bottom:11px;border:1px solid #3a3b3c;}
+.fb-compose-top{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+.fb-compose-av{width:38px;height:38px;border-radius:50%;background:#1877f2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;}
+.fb-compose-inp{flex:1;background:#3a3b3c;border:none;border-radius:20px;color:#e4e6eb;font-size:14px;font-family:var(--font);padding:8px 14px;outline:none;}
+.fb-compose-inp::placeholder{color:#b0b3b8;}
+.fb-compose-div{height:1px;background:#3a3b3c;margin:0 -11px;}
+.fb-compose-acts{display:flex;justify-content:space-around;padding-top:5px;}
+.fb-compose-act{background:transparent;border:none;color:#b0b3b8;font-size:12px;font-weight:600;padding:6px 10px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.fb-compose-act:hover{background:#3a3b3c;color:#e4e6eb;}
+.fb-post{background:#242526;border-radius:10px;margin-bottom:11px;border:1px solid #3a3b3c;animation:fadeIn 0.35s ease;overflow:hidden;}
+.fb-post-hdr{display:flex;align-items:center;gap:9px;padding:11px 13px 7px;}
+.fb-post-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:#fff;}
+.fb-post-meta{flex:1;}
+.fb-post-name{font-size:14px;font-weight:700;color:#e4e6eb;display:flex;align-items:center;gap:5px;}
+.fb-post-time{font-size:12px;color:#b0b3b8;display:flex;align-items:center;gap:3px;margin-top:1px;}
+.fb-post-more-btn{width:32px;height:32px;border-radius:50%;background:transparent;border:none;cursor:pointer;font-size:16px;color:#b0b3b8;}
+.fb-post-more-btn:hover{background:#3a3b3c;}
+.fb-post-body{padding:0 13px 9px;font-size:14px;line-height:1.55;color:#e4e6eb;word-break:break-word;}
+.fb-post-body .h{color:#4599ff;}
+.fb-react-bar{padding:6px 13px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #3a3b3c;}
+.fb-react-left{display:flex;align-items:center;gap:4px;font-size:13px;color:#b0b3b8;}
+.fb-react-icons{display:flex;}
+.fb-react-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;margin-right:-2px;border:1px solid #242526;}
+.fb-react-right{font-size:13px;color:#b0b3b8;}
+.fb-acts{display:flex;border-top:1px solid #3a3b3c;}
+.fb-act{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;background:transparent;border:none;cursor:pointer;color:#b0b3b8;font-size:13px;font-weight:600;}
+.fb-act:hover{background:#3a3b3c;color:#e4e6eb;border-radius:0;}
+.fb-official{font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(0,186,124,0.15);color:#00ba7c;font-weight:700;margin-left:3px;}
+.fb-alert{background:rgba(244,33,46,0.12);border-bottom:1px solid rgba(244,33,46,0.3);padding:8px 13px;display:flex;align-items:center;gap:8px;font-size:12px;border-left:3px solid var(--danger);flex-shrink:0;}
+
+/* ═══════ INSTAGRAM FEED ═══════ */
+.ig-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#000;color:#fff;}
+.ig-nav{background:#000;border-bottom:1px solid rgba(255,255,255,0.1);padding:0 14px;height:50px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.ig-wordmark{font-size:20px;font-weight:800;font-style:italic;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ig-nav-right{display:flex;gap:14px;align-items:center;}
+.ig-nav-btn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:0.85;position:relative;}
+.ig-nav-btn:hover{opacity:1;}
+.ig-stories-bar{display:flex;gap:12px;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,0.1);overflow-x:auto;flex-shrink:0;}
+.ig-stories-bar::-webkit-scrollbar{display:none;}
+.ig-story{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;}
+.ig-story-ring{width:56px;height:56px;border-radius:50%;padding:2px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);}
+.ig-story-ring.seen{background:#333;}
+.ig-story-av{width:100%;height:100%;border-radius:50%;background:#1a1a1a;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;position:relative;}
+.ig-story-lbl{font-size:11px;color:#ccc;max-width:60px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ig-add-btn{position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;background:#0095f6;border-radius:50%;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:900;line-height:1;}
+.ig-body{flex:1;overflow-y:auto;display:flex;justify-content:center;}
+.ig-body::-webkit-scrollbar{width:3px;}
+.ig-body::-webkit-scrollbar-thumb{background:#222;border-radius:2px;}
+.ig-feed{width:100%;max-width:480px;}
+.ig-post{border-bottom:1px solid rgba(255,255,255,0.1);animation:fadeIn 0.35s ease;}
+.ig-post-hdr{display:flex;align-items:center;gap:10px;padding:10px 12px;}
+.ig-av-ring{width:34px;height:34px;border-radius:50%;padding:2px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);flex-shrink:0;}
+.ig-av-ring.off{background:linear-gradient(45deg,#00ba7c,#1d9bf0);}
+.ig-av{width:100%;height:100%;border-radius:50%;background:#1a1a1a;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;}
+.ig-post-meta{flex:1;}
+.ig-post-user{font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.ig-post-sub{font-size:11px;color:#aaa;}
+.ig-post-more-btn{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0 3px;}
+.ig-img{width:100%;background:#111;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.ig-img-grad{position:absolute;inset:0;opacity:0.85;}
+.ig-img-lbl{position:relative;z-index:1;font-size:26px;font-weight:700;text-align:center;padding:20px;text-shadow:0 2px 10px rgba(0,0,0,0.9);}
+.ig-post-actions{display:flex;align-items:center;padding:9px 12px 5px;}
+.ig-act-left{display:flex;gap:13px;}
+.ig-act-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0;line-height:1;transition:transform 0.15s;}
+.ig-act-btn:hover{transform:scale(1.15);}
+.ig-act-btn.liked{color:#ed4956;}
+.ig-save{margin-left:auto;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
+.ig-likes{padding:0 12px 4px;font-size:13px;font-weight:700;}
+.ig-caption{padding:0 12px 7px;font-size:13px;line-height:1.5;word-break:break-word;}
+.ig-caption strong{font-weight:700;margin-right:4px;}
+.ig-caption .h{color:#00b4d8;}
+.ig-view-comments{padding:0 12px 4px;font-size:13px;color:#888;cursor:pointer;}
+.ig-time{padding:0 12px 9px;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.04em;}
+.ig-comment-row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-top:1px solid rgba(255,255,255,0.08);}
+.ig-comment-av{width:26px;height:26px;border-radius:50%;background:#0095f6;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.ig-comment-inp{flex:1;background:transparent;border:none;color:#fff;font-size:13px;font-family:var(--font);outline:none;}
+.ig-comment-inp::placeholder{color:#555;}
+.ig-ver{width:14px;height:14px;background:#0095f6;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;}
+.ig-ver svg{width:8px;height:8px;fill:#fff;}
+.ig-off-badge{font-size:10px;padding:1px 5px;border-radius:4px;background:rgba(0,186,124,0.2);color:#00ba7c;font-weight:700;margin-left:3px;}
+.ig-alert{background:rgba(244,33,46,0.15);border-bottom:1px solid rgba(244,33,46,0.35);padding:8px 13px;display:flex;align-items:center;gap:8px;font-size:12px;flex-shrink:0;}
+
+.exercise-watermark{position:fixed;bottom:10px;right:10px;z-index:500;background:rgba(255,212,0,0.15);border:1px solid rgba(255,212,0,0.4);border-radius:7px;padding:4px 9px;font-size:10px;font-weight:700;color:var(--warning);letter-spacing:0.1em;text-transform:uppercase;pointer-events:none;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+</style>
+</head>
+<body>
+<div class="exercise-watermark">⚠ Exercise Only</div>
+
+<!-- MODE SCREEN -->
+<div id="mode-screen">
+  <div class="mode-logo"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.26 5.632 5.905-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+  <div><div class="mode-title">SocialSim</div><div class="mode-sub">Emergency Exercise Social Media Platform</div></div>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="enterFeed('x')"><div class="mode-card-icon">𝕏</div><div class="mode-card-title">X / Twitter</div><div class="mode-card-desc">Live feed, trending topics, breaking alerts.</div><span class="mode-badge badge-blue">PUBLIC</span></div>
+    <div class="mode-card" onclick="enterFeed('fb')"><div class="mode-card-icon" style="color:#1877f2;font-size:34px;font-weight:900;">f</div><div class="mode-card-title">Facebook</div><div class="mode-card-desc">Community posts, reactions, shares.</div><span class="mode-badge badge-fb">PUBLIC</span></div>
+    <div class="mode-card" onclick="enterFeed('ig')"><div class="mode-card-icon">📸</div><div class="mode-card-title">Instagram</div><div class="mode-card-desc">Stories, posts, image cards.</div><span class="mode-badge badge-ig">PUBLIC</span></div>
+    <div class="mode-card" id="admin-card">
+      <div class="mode-card-icon">🎛️</div><div class="mode-card-title">Exercise Control</div><div class="mode-card-desc">Inject posts to all platforms. Directors only.</div>
+      <span class="mode-badge badge-red">ADMIN</span>
+      <div class="mode-pw-row"><input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"/><button onclick="checkPw()">Go</button></div>
+      <div id="pw-error">Incorrect password</div>
+    </div>
+  </div>
+  <div class="connecting-msg" id="conn-msg" style="display:none;"><div class="spinner"></div> Connecting…</div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <!-- ADMIN -->
+  <div class="admin-panel" id="admin-panel">
+    <div class="panel-header">
+      <div class="dot" id="admin-dot" style="background:var(--muted);"></div>
+      <span>Exercise Control</span>
+      <span class="live-pill" style="margin-left:auto;">LIVE</span>
+      <span id="admin-clock" style="color:var(--text);font-size:10px;margin-left:7px;"></span>
+    </div>
+    <div class="admin-scroll">
+      <div class="card">
+        <div class="card-title">Incident Status</div>
+        <div class="incident-controls">
+          <div class="incident-status"><div class="incident-status-label">Phase</div><div class="incident-status-val status-offline" id="inc-val">No Active Incident</div></div>
+          <div class="form-row"><label>Incident Name</label><input type="text" id="inc-name" placeholder="e.g. Flooding — River Severn"/></div>
+          <div class="ctrl-row">
+            <button class="btn-sm live" onclick="setStatus('live')">▶ Go Live</button>
+            <button class="btn-sm warn" onclick="setStatus('escalating')">⬆ Escalate</button>
+            <button class="btn-sm danger" onclick="setStatus('critical')">⚠ Critical</button>
+            <button class="btn-sm" onclick="setStatus('offline')">■ End</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Alert Banner — All Platforms</div>
+        <div class="form-row"><label>Message</label><input type="text" id="banner-txt" placeholder="e.g. Road closures in effect — avoid A361"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+          <button class="btn-primary" onclick="pushBanner()">Push Banner</button>
+          <button class="btn-primary btn-danger" onclick="clearBanner()">Clear</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Inject Post — All Platforms</div>
+        <div class="inject-type-tabs">
+          <button class="tab-btn active" data-type="public" onclick="setType(this,'public')">Public</button>
+          <button class="tab-btn" data-type="official" onclick="setType(this,'official')">Official</button>
+          <button class="tab-btn" data-type="media" onclick="setType(this,'media')">Media</button>
+          <button class="tab-btn" data-type="rumour" onclick="setType(this,'rumour')">Rumour</button>
+        </div>
+        <div class="handle-row">
+          <div class="avatar-preview" id="av-prev">U</div>
+          <div class="form-row" style="flex:1;"><label>Name</label><input type="text" id="post-name" placeholder="John Dobson" oninput="updatePrev()"/></div>
+          <div class="form-row" style="flex:1;"><label>Handle</label><input type="text" id="post-handle" placeholder="@jdobson92"/></div>
+        </div>
+        <div class="form-row"><label>Content</label><textarea id="post-content" rows="3" placeholder="What's happening? Use #hashtags..."></textarea></div>
+        <div class="form-row"><label>Sentiment</label>
+          <div class="sentiment-row">
+            <button class="sent-btn" data-s="panic" onclick="setSentiment(this)">🔴 Panic</button>
+            <button class="sent-btn active-concerned" data-s="concerned" onclick="setSentiment(this)">🟡 Concern</button>
+            <button class="sent-btn" data-s="neutral" onclick="setSentiment(this)">⚪ Neutral</button>
+            <button class="sent-btn" data-s="positive" onclick="setSentiment(this)">🟢 Positive</button>
+          </div>
+        </div>
+        <div class="form-row"><label>Engagement (optional)</label><input type="number" id="post-eng" placeholder="23" min="0"/></div>
+        <button class="btn-primary" onclick="injectPost()">⬆ Inject to All Platforms</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Scenario Presets</div>
+        <div class="preset-list" id="preset-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Trending Topics (X)</div>
+        <div class="form-row"><label>Hashtag</label><input type="text" id="trend-tag" placeholder="#RiverSevern"/></div>
+        <div class="form-row"><label>Count</label><input type="number" id="trend-count" placeholder="4821"/></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+          <button class="btn-primary" onclick="addTrend()">Add</button>
+          <button class="btn-primary btn-danger" onclick="clearTrends()">Clear All</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Exercise Reset</div>
+        <button class="btn-primary btn-danger" onclick="clearAll()">🗑 Clear All &amp; Reset</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Activity Log</div>
+        <div class="feed-log" id="activity-log"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEED AREA -->
+  <div id="feed-area" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+    <div class="platform-switcher" id="plat-switcher" style="display:none;">
+      <button class="plat-btn" id="btn-x" onclick="switchPlat('x')">𝕏 &nbsp;X / Twitter</button>
+      <button class="plat-btn" id="btn-fb" onclick="switchPlat('fb')">f &nbsp;Facebook</button>
+      <button class="plat-btn" id="btn-ig" onclick="switchPlat('ig')">📸 Instagram</button>
+    </div>
+
+    <!-- X -->
+    <div id="feed-x" class="x-wrap" style="display:none;">
+      <div class="x-topbar">
+        <div class="x-logo"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.26 5.632 5.905-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+        <div class="x-search"><span>🔍</span><span>Search</span></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button style="background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer;position:relative;" id="x-notif-btn">🔔<div id="x-ndot" style="display:none;position:absolute;top:0;right:0;width:7px;height:7px;background:var(--accent);border-radius:50%;border:1px solid var(--bg);"></div></button>
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">Y</div>
+        </div>
+      </div>
+      <div id="x-alert" style="display:none;" class="x-alert">
+        <span>⚠️</span><div><div style="font-weight:600;color:#ff8080;" id="x-alert-txt"></div><div style="color:var(--muted);font-size:11px;margin-top:1px;">Emergency Services — Official</div></div>
+        <button onclick="document.getElementById('x-alert').style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;">✕</button>
+      </div>
+      <div class="x-body">
+        <div class="x-main" id="x-main">
+          <div class="x-compose">
+            <div class="x-compose-av">Y</div>
+            <div style="flex:1;">
+              <input type="text" placeholder="What's happening?" maxlength="280" id="x-compose" oninput="document.getElementById('x-chars').textContent=280-this.value.length"/>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="color:var(--accent);font-size:13px;">🖼️ GIF 📊</span>
+                <div style="display:flex;align-items:center;gap:7px;"><span id="x-chars" style="font-size:12px;color:var(--muted);">280</span><button class="x-post-btn" onclick="userPost('x')">Post</button></div>
+              </div>
+            </div>
+          </div>
+          <div id="x-posts"></div>
+        </div>
+        <div class="x-sidebar">
+          <div class="x-trend-box"><h3>Trending</h3><div id="x-trends"><div style="font-size:12px;color:var(--muted);">No topics yet</div></div></div>
+          <div class="x-trend-box"><h3 style="font-size:13px;">Who to follow</h3><div id="x-suggested"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FACEBOOK -->
+    <div id="feed-fb" class="fb-wrap" style="display:none;">
+      <div class="fb-nav">
+        <div class="fb-logo"><div class="fb-logo-mark">f</div>facebook</div>
+        <div class="fb-nav-right">
+          <button class="fb-nav-btn">🔍</button>
+          <button class="fb-nav-btn">👥</button>
+          <button class="fb-nav-btn" style="position:relative;" id="fb-notif-btn">🔔<div id="fb-ndot" style="display:none;position:absolute;top:3px;right:3px;width:7px;height:7px;background:var(--danger);border-radius:50%;border:1px solid #242526;"></div></button>
+          <button class="fb-nav-btn">☰</button>
+        </div>
+      </div>
+      <div id="fb-alert" style="display:none;" class="fb-alert">
+        <span>⚠️</span><div><div style="font-weight:600;color:#ff8080;" id="fb-alert-txt"></div><div style="color:#888;font-size:11px;margin-top:1px;">Emergency Services</div></div>
+        <button onclick="document.getElementById('fb-alert').style.display='none'" style="margin-left:auto;background:none;border:none;color:#888;cursor:pointer;">✕</button>
+      </div>
+      <div class="fb-body">
+        <div class="fb-inner">
+          <div class="fb-compose">
+            <div class="fb-compose-top">
+              <div class="fb-compose-av">Y</div>
+              <input class="fb-compose-inp" type="text" id="fb-compose" placeholder="What's on your mind?"/>
+            </div>
+            <div class="fb-compose-div"></div>
+            <div class="fb-compose-acts">
+              <button class="fb-compose-act" onclick="userPost('fb')">📤 Post</button>
+              <button class="fb-compose-act">🖼️ Photo/Video</button>
+              <button class="fb-compose-act">😊 Feeling</button>
+            </div>
+          </div>
+          <div id="fb-posts"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTAGRAM -->
+    <div id="feed-ig" class="ig-wrap" style="display:none;">
+      <div class="ig-nav">
+        <div class="ig-wordmark">Instagram</div>
+        <div class="ig-nav-right">
+          <button class="ig-nav-btn" style="position:relative;" id="ig-notif-btn">🔔<div id="ig-ndot" style="display:none;position:absolute;top:-1px;right:-1px;width:7px;height:7px;background:var(--danger);border-radius:50%;border:1px solid #000;"></div></button>
+          <button class="ig-nav-btn">📤</button>
+        </div>
+      </div>
+      <div id="ig-alert" style="display:none;" class="ig-alert">
+        <span>🚨</span><div style="font-weight:600;color:#ff7070;" id="ig-alert-txt"></div>
+        <button onclick="document.getElementById('ig-alert').style.display='none'" style="margin-left:auto;background:none;border:none;color:#888;cursor:pointer;">✕</button>
+      </div>
+      <div class="ig-stories-bar" id="ig-stories">
+        <div class="ig-story">
+          <div class="ig-story-ring seen"><div class="ig-story-av" style="background:#0095f6;">Y<div class="ig-add-btn">+</div></div></div>
+          <div class="ig-story-lbl">Your story</div>
+        </div>
+      </div>
+      <div class="ig-body"><div class="ig-feed" id="ig-posts"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDezHiKveTfhlEuJtnFrVjYbj3tglZZ-pE",
+  authDomain: "socialsim-exercises.firebaseapp.com",
+  databaseURL: "https://socialsim-exercises-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "socialsim-exercises",
+  storageBucket: "socialsim-exercises.firebasestorage.app",
+  messagingSenderId: "140875258847",
+  appId: "1:140875258847:web:da6d03172d16da29d8026a"
+};
+const ADMIN_PW = "exercise2024";
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// helpers
+const AVC=['#1d9bf0','#00ba7c','#f4212e','#ffd400','#7856ff','#ff6b35','#17bf63','#e0245e','#1877f2','#e1306c'];
+function avc(s){let h=0;for(let c of s||'U')h=(h*31+c.charCodeAt(0))%AVC.length;return AVC[h];}
+function ini(n){return(n||'U').trim().split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';}
+function ts(){return new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+function fmt(n){return n>=1000?(n/1000).toFixed(1)+'K':String(n);}
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function hl(t){return(t||'').replace(/(#[\w]+)/g,'<span class="h">$1</span>').replace(/(@[\w]+)/g,'<span class="h">$1</span>');}
+function mkEl(h){const d=document.createElement('div');d.innerHTML=h;return d.firstElementChild;}
+function igGrad(name){const g=[['#ff6b35','#f7c59f'],['#1d3557','#457b9d'],['#2d6a4f','#95d5b2'],['#7b2d8b','#c77dff'],['#b5179e','#f72585'],['#0077b6','#48cae4']];let h=0;for(let c of name||'A')h=(h+c.charCodeAt(0))%g.length;return g[h];}
+
+let postType='public', sentiment='concerned', actLog=[], rendered={x:new Set(),fb:new Set(),ig:new Set()}, storySet=new Set();
+
+// ── Entry ──
+window.enterFeed=function(p){document.getElementById('conn-msg').style.display='flex';setTimeout(()=>launch('feed',p),700);};
+window.checkPw=function(){
+  if(document.getElementById('pw-input').value===ADMIN_PW){
+    document.getElementById('pw-error').style.display='none';
+    document.getElementById('conn-msg').style.display='flex';
+    setTimeout(()=>launch('admin','x'),700);
+  } else {document.getElementById('pw-error').style.display='block';}
+};
+
+function launch(m,p){
+  document.getElementById('mode-screen').style.display='none';
+  const appEl=document.getElementById('app');
+  appEl.className='app '+(m==='admin'?'admin-mode':'feed-mode');
+  if(m==='feed') document.getElementById('admin-panel').style.display='none';
+  document.getElementById('plat-switcher').style.display='flex';
+  switchPlat(p||'x');
+  initListeners(); renderPresets(); renderSuggested(); renderBaseStories();
+  updateClock(); setInterval(updateClock,1000);
+  addLog('Connected to live exercise feed');
+}
+
+window.switchPlat=function(p){
+  ['x','fb','ig'].forEach(pl=>{
+    document.getElementById('feed-'+pl).style.display=pl===p?'flex':'none';
+    const b=document.getElementById('btn-'+pl);
+    if(b) b.className='plat-btn'+(pl===p?' active-'+pl:'');
+  });
+};
+
+// ── Firebase ──
+function initListeners(){
+  onValue(ref(db,'posts'),snap=>{
+    const data=snap.val();
+    ['x','fb','ig'].forEach(pl=>{
+      const feed=document.getElementById(pl+'-posts');
+      if(!feed) return;
+      if(!data){feed.innerHTML='';rendered[pl].clear();return;}
+      const posts=Object.entries(data).map(([k,v])=>({...v,_key:k})).sort((a,b)=>(b.ts||0)-(a.ts||0));
+      const newIds=new Set(posts.map(p=>p._key));
+      rendered[pl].forEach(id=>{if(!newIds.has(id)){const el=document.getElementById(pl+'_'+id);if(el)el.remove();rendered[pl].delete(id);}});
+      posts.forEach(p=>{
+        if(!rendered[pl].has(p._key)){
+          const html=pl==='x'?buildX(p):pl==='fb'?buildFb(p):buildIg(p);
+          const kids=feed.children; let ins=false;
+          for(let i=0;i<kids.length;i++){if((p.ts||0)>parseInt(kids[i].dataset.ts||0)){feed.insertBefore(mkEl(html),kids[i]);ins=true;break;}}
+          if(!ins) feed.insertAdjacentHTML('beforeend',html);
+          rendered[pl].add(p._key);
+          notif(pl);
+          if(pl==='ig'&&!storySet.has(p._key)){addStory(p);storySet.add(p._key);}
+        }
+      });
+    });
+  });
+
+  onValue(ref(db,'banner'),snap=>{
+    const d=snap.val();
+    ['x','fb','ig'].forEach(pl=>{
+      const bar=document.getElementById(pl+'-alert');
+      const txt=document.getElementById(pl+'-alert-txt');
+      if(!bar||!txt) return;
+      if(d&&d.text&&d.active){txt.textContent=d.text;bar.style.display='flex';}
+      else bar.style.display='none';
+    });
+  });
+
+  onValue(ref(db,'trending'),snap=>{
+    const data=snap.val();
+    const list=document.getElementById('x-trends');
+    if(!list) return;
+    if(!data){list.innerHTML='<div style="font-size:12px;color:var(--muted);">No topics yet</div>';return;}
+    const items=Object.values(data).sort((a,b)=>(b.count||0)-(a.count||0));
+    list.innerHTML=items.map((t,i)=>`<div class="x-trend-item"><div class="x-trend-cat">Trending ${i<3?'🔥':''}</div><div class="x-trend-tag">${t.tag}</div><div class="x-trend-count">${fmt(t.count||0)} posts</div></div>`).join('');
+  });
+
+  onValue(ref(db,'incident'),snap=>{
+    const d=snap.val(); if(!d) return;
+    const el=document.getElementById('inc-val'); const dot=document.getElementById('admin-dot'); if(!el) return;
+    const cfg={offline:{l:'No Active Incident',c:'status-offline',col:'#7a7f96',a:''},live:{l:'LIVE — '+(d.name||''),c:'status-live',col:'#00ba7c',a:''},escalating:{l:'ESCALATING — '+(d.name||''),c:'status-escalating',col:'#ffd400',a:''},critical:{l:'CRITICAL — '+(d.name||''),c:'status-critical',col:'#f4212e',a:'blink 0.8s infinite'}}[d.status||'offline'];
+    el.className='incident-status-val '+cfg.c; el.textContent=cfg.l;
+    if(dot){dot.style.background=cfg.col;dot.style.animation=cfg.a;}
+  });
+}
+
+function notif(pl){const ids={x:'x-ndot',fb:'fb-ndot',ig:'ig-ndot'};const el=document.getElementById(ids[pl]);if(el)el.style.display='block';}
+
+// ── X builder ──
+function buildX(p){
+  const av=avc(p.name||'U'),isO=p.type==='official',isM=p.type==='media';
+  const rep=p.replies||ri(0,120),rt=ri(0,isO?800:200),lk=ri(rep,isO?3000:500);
+  const badge=isO?'<span class="off-badge">OFFICIAL</span>':(p.sentiment==='panic'?'<span class="alert-badge">ALERT</span>':'');
+  const ver=(isO||isM)?'<span class="tweet-ver"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>':'';
+  const bar=p.sentiment&&p.sentiment!=='neutral'?`<div class="tweet-sbar ${p.sentiment}"></div>`:'';
+  return `<div class="tweet" id="x_${p._key}" data-ts="${p.ts||0}">
+    <div class="tweet-av" style="background:${av}">${ini(p.name)}</div>
+    <div class="tweet-right">
+      <div class="tweet-hdr"><span class="tweet-name">${p.name||'User'}</span>${ver}<span class="tweet-handle">${p.handle||'@user'}</span><span class="tweet-time">· ${p.time||ts()}</span>${badge}</div>
+      ${bar}<div class="tweet-body">${hl(p.content||'')}</div>
+      <div class="tweet-actions">
+        <button class="tweet-action" onclick="this.classList.toggle('liked')"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 7.879 3.77 7.879 8.276 0 4.422-3.455 8.107-7.879 8.107h-2.35c-1.381 0-2.447.994-2.447 2.193v2.07c0 .383-.302.654-.682.654-.148 0-.285-.038-.401-.11l-4.76-2.956A9.01 9.01 0 0 1 1.75 10zm8.005-5.999c-3.202 0-5.753 2.524-5.753 5.999A6.76 6.76 0 0 0 5.55 14.63l3.47 2.154v-.938c0-2.478 1.928-4.446 4.7-4.446h2.35c2.967 0 5.627-2.615 5.627-5.854 0-3.235-2.574-6.047-5.627-6.047h-4.314z"/></svg>${fmt(rep)}</button>
+        <button class="tweet-action"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M4.75 3.79l4.603 4.3-1.706 1.82L6 8.38v7.37c0 .97.784 1.75 1.75 1.75H13V19.5H7.75C5.681 19.5 4 17.819 4 15.75V8.38L2.853 9.91.147 8.09l4.603-6.3zm14.5 16.42l-4.603-4.3 1.706-1.82L17.5 15.62V8.25c0-.97-.784-1.75-1.75-1.75H11V4.5h4.75c2.069 0 3.75 1.681 3.75 3.75v7.37l1.147-1.53 2.706 1.82-4.603 6.3z"/></svg>${fmt(rt)}</button>
+        <button class="tweet-action" onclick="this.classList.toggle('liked')"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"/></svg>${fmt(lk)}</button>
+      </div>
+    </div>
+  </div>`;}
+
+// ── Facebook builder ──
+function buildFb(p){
+  const av=avc(p.name||'U'),isO=p.type==='official',isM=p.type==='media';
+  const lk=ri(5,isO?3000:500),cmt=p.replies||ri(0,80),sh=ri(0,isO?200:40);
+  const badge=isO?'<span class="fb-official">OFFICIAL</span>':'';
+  const ver=(isO||isM)?'✓ ':'';
+  const emojis=['👍','❤️','😮','😢','😡'];
+  const icons=emojis.slice(0,ri(2,4)).map(e=>`<div class="fb-react-icon" style="background:${e==='👍'?'#1877f2':e==='❤️'?'#e0245e':'#ffd400'}">${e}</div>`).join('');
+  return `<div class="fb-post" id="fb_${p._key}" data-ts="${p.ts||0}">
+    <div class="fb-post-hdr">
+      <div class="fb-post-av" style="background:${av}">${ini(p.name)}</div>
+      <div class="fb-post-meta">
+        <div class="fb-post-name">${ver}${p.name||'User'}${badge}</div>
+        <div class="fb-post-time">🌐 ${p.time||ts()} · Public</div>
+      </div>
+      <button class="fb-post-more-btn">···</button>
+    </div>
+    <div class="fb-post-body">${hl(p.content||'')}</div>
+    <div class="fb-react-bar">
+      <div class="fb-react-left"><div class="fb-react-icons">${icons}</div>&nbsp;${fmt(lk)}</div>
+      <div class="fb-react-right">${cmt} comments · ${sh} shares</div>
+    </div>
+    <div class="fb-acts">
+      <button class="fb-act" onclick="this.style.color='#1877f2';this.textContent='👍 Liked'">👍 Like</button>
+      <button class="fb-act">💬 Comment</button>
+      <button class="fb-act">↗ Share</button>
+    </div>
+  </div>`;}
+
+// ── Instagram builder ──
+function buildIg(p){
+  const av=avc(p.name||'U'),isO=p.type==='official',isM=p.type==='media';
+  const lk=ri(10,isO?8000:1200);
+  const [c1,c2]=igGrad(p.name||'A');
+  const lbl=p.sentiment==='panic'?'🚨 URGENT':(p.sentiment==='concerned'?'⚠️ UPDATE':(isO?'📢 OFFICIAL':'📍 LOCAL'));
+  const ver=(isO||isM)?'<span class="ig-ver"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>':'';
+  const offBadge=isO?'<span class="ig-off-badge">OFFICIAL</span>':'';
+  const handle=(p.handle||'@user').replace('@','');
+  const ringCls=isO?'ig-av-ring off':'ig-av-ring';
+  return `<div class="ig-post" id="ig_${p._key}" data-ts="${p.ts||0}">
+    <div class="ig-post-hdr">
+      <div class="${ringCls}"><div class="ig-av" style="background:${av}">${ini(p.name)}</div></div>
+      <div class="ig-post-meta"><div class="ig-post-user">${handle}${ver}${offBadge}</div><div class="ig-post-sub">${p.name||'User'}</div></div>
+      <button class="ig-post-more-btn">···</button>
+    </div>
+    <div class="ig-img"><div class="ig-img-grad" style="background:linear-gradient(135deg,${c1},${c2});"></div><div class="ig-img-lbl">${lbl}</div></div>
+    <div class="ig-post-actions">
+      <div class="ig-act-left">
+        <button class="ig-act-btn" onclick="this.classList.toggle('liked');this.textContent=this.classList.contains('liked')?'❤️':'🤍'">🤍</button>
+        <button class="ig-act-btn">💬</button>
+        <button class="ig-act-btn">📤</button>
+      </div>
+      <button class="ig-save">🔖</button>
+    </div>
+    <div class="ig-likes">${fmt(lk)} likes</div>
+    <div class="ig-caption"><strong>${handle}</strong>${hl(p.content||'').replace(/class="h"/g,'style="color:#00b4d8"')}</div>
+    <div class="ig-view-comments">View all ${ri(3,80)} comments</div>
+    <div class="ig-time">${p.time||ts()}</div>
+    <div class="ig-comment-row"><div class="ig-comment-av">Y</div><input class="ig-comment-inp" placeholder="Add a comment…" type="text"/><span style="color:#0095f6;font-size:13px;font-weight:600;cursor:pointer;">Post</span></div>
+  </div>`;}
+
+// ── Stories ──
+function addStory(p){
+  const el=document.getElementById('ig-stories');if(!el) return;
+  const av=avc(p.name||'U');
+  const name=(p.handle||p.name||'user').replace('@','').slice(0,10);
+  const d=document.createElement('div'); d.className='ig-story';
+  d.innerHTML=`<div class="ig-story-ring"><div class="ig-story-av" style="background:${av}">${ini(p.name)}</div></div><div class="ig-story-lbl">${name}</div>`;
+  el.appendChild(d);
+}
+function renderBaseStories(){
+  const el=document.getElementById('ig-stories');if(!el) return;
+  [{name:'Emergency',col:'#f4212e'},{name:'Council',col:'#1877f2'},{name:'NewsNow',col:'#00ba7c'}].forEach(a=>{
+    const d=document.createElement('div');d.className='ig-story';
+    d.innerHTML=`<div class="ig-story-ring"><div class="ig-story-av" style="background:${a.col}">${ini(a.name)}</div></div><div class="ig-story-lbl">${a.name}</div>`;
+    el.appendChild(d);
+  });
+}
+
+// ── User posts ──
+window.userPost=function(pl){
+  const ids={x:'x-compose',fb:'fb-compose'};
+  const val=ids[pl]?document.getElementById(ids[pl])?.value?.trim():'';
+  if(!val) return;
+  push(ref(db,'posts'),{name:'Exercise Participant',handle:'@participant',content:val,type:'public',sentiment:'neutral',time:ts(),ts:Date.now(),replies:0});
+  if(ids[pl]) document.getElementById(ids[pl]).value='';
+  if(pl==='x') document.getElementById('x-chars').textContent='280';
+  addLog('Participant posted on '+pl.toUpperCase());
+};
+
+// ── Admin ──
+window.setType=function(el,t){
+  postType=t;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');
+  if(t==='official'){document.getElementById('post-name').value='Emergency Services';document.getElementById('post-handle').value='@EmergencyServices';}
+  else if(t==='media'){document.getElementById('post-name').value='Local News Network';document.getElementById('post-handle').value='@LocalNewsNow';}
+  else if(t==='rumour'){const ns=['concerned_resident','sarah_81','davemk2','worried_mum_uk','local_watcher'];const n=ns[ri(0,ns.length-1)];document.getElementById('post-name').value=n;document.getElementById('post-handle').value='@'+n;}
+  updatePrev();
+};
+window.setSentiment=function(el){document.querySelectorAll('.sent-btn').forEach(b=>b.className='sent-btn');sentiment=el.dataset.s;el.classList.add('active-'+sentiment);};
+window.updatePrev=function(){const n=document.getElementById('post-name')?.value||'U';const av=document.getElementById('av-prev');if(av){av.textContent=ini(n);av.style.background=avc(n);}};
+window.injectPost=function(){
+  const name=document.getElementById('post-name').value.trim()||'Anonymous';
+  const handle=document.getElementById('post-handle').value.trim()||'@anon';
+  const content=document.getElementById('post-content').value.trim();
+  const eng=parseInt(document.getElementById('post-eng').value)||undefined;
+  if(!content){alert('Post content is required');return;}
+  push(ref(db,'posts'),{name,handle,content,type:postType,sentiment,replies:eng||ri(0,150),time:ts(),ts:Date.now()});
+  addLog('Injected '+postType+' post by '+name);
+  document.getElementById('post-content').value='';
+  document.getElementById('post-eng').value='';
+};
+window.setStatus=function(s){const name=document.getElementById('inc-name')?.value||'Incident';set(ref(db,'incident'),{status:s,name,ts:Date.now()});addLog('Status: '+s+(name?' — '+name:''));};
+window.pushBanner=function(){const text=document.getElementById('banner-txt').value.trim();if(!text) return;set(ref(db,'banner'),{text,active:true,ts:Date.now()});addLog('Banner: "'+text+'"');};
+window.clearBanner=function(){set(ref(db,'banner'),{active:false});addLog('Banner cleared');};
+window.addTrend=function(){
+  let tag=document.getElementById('trend-tag').value.trim();
+  let count=parseInt(document.getElementById('trend-count').value)||ri(1000,50000);
+  if(!tag) return;
+  if(!tag.startsWith('#')) tag='#'+tag;
+  push(ref(db,'trending'),{tag,count,ts:Date.now()});
+  document.getElementById('trend-tag').value='';document.getElementById('trend-count').value='';
+  addLog('Trend: '+tag);
+};
+window.clearTrends=function(){set(ref(db,'trending'),null);addLog('Trends cleared');};
+window.clearAll=function(){
+  if(!confirm('Clear ALL posts and reset? This cannot be undone.')) return;
+  set(ref(db,'posts'),null);set(ref(db,'banner'),{active:false});set(ref(db,'trending'),null);set(ref(db,'incident'),{status:'offline',name:'',ts:Date.now()});
+  Object.keys(rendered).forEach(k=>rendered[k].clear());storySet.clear();
+  const ig=document.getElementById('ig-stories');
+  if(ig){ig.innerHTML='<div class="ig-story"><div class="ig-story-ring seen"><div class="ig-story-av" style="background:#0095f6;">Y<div class="ig-add-btn">+</div></div></div><div class="ig-story-lbl">Your story</div></div>';renderBaseStories();}
+  addLog('Exercise reset');
+};
+
+// ── Presets ──
+const PRESETS=[
+  {name:'Flooding — River Alert',tag:'flood',posts:[
+    {name:'Environment Agency',handle:'@EnvAgencyUK',type:'official',sentiment:'concerned',content:'⚠️ Flood alert issued for River Severn. Property owners in low-lying areas should take precautions. gov.uk/flood #FloodAlert #RiverSevern'},
+    {name:'Local Resident',handle:'@jdobson92',type:'public',sentiment:'panic',content:'The water is coming into our street!! Nobody told us there was a warning. What do we do?? #flooding #help'},
+    {name:'Council Comms',handle:'@DistrictCouncil',type:'official',sentiment:'neutral',content:'Sandbag distribution points now open at: Town Hall, Riverside Car Park, Community Centre. Bring ID. #FloodAlert'},
+    {name:'Local News Now',handle:'@LocalNewsNow',type:'media',sentiment:'concerned',content:'BREAKING: Severe flooding along the Severn valley. Multiple roads closed. Emergency services on scene. #FloodAlert'},
+  ]},
+  {name:'Industrial Fire',tag:'fire',posts:[
+    {name:'Fire & Rescue',handle:'@CountyFireRescue',type:'official',sentiment:'concerned',content:'Incident: Large fire at industrial estate, Northfield Rd. Stay indoors, close windows. Avoid the area. #Northfield'},
+    {name:'worried_local',handle:'@worriedlocal',type:'public',sentiment:'panic',content:'Massive cloud of black smoke coming this way!! My kids are at school nearby — what do I do?? #fire #Northfield'},
+    {name:'Air Quality Watch',handle:'@AirQualityWatch',type:'media',sentiment:'concerned',content:'Monitoring air quality near Northfield incident. Readings elevated. Precautionary indoor measures advised. #NorthfieldFire'},
+  ]},
+  {name:'Cyber Attack — Utilities',tag:'cyber',posts:[
+    {name:'National Grid',handle:'@NationalGrid',type:'official',sentiment:'neutral',content:'We are aware of a cyber security incident affecting some systems. Essential services remain operational. Investigations ongoing.'},
+    {name:'tech_observer',handle:'@techobserver',type:'media',sentiment:'concerned',content:'Reports suggest ransomware has hit National Grid systems. Significant infrastructure incident if confirmed. #CyberAttack'},
+    {name:'Mike Tanner',handle:'@miketanner77',type:'public',sentiment:'panic',content:'My smart meter has gone haywire and I can\'t pay my bill. Is this the hack everyone\'s talking about?? #NationalGrid'},
+  ]},
+  {name:'Public Health — Outbreak',tag:'medical',posts:[
+    {name:'Public Health England',handle:'@PHE_uk',type:'official',sentiment:'neutral',content:'Investigating reports of gastrointestinal illness linked to a recent community event. If you attended please contact NHS 111.'},
+    {name:'Northshire Gazette',handle:'@NorthshireGaz',type:'media',sentiment:'concerned',content:'BREAKING: 40+ people ill after last weekend\'s food festival. @PHE_uk investigating. #PublicHealth'},
+    {name:'worried_parent_uk',handle:'@worried_parent_uk',type:'public',sentiment:'panic',content:'My whole family is sick after the food festival. This is a disgrace. WHO IS RESPONSIBLE?? #foodpoisoning'},
+  ]},
+];
+window.loadPreset=function(i){
+  const p=PRESETS[i];
+  p.posts.forEach((post,j)=>{setTimeout(()=>{push(ref(db,'posts'),{...post,replies:ri(5,200),time:ts(),ts:Date.now()-(p.posts.length-j)*2000});},j*600);});
+  push(ref(db,'trending'),{tag:'#'+p.tag+'Alert',count:ri(3000,45000),ts:Date.now()});
+  addLog('Preset loaded: '+p.name);
+};
+function renderPresets(){
+  const el=document.getElementById('preset-list');if(!el) return;
+  el.innerHTML=PRESETS.map((p,i)=>`<div class="preset-item" onclick="loadPreset(${i})"><span class="preset-name">${p.name}</span><span class="preset-tag tag-${p.tag}">${p.tag.toUpperCase()}</span></div>`).join('');
+}
+function renderSuggested(){
+  const el=document.getElementById('x-suggested');if(!el) return;
+  [{name:'Emergency Services',handle:'@EmergencyServices',col:'#f4212e'},{name:'Council Comms',handle:'@DistrictCouncil',col:'#1877f2'},{name:'Local News Now',handle:'@LocalNewsNow',col:'#00ba7c'}].forEach(a=>{
+    el.insertAdjacentHTML('beforeend',`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);"><div style="width:32px;height:32px;border-radius:50%;background:${a.col};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">${ini(a.name)}</div><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;">${a.name}</div><div style="font-size:11px;color:var(--muted);">${a.handle}</div></div><button style="padding:3px 9px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text);font-size:11px;cursor:pointer;">Follow</button></div>`);
+  });
+}
+function addLog(msg){const t=ts();actLog.unshift(`<span>[${t}]</span> ${msg}`);if(actLog.length>30)actLog.pop();const el=document.getElementById('activity-log');if(el)el.innerHTML=actLog.map(l=>`<div class="log-item">${l}</div>`).join('');}
+function updateClock(){const el=document.getElementById('admin-clock');if(el)el.textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+</script>
+</body>
+</html>
