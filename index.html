@@ -677,6 +677,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           <button class="btn-primary" id="btn-push-news">📰 Push Article</button>
           <button class="btn-primary" id="btn-preview-news" style="background:var(--surface2);color:var(--text);">👁 Preview</button>
         </div>
+        <button class="btn-primary" id="btn-load-saved-article" style="background:var(--surface2);color:var(--accent);margin-top:7px;border:1px solid var(--accent);">⬇ Load Starlight Walk Article</button>
       </div>
 
       <div class="card">
@@ -993,6 +994,31 @@ function launch(mode, plat){
   loadPersonas();
   renderPersonas();
   loadScriptFromFirebase();
+  // Auto-load Starlight Walk script if no script exists yet
+  if(mode==='admin'){
+    import('https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js').then(({get})=>{
+      get(ref(db,'script')).then(snap=>{
+        if(!snap.exists()){
+          set(ref(db,'script'), STARLIGHT_SCRIPT);
+          // Pre-load trending topics
+          push(ref(db,'trending'),{tag:'#StarlightWalk',count:8420,ts:Date.now()});
+          push(ref(db,'trending'),{tag:'#Huddersfield',count:3210,ts:Date.now()-1000});
+          push(ref(db,'trending'),{tag:'#StarlightWalkHX',count:1840,ts:Date.now()-2000});
+          // Pre-load news article into Firebase for use during exercise
+          set(ref(db,'savedArticle'),{
+            pub:'Huddersfield Examiner',
+            headline:'Emergency services respond to serious incidents at Starlight Walk charity event',
+            standfirst:'Two separate incidents — including a cardiac arrest and a vehicle collision — disrupted the annual overnight fundraising walk in Huddersfield.',
+            body:'Emergency services were called to two separate incidents during the Starlight Walk charity event overnight, which takes place across 3, 6 and 10-mile routes finishing at John Smith\'s Stadium. | The first incident, a medical emergency, was reported on the 10-mile route near Croftflat Road at approximately 00:13. Witnesses described CPR being administered by bystanders before paramedics arrived. A man was subsequently taken to hospital by ambulance. | The second and more serious incident occurred at approximately 22:18 at the Aspley bridge section, where a vehicle is understood to have struck a group of walkers on the shared route immediately east of the A629 roundabout. Multiple casualties were reported, with emergency services describing at least one person as seriously injured. | West Yorkshire Police attended the scene and confirmed the incident was being treated as a road traffic collision. Officers stated there was no evidence to suggest the incident was deliberate, despite speculation on social media. | The Starlight Walk is an annual overnight charity walk raising funds for the local hospice, with approximately 1,000 participants taking part across three routes this year.',
+            quote:'We urge the public not to speculate and to allow emergency services to do their work — West Yorkshire Police',
+            image:'',
+            reporter:'James Whitmore, Senior Reporter',
+          });
+          addLog('Starlight Walk scenario auto-loaded — script, trending topics and news article ready');
+        }
+      }).catch(()=>{});
+    }).catch(()=>{});
+  }
   updateClock();
   setInterval(updateClock,1000);
   addLog('Connected to live exercise feed');
@@ -1597,6 +1623,22 @@ function gatherArticle(){
   };
 }
 document.getElementById('btn-preview-news').addEventListener('click',()=>openNews(gatherArticle()));
+document.getElementById('btn-load-saved-article').addEventListener('click',()=>{
+  import('https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js').then(({get})=>{
+    get(ref(db,'savedArticle')).then(snap=>{
+      if(!snap.exists()){addLog('No saved article found');return;}
+      const a=snap.val();
+      document.getElementById('news-pub').value=a.pub||'';
+      document.getElementById('news-hed').value=a.headline||'';
+      document.getElementById('news-stand').value=a.standfirst||'';
+      document.getElementById('news-body').value=a.body||'';
+      document.getElementById('news-quote').value=a.quote||'';
+      document.getElementById('news-img').value=a.image||'';
+      document.getElementById('news-reporter').value=a.reporter||'';
+      addLog('Starlight Walk news article loaded');
+    });
+  }).catch(()=>addLog('Could not load saved article'));
+});
 document.getElementById('btn-push-news').addEventListener('click',()=>{
   const art=gatherArticle();
   if(!art.headline){alert('Headline is required');return;}
@@ -1635,7 +1677,7 @@ const DEFAULT_PERSONAS=[
   {name:'NHS Trust',             handle:'@NHSTrust',            type:'official', bio:'Health service updates',                     photo:''},
   {name:'National Grid',         handle:'@NationalGrid',        type:'official', bio:'Energy infrastructure',                      photo:''},
   {name:'Network Rail',          handle:'@NetworkRail',         type:'official', bio:'Rail network disruption',                    photo:''},
-  {name:'Police Service',        handle:'@PoliceService',       type:'official', bio:'Law enforcement updates',                    photo:'https://raw.githubusercontent.com/helensalvini76-blip/socialsim/main/images/police-service.jpg'},
+  {name:'Police Service',        handle:'@PoliceService',       type:'official', bio:'Law enforcement updates',                    photo:''},
   {name:'Highways England',      handle:'@HighwaysEngland',     type:'official', bio:'Road closures & traffic',                    photo:''},
   {name:'Met Office',            handle:'@MetOffice',           type:'official', bio:'Weather warnings',                           photo:''},
   {name:'Cabinet Office',        handle:'@CabinetOffice',       type:'official', bio:'Central government',                         photo:''},
@@ -1650,7 +1692,7 @@ const DEFAULT_PERSONAS=[
   {name:'Freelance Journalist',  handle:'@presspack_jen',       type:'media',    bio:'Independent reporter',                       photo:''},
   // ── PUBLIC ──
   {name:'Concerned Resident',    handle:'@concerned_resident',  type:'public',   bio:'Local resident',                             photo:''},
-  {name:'Sarah Mitchell',        handle:'@sarah_81',            type:'public',   bio:'Worried local',                              photo:'https://raw.githubusercontent.com/helensalvini76-blip/socialsim/main/images/Sarah-mitchell.jpg'},
+  {name:'Sarah Mitchell',        handle:'@sarah_81',            type:'public',   bio:'Worried local',                              photo:''},
   {name:'Dave Briggs',           handle:'@davemk2',             type:'public',   bio:'Eyewitness',                                 photo:''},
   {name:'Worried Parent',        handle:'@worried_mum_uk',      type:'public',   bio:'Parent near incident',                       photo:''},
   {name:'John Dobson',           handle:'@jdobson92',           type:'public',   bio:'Local resident',                             photo:''},
@@ -1685,6 +1727,12 @@ const DEFAULT_PERSONAS=[
   {name:'Angry Local',           handle:'@fed_up_with_it',      type:'public',   bio:'Frustrated, demanding answers',              photo:''},
   {name:'Sceptical Resident',    handle:'@not_buying_it_uk',    type:'public',   bio:'Questions official statements',              photo:''},
   {name:'Helpful Neighbour',     handle:'@helping_out_local',   type:'public',   bio:'Organising community support',               photo:''},
+  // ── STARLIGHT WALK SPECIFIC ──
+  {name:'Starlight Walk',        handle:'@StarlightWalkHX',     type:'official', bio:'Starlight Walk event account',               photo:''},
+  {name:'West Yorkshire Police', handle:'@WestYorksPolice',     type:'official', bio:'Police — major incident updates',            photo:''},
+  {name:'Yorkshire Ambulance',   handle:'@YorkshireAmbulance',  type:'official', bio:'NHS ambulance service',                      photo:''},
+  {name:'Huddersfield Examiner', handle:'@ExaminerHD',          type:'media',    bio:'Local newspaper — Huddersfield',             photo:''},
+  {name:'BBC Yorkshire',         handle:'@BBCYorkshire',        type:'media',    bio:'BBC regional news',                          photo:''},
   // ── RUMOUR ──
   {name:'Local Watch Account',   handle:'@northfield_watch',    type:'rumour',   bio:'Unverified local alerts',                    photo:''},
   {name:'Conspiracy Account',    handle:'@truth_seeker_uk',     type:'rumour',   bio:'Misinformation spreader',                    photo:''},
@@ -1770,6 +1818,21 @@ document.getElementById('btn-save-persona').addEventListener('click',()=>{
 // PRESETS
 // ─────────────────────────────────────────────
 const PRESETS=[
+  {name:'⭐ Starlight Walk — Phase 1: Cardiac Arrest',tag:'starlight1',posts:[
+    {name:'Karen Whitfield',handle:'@karen_whitfield',type:'public',sentiment:'concerned',content:'Something\'s happened on the Starlight Walk route near Fenay Bridge. Lots of people stopping. Hope everyone is ok 🙏 #StarlightWalk'},
+    {name:'Dave Briggs',handle:'@davemk2',type:'public',sentiment:'panic',content:'There\'s someone collapsed on the 10 mile route near Croftflat Road. CPR going on. Where is the ambulance?? #StarlightWalk'},
+    {name:'Starlight Walk',handle:'@StarlightWalkHX',type:'official',sentiment:'neutral',content:'We are aware of a medical situation on the 10-mile route. Our medical team is responding. Please follow marshal instructions and keep routes clear. Updates to follow. #StarlightWalk'},
+    {name:'Becky Turner',handle:'@beckyturner81',type:'public',sentiment:'panic',content:'Someone has DIED on the Starlight Walk. Saw it with my own eyes near Fenay Bridge. This is awful 😢 #StarlightWalk'},
+    {name:'Huddersfield Examiner',handle:'@ExaminerHD',type:'media',sentiment:'concerned',content:'Reports coming in of a medical emergency on the #StarlightWalk route near Fenay Bridge, Huddersfield. @StarlightWalkHX can you confirm?'},
+  ]},
+  {name:'⭐ Starlight Walk — Phase 2: Vehicle Incident',tag:'starlight2',posts:[
+    {name:'Owen Hughes',handle:'@owen_h_wales',type:'public',sentiment:'panic',content:'CAR HAS HIT PEOPLE at Aspley bridge!! People are screaming and running. This is terrifying. Someone call 999!! #StarlightWalk'},
+    {name:'Tom Ashworth',handle:'@tom_ashworth',type:'public',sentiment:'panic',content:'What is happening at Aspley?? I\'m on the 6 mile route and people are running back toward the stadium saying there\'s been an attack #StarlightWalk'},
+    {name:'Angry Local',handle:'@fed_up_with_it',type:'rumour',sentiment:'panic',content:'PEOPLE ARE BEING ATTACKED at the Starlight Walk at Aspley. This is a deliberate attack. AVOID THE AREA and tell your family to get out #StarlightWalk #Huddersfield'},
+    {name:'Sceptical Resident',handle:'@not_buying_it_uk',type:'rumour',sentiment:'panic',content:'My mate says there\'s multiple casualties at Aspley and police aren\'t there yet. Why are walkers still on the route?? #StarlightWalk'},
+    {name:'West Yorkshire Police',handle:'@WestYorksPolice',type:'official',sentiment:'neutral',content:'We are responding to an incident at Aspley, Huddersfield. Please follow directions from marshals and event staff. Avoid the Aspley bridge area. Further updates to follow.'},
+    {name:'Huddersfield Examiner',handle:'@ExaminerHD',type:'media',sentiment:'concerned',content:'BREAKING: Emergency services responding to serious incident at Aspley during the #StarlightWalk. Multiple casualties reported. We are seeking further information.'},
+  ]},
   {name:'Flooding — River Alert',tag:'flood',posts:[
     {name:'Environment Agency',handle:'@EnvAgencyUK',type:'official',sentiment:'concerned',content:'⚠️ Flood alert issued for River Severn. Property owners in low-lying areas should take precautions. gov.uk/flood #FloodAlert #RiverSevern'},
     {name:'Local Resident',handle:'@jdobson92',type:'public',sentiment:'panic',content:'The water is coming into our street!! Nobody told us there was a warning. What do we do?? #flooding #help'},
@@ -1791,6 +1854,48 @@ const PRESETS=[
     {name:'Northshire Gazette',handle:'@NorthshireGaz',type:'media',sentiment:'concerned',content:'BREAKING: 40+ people ill after last weekend\'s food festival. @PHE_uk investigating. #PublicHealth'},
     {name:'worried_parent_uk',handle:'@worried_parent_uk',type:'public',sentiment:'panic',content:'My whole family is sick after the food festival. This is a disgrace. WHO IS RESPONSIBLE?? #foodpoisoning'},
   ]},
+];
+
+// ── STARLIGHT WALK AUTO SCRIPT ──
+// Pre-loaded inject timeline for the full exercise.
+// Loads into Firebase 'script' node on first admin login if no script exists.
+const STARLIGHT_SCRIPT = [
+  // ── PHASE 1: CARDIAC ARREST (H+00 to H+25) ──
+  {id:'sw_1',delayMins:0,  name:'Karen Whitfield',   handle:'@karen_whitfield',  type:'public',   sentiment:'concerned', content:'Something\'s happened on the #StarlightWalk near Fenay Bridge. Lots of people stopped in the road. Marshals running. Hope everyone is alright 🙏',fired:false},
+  {id:'sw_2',delayMins:1,  name:'Dave Briggs',        handle:'@davemk2',          type:'public',   sentiment:'panic',     content:'Someone\'s collapsed on the 10 mile route near Croftflat Road!! CPR is happening RIGHT NOW. Where is the ambulance?? #StarlightWalk #emergency',fired:false},
+  {id:'sw_3',delayMins:2,  name:'Becky Turner',       handle:'@beckyturner81',    type:'public',   sentiment:'panic',     content:'Someone has DIED on the Starlight Walk 😢 Saw it near Fenay Bridge. This is absolutely awful. Praying for the family. #StarlightWalk',fired:false},
+  {id:'sw_4',delayMins:3,  name:'Tom Ashworth',       handle:'@tom_ashworth',     type:'public',   sentiment:'concerned', content:'Walk has stopped near Croftflat. Nobody telling us what\'s going on. Been standing here 10 mins. What do we do? @StarlightWalkHX #StarlightWalk',fired:false},
+  {id:'sw_5',delayMins:5,  name:'Huddersfield Examiner',handle:'@ExaminerHD',    type:'media',    sentiment:'concerned', content:'Reports of a medical emergency on the #StarlightWalk route near Fenay Bridge, Huddersfield. Emergency services understood to be en route. @StarlightWalkHX are you able to comment?',fired:false},
+  {id:'sw_6',delayMins:7,  name:'Priya Sharma',       handle:'@priyasharma_nw',   type:'public',   sentiment:'concerned', content:'My husband is on the 10 mile route and not answering his phone. He was near Croftflat Road. Has anyone seen him? Really worried. #StarlightWalk',fired:false},
+  {id:'sw_7',delayMins:9,  name:'Local Watch Account',handle:'@northfield_watch', type:'rumour',   sentiment:'panic',     content:'BREAKING: Man in his 60s has died on the Starlight Walk near Fenay Bridge. Ambulance took 25 minutes to arrive. Questions need answering. #StarlightWalk #Huddersfield',fired:false},
+  {id:'sw_8',delayMins:11, name:'Cllr James Walsh',   handle:'@cllr_james_w',     type:'public',   sentiment:'concerned', content:'I\'m hearing very concerning reports from the #StarlightWalk tonight. @StarlightWalkHX I need an urgent update. What is happening and are all participants safe?',fired:false},
+  {id:'sw_9',delayMins:13, name:'Gary Bolton',        handle:'@garybolton_fc',    type:'public',   sentiment:'positive',  content:'Just want to say the marshals and first aiders on the Starlight Walk are doing an incredible job in a really difficult situation. So professional. #StarlightWalk',fired:false},
+  {id:'sw_10',delayMins:15,name:'Huddersfield Examiner',handle:'@ExaminerHD',    type:'media',    sentiment:'concerned', content:'UPDATE: We understand a man has been taken to hospital by ambulance from the #StarlightWalk route near Croftflat Road. Event organisers yet to issue a statement. We are attempting to contact next of kin.',fired:false},
+  {id:'sw_11',delayMins:17,name:'Worried Parent',     handle:'@worried_mum_uk',   type:'public',   sentiment:'panic',     content:'My mum is on the Starlight Walk and I can\'t reach her. She\'s 68 and was on the 10 mile route. Is there a number to call?? @StarlightWalkHX PLEASE respond #StarlightWalk',fired:false},
+  {id:'sw_12',delayMins:20,name:'Viral Rumour Account',handle:'@sharethis_now',  type:'rumour',   sentiment:'panic',     content:'⚠️ SHARE THIS: Eyewitnesses say the Starlight Walk had NO defibrillator on the route. Man collapsed and had to wait 30 minutes for help. Is this true? @StarlightWalkHX #StarlightWalk',fired:false},
+  {id:'sw_13',delayMins:23,name:'Sceptical Resident', handle:'@not_buying_it_uk', type:'rumour',   sentiment:'concerned', content:'Why is the Starlight Walk still going ahead after someone has just collapsed and potentially died? Who is making these decisions? #StarlightWalk #accountability',fired:false},
+
+  // ── PHASE 2: VEHICLE INCIDENT (H+30 to H+65) ──
+  {id:'sw_14',delayMins:30,name:'Owen Hughes',        handle:'@owen_h_wales',     type:'public',   sentiment:'panic',     content:'OH MY GOD a car has just hit people at the Aspley bridge. People screaming everywhere. Someone call 999 NOW. #StarlightWalk #Aspley',fired:false},
+  {id:'sw_15',delayMins:31,name:'Amelia Cross',       handle:'@ameliacross_uk',   type:'public',   sentiment:'panic',     content:'There\'s been an accident at Aspley on the Starlight Walk. People are running back toward the stadium. We don\'t know what\'s happened. So scared. #StarlightWalk',fired:false},
+  {id:'sw_16',delayMins:32,name:'Angry Local',        handle:'@fed_up_with_it',   type:'rumour',   sentiment:'panic',     content:'PEOPLE ARE BEING ATTACKED at the Starlight Walk at Aspley. This is a DELIBERATE ATTACK. Get your family out NOW. #StarlightWalk #Huddersfield #terror',fired:false},
+  {id:'sw_17',delayMins:33,name:'Liam Carr',          handle:'@liamcarr92',       type:'public',   sentiment:'panic',     content:'Absolute chaos at Aspley. At least 6 people on the ground. Nobody seems to be in charge. Where is event control?? @StarlightWalkHX #StarlightWalk',fired:false},
+  {id:'sw_18',delayMins:35,name:'Conspiracy Account', handle:'@truth_seeker_uk',  type:'rumour',   sentiment:'panic',     content:'Multiple sources telling me the Starlight Walk attack at Aspley was deliberate. Police are on scene but NOT confirming anything. Why the silence? SHARE #StarlightWalk',fired:false},
+  {id:'sw_19',delayMins:36,name:'Kevin Park',         handle:'@kev_park_',        type:'public',   sentiment:'concerned', content:'I\'m at the stadium. Distressed walkers arriving saying something has happened at Aspley. Families turning up asking where their relatives are. #StarlightWalk',fired:false},
+  {id:'sw_20',delayMins:37,name:'Huddersfield Examiner',handle:'@ExaminerHD',    type:'media',    sentiment:'concerned', content:'BREAKING: Emergency services responding to serious incident at Aspley during the #StarlightWalk. Multiple casualties reported. Police, ambulance and fire on scene. We are seeking a statement from organisers and @WestYorksPolice',fired:false},
+  {id:'sw_21',delayMins:39,name:'West Yorkshire Police',handle:'@WestYorksPolice',type:'official',sentiment:'neutral',   content:'We are responding to an RTC involving a vehicle and pedestrians at Aspley, Huddersfield. Please avoid the area and follow directions from officers and event marshals. Further updates to follow.',fired:false},
+  {id:'sw_22',delayMins:41,name:'Sandra Yates',       handle:'@sandra_yates',     type:'public',   sentiment:'concerned', content:'I\'m a parish councillor and I have constituents at the Starlight Walk tonight. I need to know what is happening at Aspley. @StarlightWalkHX @WestYorksPolice is anyone issuing guidance? #StarlightWalk',fired:false},
+  {id:'sw_23',delayMins:43,name:'Darren Stubbs',      handle:'@darrenstubbs',     type:'public',   sentiment:'concerned', content:'Still on the 6 mile route. Marshals have stopped us but nobody is telling us anything. Been standing here 15 mins in the cold. What is happening? @StarlightWalkHX #StarlightWalk',fired:false},
+  {id:'sw_24',delayMins:45,name:'Viral Rumour Account',handle:'@sharethis_now',  type:'rumour',   sentiment:'panic',     content:'CONFIRMED by multiple witnesses: deliberate attack on charity walkers at Aspley. At least one dead, several seriously injured. Why is @StarlightWalkHX not shutting the walk down immediately?? #StarlightWalk',fired:false},
+  {id:'sw_25',delayMins:48,name:'BBC Yorkshire',      handle:'@BBCYorkshire',     type:'media',    sentiment:'concerned', content:'We are following reports of a serious incident during the Starlight Walk charity event in Huddersfield. Emergency services are on scene. We will update as more information becomes available. #StarlightWalk',fired:false},
+  {id:'sw_26',delayMins:50,name:'Cllr James Walsh',   handle:'@cllr_james_w',     type:'public',   sentiment:'panic',     content:'This is now a very serious situation. Two incidents in one night at the Starlight Walk. @StarlightWalkHX must suspend the event immediately and account for all participants. I am contacting the Chief Executive now. #StarlightWalk',fired:false},
+  {id:'sw_27',delayMins:53,name:'Fiona MacLeod',      handle:'@fionamacleod_',    type:'public',   sentiment:'concerned', content:'I\'m a nurse and I was near Aspley when the incident happened. The first aiders were amazing and got there very quickly. Please don\'t believe the rumours about no response. #StarlightWalk',fired:false},
+  {id:'sw_28',delayMins:56,name:'Huddersfield Examiner',handle:'@ExaminerHD',    type:'media',    sentiment:'concerned', content:'UPDATE #StarlightWalk: West Yorkshire Police confirm vehicle RTC at Aspley. One person seriously injured, several walking wounded. Police not treating as terror-related at this stage. Organisers still to issue statement.',fired:false},
+
+  // ── RECOVERY PHASE (H+65+) ──
+  {id:'sw_29',delayMins:65,name:'Helpful Neighbour',  handle:'@helping_out_local', type:'public',  sentiment:'positive',  content:'Setting up tea and blankets outside the stadium for Starlight Walk participants who\'ve had a difficult night. Come and get warm. You\'re all amazing for doing this. #StarlightWalk 💛',fired:false},
+  {id:'sw_30',delayMins:67,name:'Huddersfield Examiner',handle:'@ExaminerHD',    type:'media',    sentiment:'concerned', content:'COMMENT REQUEST: A local journalist is asking why the Starlight Walk route at Aspley had vehicle access. @StarlightWalkHX are you able to respond before our deadline at 06:00? #StarlightWalk',fired:false},
+  {id:'sw_31',delayMins:70,name:'Worried Parent',     handle:'@worried_mum_uk',   type:'public',   sentiment:'positive',  content:'Update: my mum is safe and back at the stadium. Thank you to all the marshals and volunteers who helped tonight. You are incredible. #StarlightWalk 💛',fired:false},
 ];
 function renderPresets(){
   const el=document.getElementById('preset-list'); if(!el) return;
