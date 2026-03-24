@@ -681,24 +681,55 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
 
       <div class="card">
-        <div class="card-title">⏱ Auto Script</div>
-
-        <!-- Run controls -->
+        <div class="card-title">⏱ Auto Script — Phase 1: Cardiac Arrest</div>
         <div class="script-run-box">
           <div class="script-status-row">
             <span class="script-status-label">Status</span>
-            <span class="script-status-val" id="script-status-val">Not started</span>
+            <span class="script-status-val" id="s1-status-val">Not started</span>
           </div>
-          <div class="script-next" id="script-next-label">No script loaded</div>
+          <div class="script-next" id="s1-next-label">Load script to begin</div>
           <div class="script-ctrl-row">
-            <button class="btn-script start" id="btn-script-start">▶ Start</button>
-            <button class="btn-script" id="btn-script-skip" disabled>⏭ Skip next</button>
-            <button class="btn-script stop" id="btn-script-stop" disabled>■ Stop</button>
+            <button class="btn-script start" id="btn-s1-start">▶ Start</button>
+            <button class="btn-script" id="btn-s1-fire-next" disabled style="border-color:var(--warning);color:var(--warning);">⚡ Fire next now</button>
+            <button class="btn-script stop" id="btn-s1-stop" disabled>■ Stop</button>
           </div>
         </div>
+        <div class="script-timeline" id="s1-timeline">
+          <div class="script-empty">Loading Phase 1 script…</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px;">
+          <button class="btn-primary" id="btn-s1-reset" style="background:var(--surface2);color:var(--muted);">↺ Reset Phase 1</button>
+          <button class="btn-primary btn-danger" id="btn-s1-clear">🗑 Clear</button>
+        </div>
+      </div>
 
+      <div class="card">
+        <div class="card-title">⏱ Auto Script — Phase 2: Vehicle Incident</div>
+        <div class="script-run-box">
+          <div class="script-status-row">
+            <span class="script-status-label">Status</span>
+            <span class="script-status-val" id="s2-status-val">Not started</span>
+          </div>
+          <div class="script-next" id="s2-next-label">Load script to begin</div>
+          <div class="script-ctrl-row">
+            <button class="btn-script start" id="btn-s2-start">▶ Start</button>
+            <button class="btn-script" id="btn-s2-fire-next" disabled style="border-color:var(--warning);color:var(--warning);">⚡ Fire next now</button>
+            <button class="btn-script stop" id="btn-s2-stop" disabled>■ Stop</button>
+          </div>
+        </div>
+        <div class="script-timeline" id="s2-timeline">
+          <div class="script-empty">Loading Phase 2 script…</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px;">
+          <button class="btn-primary" id="btn-s2-reset" style="background:var(--surface2);color:var(--muted);">↺ Reset Phase 2</button>
+          <button class="btn-primary btn-danger" id="btn-s2-clear">🗑 Clear</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⏱ Custom Script</div>
         <!-- Add inject form -->
-        <div class="script-add-form">
+        <div class="script-add-form" style="display:flex;">
           <div class="script-add-title">Add Scheduled Inject</div>
           <div class="script-add-row">
             <div class="form-row">
@@ -728,6 +759,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           </div>
           <div class="script-add-row">
             <div class="form-row" style="flex:1;">
+              <label>Phase</label>
+              <select id="sc-phase">
+                <option value="1">Phase 1</option>
+                <option value="2">Phase 2</option>
+              </select>
+            </div>
+            <div class="form-row" style="flex:1;">
               <label>Type</label>
               <select id="sc-type">
                 <option value="public">Public</option>
@@ -750,17 +788,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <label>Image URL (optional)</label>
             <input type="text" id="sc-image" placeholder="https://…/photo.jpg"/>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-            <button class="btn-primary" id="btn-sc-add">＋ Add to Script</button>
-            <button class="btn-primary" id="btn-sc-clear" style="background:var(--surface2);color:var(--text);">🗑 Clear Script</button>
-          </div>
+          <button class="btn-primary" id="btn-sc-add">＋ Add to Script</button>
         </div>
-
-        <!-- Timeline -->
-        <div class="script-timeline" id="script-timeline">
-          <div class="script-empty">No injects scheduled yet</div>
-        </div>
-
       </div>
 
       <div class="card">
@@ -997,14 +1026,16 @@ function launch(mode, plat){
   // Auto-load Starlight Walk script if no script exists yet
   if(mode==='admin'){
     import('https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js').then(({get})=>{
-      get(ref(db,'script')).then(snap=>{
+      get(ref(db,'script1')).then(snap=>{
         if(!snap.exists()){
-          set(ref(db,'script'), STARLIGHT_SCRIPT);
-          // Pre-load trending topics
+          // Split Starlight script into Phase 1 (sw_1–sw_13) and Phase 2 (sw_14–sw_31)
+          const phase1 = STARLIGHT_SCRIPT.filter(i=>parseInt(i.id.replace('sw_',''))<=13);
+          const phase2 = STARLIGHT_SCRIPT.filter(i=>parseInt(i.id.replace('sw_',''))>=14);
+          set(ref(db,'script1'), phase1);
+          set(ref(db,'script2'), phase2);
           push(ref(db,'trending'),{tag:'#StarlightWalk',count:8420,ts:Date.now()});
           push(ref(db,'trending'),{tag:'#Huddersfield',count:3210,ts:Date.now()-1000});
           push(ref(db,'trending'),{tag:'#StarlightWalkHX',count:1840,ts:Date.now()-2000});
-          // Pre-load news article into Firebase for use during exercise
           set(ref(db,'savedArticle'),{
             pub:'Huddersfield Examiner',
             headline:'Emergency services respond to serious incidents at Starlight Walk charity event',
@@ -1014,7 +1045,7 @@ function launch(mode, plat){
             image:'',
             reporter:'James Whitmore, Senior Reporter',
           });
-          addLog('Starlight Walk scenario auto-loaded — script, trending topics and news article ready');
+          addLog('Starlight Walk scenario auto-loaded — Phase 1 (13 injects) and Phase 2 (18 injects) ready');
         }
       }).catch(()=>{});
     }).catch(()=>{});
@@ -1600,6 +1631,9 @@ document.getElementById('btn-reset').addEventListener('click',()=>{
   set(ref(db,'posts'),null); set(ref(db,'banner'),{active:false}); set(ref(db,'trending'),null);
   set(ref(db,'incident'),{status:'offline',name:'',ts:Date.now()});
   set(ref(db,'replies'),null);
+  set(ref(db,'script1'),null); set(ref(db,'script2'),null);
+  phases[1].items=[]; phases[2].items=[];
+  stopPhase(1); stopPhase(2);
   repliesData=[]; unreadCount=0; renderRepliesMonitor();
   Object.keys(rendered).forEach(k=>rendered[k].clear());
   storySet.clear(); Object.keys(newsStore).forEach(k=>delete newsStore[k]);
@@ -1926,273 +1960,190 @@ function renderSuggested(){
 // UTILITIES
 // ─────────────────────────────────────────────
 // ─────────────────────────────────────────────
-// AUTO SCRIPT BUILDER
+// TWO-PHASE AUTO SCRIPT SYSTEM
+// Phase 1 starts at 00:13, Phase 2 starts at 22:18
 // ─────────────────────────────────────────────
-let scriptItems = [];       // array of {id, delayMins, name, handle, type, sentiment, content, image, photo, fired}
-let scriptRunning = false;
-let scriptStartTime = null; // Date.now() when started
-let scriptTimer = null;     // setInterval handle
-let scriptNextIdx = null;   // index of next unfired item
+const PHASE_START = { 1:{h:0,m:13}, 2:{h:22,m:18} };
 
-function saveScript(){
-  try{ set(ref(db,'script'), scriptItems.length ? scriptItems : null); } catch(e){}
+function phaseClockTime(phase, delayMins){
+  const base=PHASE_START[phase]||{h:0,m:0};
+  const total=base.h*60+base.m+delayMins;
+  const hh=Math.floor(total/60)%24, mm=total%60;
+  return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
 }
 
+const phases = { 1:{items:[],running:false,startTime:null,timer:null}, 2:{items:[],running:false,startTime:null,timer:null} };
+
+function savePhaseScript(ph){ try{set(ref(db,'script'+ph),phases[ph].items.length?phases[ph].items:null);}catch(e){} }
+
 function loadScriptFromFirebase(){
-  onValue(ref(db,'script'), snap=>{
-    const data = snap.val();
-    if(data && Array.isArray(data)){
-      scriptItems = data;
-    } else if(data && typeof data === 'object'){
-      scriptItems = Object.values(data);
-    } else {
-      scriptItems = [];
-    }
-    renderTimeline();
-    populatePersonaSelect();
+  [1,2].forEach(ph=>{
+    onValue(ref(db,'script'+ph),snap=>{
+      const data=snap.val();
+      if(data&&Array.isArray(data)) phases[ph].items=data;
+      else if(data&&typeof data==='object') phases[ph].items=Object.values(data);
+      else phases[ph].items=[];
+      renderTimeline(ph);
+      if(ph===1) populatePersonaSelect();
+    });
   });
 }
 
 function populatePersonaSelect(){
-  const sel = document.getElementById('sc-persona'); if(!sel) return;
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">— type manually below —</option>';
-  personas.forEach((p,i)=>{
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = p.name + ' (' + p.handle + ')';
-    sel.appendChild(opt);
-  });
-  sel.value = cur;
+  const sel=document.getElementById('sc-persona'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— type manually below —</option>';
+  personas.forEach((p,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=p.name+' ('+p.handle+')'; sel.appendChild(o); });
+  sel.value=cur;
 }
 
-// When persona selected from dropdown, fill name/handle/type
-document.getElementById('sc-persona').addEventListener('change', function(){
-  const idx = parseInt(this.value);
-  if(isNaN(idx)) return;
-  const p = personas[idx];
-  if(!p) return;
-  document.getElementById('sc-name').value = p.name;
-  document.getElementById('sc-handle').value = p.handle;
-  document.getElementById('sc-type').value = p.type||'public';
+document.getElementById('sc-persona').addEventListener('change',function(){
+  const idx=parseInt(this.value); if(isNaN(idx)) return;
+  const p=personas[idx]; if(!p) return;
+  document.getElementById('sc-name').value=p.name;
+  document.getElementById('sc-handle').value=p.handle;
+  document.getElementById('sc-type').value=p.type||'public';
 });
 
-document.getElementById('btn-sc-add').addEventListener('click', ()=>{
-  const delayMins = parseFloat(document.getElementById('sc-delay').value);
-  const name = document.getElementById('sc-name').value.trim();
-  const handle = document.getElementById('sc-handle').value.trim();
-  const content = document.getElementById('sc-content').value.trim();
-  const type = document.getElementById('sc-type').value;
-  const sentiment = document.getElementById('sc-sentiment').value;
-  const image = document.getElementById('sc-image').value.trim()||undefined;
-  // get photo from persona if selected
-  const pIdx = parseInt(document.getElementById('sc-persona').value);
-  const photo = !isNaN(pIdx) && personas[pIdx] ? personas[pIdx].photo||undefined : undefined;
-
-  if(isNaN(delayMins)||delayMins<0){ alert('Enter a valid delay in minutes (0 or more)'); return; }
-  if(!name||!content){ alert('Name and content are required'); return; }
-
-  const item = {
-    id: Date.now()+'_'+Math.random().toString(36).slice(2,6),
-    delayMins,
-    name, handle:handle||'@user', type, sentiment, content,
-    image, photo, fired:false
-  };
-  scriptItems.push(item);
-  scriptItems.sort((a,b)=>a.delayMins-b.delayMins);
-  saveScript();
-  renderTimeline();
-  addLog('Script inject added: +'+delayMins+'min — '+name);
-
-  // clear form
-  document.getElementById('sc-delay').value='';
-  document.getElementById('sc-content').value='';
-  document.getElementById('sc-image').value='';
+document.getElementById('btn-sc-add').addEventListener('click',()=>{
+  const delayMins=parseFloat(document.getElementById('sc-delay').value);
+  const name=document.getElementById('sc-name').value.trim();
+  const handle=document.getElementById('sc-handle').value.trim();
+  const content=document.getElementById('sc-content').value.trim();
+  const type=document.getElementById('sc-type').value;
+  const sentiment=document.getElementById('sc-sentiment').value;
+  const image=document.getElementById('sc-image').value.trim()||undefined;
+  const ph=parseInt(document.getElementById('sc-phase').value)||1;
+  const pIdx=parseInt(document.getElementById('sc-persona').value);
+  const photo=!isNaN(pIdx)&&personas[pIdx]?personas[pIdx].photo||undefined:undefined;
+  if(isNaN(delayMins)||delayMins<0){alert('Enter a valid delay in minutes');return;}
+  if(!name||!content){alert('Name and content are required');return;}
+  const item={id:Date.now()+'_'+Math.random().toString(36).slice(2,6),delayMins,name,handle:handle||'@user',type,sentiment,content,image,photo,fired:false};
+  phases[ph].items.push(item);
+  phases[ph].items.sort((a,b)=>a.delayMins-b.delayMins);
+  savePhaseScript(ph); renderTimeline(ph);
+  addLog('Added to Phase '+ph+': +'+delayMins+'min — '+name);
+  ['sc-delay','sc-content','sc-image'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('sc-persona').value='';
   document.getElementById('sc-name').value='';
   document.getElementById('sc-handle').value='';
 });
 
-document.getElementById('btn-sc-clear').addEventListener('click', ()=>{
-  if(!confirm('Clear the entire script? This cannot be undone.')) return;
-  scriptItems=[];
-  saveScript();
-  stopScript();
-  renderTimeline();
-  addLog('Script cleared');
-});
-
-document.getElementById('btn-script-start').addEventListener('click', ()=>{
-  const unfired = scriptItems.filter(i=>!i.fired);
-  if(unfired.length===0){ alert('No injects in the script — add some first.'); return; }
-  scriptRunning=true;
-  scriptStartTime=Date.now();
-  // reset fired flags
-  scriptItems.forEach(i=>i.fired=false);
-  saveScript();
-  updateScriptUI();
-  startScriptTick();
-  addLog('Auto script STARTED');
-});
-
-document.getElementById('btn-script-skip').addEventListener('click', ()=>{
-  if(!scriptRunning) return;
-  const next = scriptItems.find(i=>!i.fired);
-  if(!next) return;
-  next.fired=true;
-  saveScript();
-  renderTimeline();
-  addLog('Skipped inject: '+next.name+' (+'+next.delayMins+'min)');
-  updateNextLabel();
-});
-
-document.getElementById('btn-script-stop').addEventListener('click', ()=>{
-  stopScript();
-  addLog('Auto script STOPPED');
-});
-
-function stopScript(){
-  scriptRunning=false;
-  scriptStartTime=null;
-  if(scriptTimer){ clearInterval(scriptTimer); scriptTimer=null; }
-  updateScriptUI();
-}
-
-function startScriptTick(){
-  if(scriptTimer) clearInterval(scriptTimer);
-  scriptTimer = setInterval(scriptTick, 1000);
-  scriptTick(); // fire immediately
-}
-
-function scriptTick(){
-  if(!scriptRunning||!scriptStartTime) return;
-  const elapsedMs = Date.now()-scriptStartTime;
-  const elapsedMins = elapsedMs/60000;
-
-  // Fire any items whose time has come
-  let fired=false;
-  scriptItems.forEach(item=>{
-    if(!item.fired && item.delayMins <= elapsedMins){
-      item.fired=true;
-      fired=true;
-      fireScriptItem(item);
-    }
+[1,2].forEach(ph=>{
+  document.getElementById('btn-s'+ph+'-start').addEventListener('click',()=>{
+    if(!phases[ph].items.filter(i=>!i.fired).length){alert('No injects in Phase '+ph);return;}
+    phases[ph].running=true; phases[ph].startTime=Date.now();
+    phases[ph].items.forEach(i=>i.fired=false);
+    savePhaseScript(ph); updatePhaseUI(ph); startPhaseTick(ph);
+    addLog('Phase '+ph+' STARTED');
   });
-  if(fired){ saveScript(); renderTimeline(); }
+  document.getElementById('btn-s'+ph+'-fire-next').addEventListener('click',()=>{
+    const next=phases[ph].items.find(i=>!i.fired); if(!next) return;
+    next.fired=true; fireScriptItem(next,ph); savePhaseScript(ph); renderTimeline(ph); updateNextLabel(ph);
+    addLog('Phase '+ph+' — fired next: '+next.name);
+  });
+  document.getElementById('btn-s'+ph+'-stop').addEventListener('click',()=>{ stopPhase(ph); addLog('Phase '+ph+' STOPPED'); });
+  document.getElementById('btn-s'+ph+'-reset').addEventListener('click',()=>{
+    stopPhase(ph); phases[ph].items.forEach(i=>i.fired=false); savePhaseScript(ph); renderTimeline(ph);
+    addLog('Phase '+ph+' reset');
+  });
+  document.getElementById('btn-s'+ph+'-clear').addEventListener('click',()=>{
+    if(!confirm('Clear Phase '+ph+' script?')) return;
+    phases[ph].items=[]; stopPhase(ph); savePhaseScript(ph); renderTimeline(ph);
+    addLog('Phase '+ph+' cleared');
+  });
+});
 
-  // Check if all done
-  const allFired = scriptItems.every(i=>i.fired);
-  if(allFired){
-    stopScript();
-    document.getElementById('script-status-val').textContent='Complete ✓';
-    document.getElementById('script-next-label').textContent='All injects have fired.';
-    addLog('Auto script complete — all injects fired');
-    return;
+function stopPhase(ph){
+  phases[ph].running=false; phases[ph].startTime=null;
+  if(phases[ph].timer){clearInterval(phases[ph].timer);phases[ph].timer=null;}
+  updatePhaseUI(ph);
+}
+function startPhaseTick(ph){
+  if(phases[ph].timer) clearInterval(phases[ph].timer);
+  phases[ph].timer=setInterval(()=>phaseTick(ph),1000); phaseTick(ph);
+}
+function phaseTick(ph){
+  if(!phases[ph].running||!phases[ph].startTime) return;
+  const elapsedMins=(Date.now()-phases[ph].startTime)/60000;
+  let fired=false;
+  phases[ph].items.forEach(item=>{
+    if(!item.fired&&item.delayMins<=elapsedMins){item.fired=true;fired=true;fireScriptItem(item,ph);}
+  });
+  if(fired){savePhaseScript(ph);renderTimeline(ph);}
+  if(phases[ph].items.every(i=>i.fired)){
+    stopPhase(ph);
+    document.getElementById('s'+ph+'-status-val').textContent='Complete ✓';
+    document.getElementById('s'+ph+'-next-label').textContent='All injects fired.';
+    addLog('Phase '+ph+' complete'); return;
   }
-
-  updateNextLabel(elapsedMins);
+  updateNextLabel(ph,elapsedMins);
 }
-
-function fireScriptItem(item){
-  push(ref(db,'posts'),clean({
-    name:item.name, handle:item.handle, content:item.content,
-    type:item.type, sentiment:item.sentiment,
-    replies:ri(0,150), time:ts(), ts:Date.now(),
-    image:item.image, photo:item.photo
-  }));
-  addLog('Auto-fired: '+item.name+' — "'+item.content.slice(0,40)+'"');
+function fireScriptItem(item,ph){
+  const clockTime=phaseClockTime(ph||1,item.delayMins);
+  push(ref(db,'posts'),clean({name:item.name,handle:item.handle,content:item.content,type:item.type,sentiment:item.sentiment,replies:ri(0,150),time:clockTime,ts:Date.now(),image:item.image,photo:item.photo}));
+  addLog('Auto-fired (Ph'+ph+'): '+item.name+' ['+clockTime+']');
 }
-
-function updateNextLabel(elapsedMins){
-  const label = document.getElementById('script-next-label'); if(!label) return;
-  const next = scriptItems.find(i=>!i.fired);
-  if(!next){ label.textContent='All injects fired.'; return; }
-  if(elapsedMins===undefined){
-    label.innerHTML='Next: <strong>'+next.name+'</strong> at +'+next.delayMins+'min';
-    return;
-  }
-  const remainingSecs = Math.max(0, Math.round((next.delayMins - elapsedMins)*60));
-  const mm = Math.floor(remainingSecs/60);
-  const ss = String(remainingSecs%60).padStart(2,'0');
-  const countdown = mm>0 ? mm+'m '+ss+'s' : ss+'s';
-  label.innerHTML='Next: <strong>'+next.name+'</strong> — <span class="countdown">'+countdown+'</span>';
+function updateNextLabel(ph,elapsedMins){
+  const label=document.getElementById('s'+ph+'-next-label'); if(!label) return;
+  const next=phases[ph].items.find(i=>!i.fired);
+  if(!next){label.textContent='All injects fired.';return;}
+  const clockTime=phaseClockTime(ph,next.delayMins);
+  if(elapsedMins===undefined){label.innerHTML='Next: <strong>'+next.name+'</strong> at '+clockTime;return;}
+  const remainingSecs=Math.max(0,Math.round((next.delayMins-elapsedMins)*60));
+  const mm=Math.floor(remainingSecs/60),ss=String(remainingSecs%60).padStart(2,'0');
+  const countdown=mm>0?mm+'m '+ss+'s':ss+'s';
+  label.innerHTML='Next: <strong>'+next.name+'</strong> ('+clockTime+') — <span class="countdown">'+countdown+'</span>';
 }
-
-function updateScriptUI(){
-  const statusVal = document.getElementById('script-status-val');
-  const startBtn = document.getElementById('btn-script-start');
-  const skipBtn = document.getElementById('btn-script-skip');
-  const stopBtn = document.getElementById('btn-script-stop');
-  if(!statusVal) return;
-  if(scriptRunning){
-    statusVal.textContent='Running'; statusVal.className='script-status-val running';
-    startBtn.disabled=true; skipBtn.disabled=false; stopBtn.disabled=false;
+function updatePhaseUI(ph){
+  const sv=document.getElementById('s'+ph+'-status-val');
+  const sb=document.getElementById('btn-s'+ph+'-start');
+  const fb=document.getElementById('btn-s'+ph+'-fire-next');
+  const xb=document.getElementById('btn-s'+ph+'-stop');
+  if(!sv) return;
+  if(phases[ph].running){
+    sv.textContent='Running'; sv.className='script-status-val running';
+    sb.disabled=true; fb.disabled=false; xb.disabled=false;
   } else {
-    statusVal.textContent='Not started'; statusVal.className='script-status-val';
-    startBtn.disabled=false; skipBtn.disabled=true; stopBtn.disabled=true;
-    document.getElementById('script-next-label').textContent = scriptItems.length ? scriptItems.filter(i=>!i.fired).length+' inject(s) ready' : 'No script loaded';
+    const rem=phases[ph].items.filter(i=>!i.fired).length;
+    sv.textContent='Not started'; sv.className='script-status-val';
+    sb.disabled=false; fb.disabled=true; xb.disabled=true;
+    const lbl=document.getElementById('s'+ph+'-next-label');
+    if(lbl) lbl.textContent=rem+' inject'+(rem!==1?'s':'')+' ready';
   }
 }
-
-function renderTimeline(){
-  const container = document.getElementById('script-timeline'); if(!container) return;
-  if(scriptItems.length===0){
-    container.innerHTML='<div class="script-empty">No injects scheduled yet</div>';
-    updateScriptUI(); return;
-  }
-  const nextItem = scriptItems.find(i=>!i.fired);
+function renderTimeline(ph){
+  const container=document.getElementById('s'+ph+'-timeline'); if(!container) return;
+  const items=phases[ph].items;
+  if(!items.length){container.innerHTML='<div class="script-empty">No injects scheduled</div>';updatePhaseUI(ph);return;}
+  const nextItem=items.find(i=>!i.fired);
   container.innerHTML='';
-  scriptItems.forEach((item, idx)=>{
-    const isNext = item===nextItem && scriptRunning;
-    const div=document.createElement('div');
-    div.className='script-item'+(item.fired?' fired':'')+(isNext?' next':'');
-    div.dataset.id=item.id;
-
+  items.forEach((item,idx)=>{
+    const isNext=item===nextItem&&phases[ph].running;
+    const clockTime=phaseClockTime(ph,item.delayMins);
     const typeCls={official:'sib-official',media:'sib-media',public:'sib-public',rumour:'sib-rumour'}[item.type]||'sib-public';
     const sentCls={panic:'sib-panic',concerned:'sib-concerned',positive:'sib-positive'}[item.sentiment]||'';
-
-    div.innerHTML=`
-      <div class="script-item-delay">+${item.delayMins}m</div>
+    const div=document.createElement('div');
+    div.className='script-item'+(item.fired?' fired':'')+(isNext?' next':'');
+    div.innerHTML=`<div class="script-item-delay">${clockTime}</div>
       <div class="script-item-body">
         <div class="script-item-who">${item.name} <span style="color:var(--muted);font-weight:400;">${item.handle}</span></div>
         <div class="script-item-content">${item.content}</div>
         <div class="script-item-badges">
           <span class="script-item-badge ${typeCls}">${item.type}</span>
           ${sentCls?`<span class="script-item-badge ${sentCls}">${item.sentiment}</span>`:''}
-          ${item.image?`<span class="script-item-badge" style="background:rgba(122,127,150,0.12);color:var(--muted);">📷 image</span>`:''}
           ${item.fired?`<span class="script-item-badge" style="background:rgba(0,186,124,0.1);color:var(--success);">✓ fired</span>`:''}
         </div>
       </div>
       <div class="script-item-actions">
-        ${!item.fired&&scriptRunning?`<button class="script-item-btn" data-fire="${item.id}" title="Fire now">▶</button>`:''}
-        <button class="script-item-btn" data-del="${item.id}" title="Delete">✕</button>
+        ${!item.fired?`<button class="script-item-btn" data-fire="${idx}" title="Fire now">▶</button>`:''}
+        <button class="script-item-btn" data-del="${idx}" title="Delete">✕</button>
       </div>`;
-
+    div.querySelector('[data-fire]')?.addEventListener('click',e=>{e.stopPropagation();item.fired=true;fireScriptItem(item,ph);savePhaseScript(ph);renderTimeline(ph);});
+    div.querySelector('[data-del]').addEventListener('click',e=>{e.stopPropagation();phases[ph].items.splice(idx,1);savePhaseScript(ph);renderTimeline(ph);addLog('Phase '+ph+' inject removed');});
     container.appendChild(div);
   });
-
-  // wire fire-now and delete buttons
-  container.querySelectorAll('[data-fire]').forEach(btn=>{
-    btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      const id=btn.dataset.fire;
-      const item=scriptItems.find(i=>i.id===id); if(!item) return;
-      item.fired=true;
-      fireScriptItem(item);
-      saveScript(); renderTimeline();
-    });
-  });
-  container.querySelectorAll('[data-del]').forEach(btn=>{
-    btn.addEventListener('click', e=>{
-      e.stopPropagation();
-      const id=btn.dataset.del;
-      scriptItems=scriptItems.filter(i=>i.id!==id);
-      saveScript(); renderTimeline();
-      addLog('Script inject removed');
-    });
-  });
-
-  updateScriptUI();
+  updatePhaseUI(ph);
 }
 
 // ─────────────────────────────────────────────
