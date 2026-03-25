@@ -1121,7 +1121,7 @@ function switchPlat(p){
     if(b) b.className='plat-btn'+(pl===p?' active-'+pl:'');
   });
   // Start exercise clock on first platform open (pre-incident at 21:45)
-  if(!exClockInterval) startExClock(21*60+45);
+  if(!exClockInterval) startExClock(21*60+45, 'Starlight Walk — Underway', 'pre');
   document.getElementById('ex-clock-bar').classList.add('visible');
 }
 document.getElementById('btn-plat-x').addEventListener('click',()=>switchPlat('x'));
@@ -1666,6 +1666,7 @@ document.getElementById('btn-reset').addEventListener('click',()=>{
   set(ref(db,'incident'),{status:'offline',name:'',ts:Date.now()});
   set(ref(db,'replies'),null);
   set(ref(db,'script1'),null); set(ref(db,'script2'),null);
+  set(ref(db,'clock'),null);
   phases[1].items=[]; phases[2].items=[];
   stopPhase(1); stopPhase(2);
   repliesData=[]; unreadCount=0; renderRepliesMonitor();
@@ -2402,64 +2403,71 @@ function updateClock(){
 }
 
 // ─────────────────────────────────────────────
-// EXERCISE CLOCK
-// Shows fictional scenario time on participant feeds
-// Phase 1 (cardiac arrest) scenario time starts at 21:45 (pre-incident build-up)
-// Phase 2 (vehicle incident) scenario time starts at 22:18
-// The clock counts forward in real time from when it is started
+// EXERCISE CLOCK — Firebase synced across all devices
+// Admin writes clock state to Firebase when starting a phase
+// All participant devices read from Firebase and stay in sync
 // ─────────────────────────────────────────────
 let exClockInterval = null;
-let exClockStartReal = null;   // real Date.now() when clock started
-let exClockStartMins = 21*60+45; // scenario start time in minutes (21:45)
 
-function startExClock(scenarioStartMins){
-  exClockStartReal = Date.now();
-  exClockStartMins = scenarioStartMins;
+function startExClock(scenarioStartMins, label, phase){
+  // Write clock state to Firebase so all devices sync
+  set(ref(db,'clock'),{
+    scenarioStartMins,
+    realStartTs: Date.now(),
+    label: label||'Starlight Walk — Exercise',
+    phase: phase||'pre'
+  });
+}
+
+function applyClockState(state){
+  if(!state){ return; }
   if(exClockInterval) clearInterval(exClockInterval);
-  exClockInterval = setInterval(tickExClock, 1000);
-  tickExClock();
+  exClockInterval = setInterval(()=>tickExClock(state), 1000);
+  tickExClock(state);
   document.getElementById('ex-clock-bar').classList.add('visible');
 }
 
-function tickExClock(){
-  if(!exClockStartReal) return;
-  const elapsedMins = (Date.now()-exClockStartReal)/60000;
-  const totalMins = exClockStartMins + elapsedMins;
+function tickExClock(state){
+  const elapsedMins = (Date.now() - state.realStartTs) / 60000;
+  const totalMins = state.scenarioStartMins + elapsedMins;
   const hh = Math.floor(totalMins/60)%24;
   const mm = Math.floor(totalMins%60);
   const ss = Math.floor((totalMins*60)%60);
   const timeStr = String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
   const el=document.getElementById('ex-clock-time'); if(el) el.textContent=timeStr;
-
-  // Update phase pill based on scenario time
   const pill=document.getElementById('ex-clock-phase-pill');
   const scenario=document.getElementById('ex-clock-scenario');
+  if(scenario) scenario.textContent=state.label||'Starlight Walk — Exercise';
   if(pill){
-    if(totalMins < 22*60+18){
-      pill.className='ex-clock-phase pre'; pill.textContent='Pre-incident';
-      if(scenario) scenario.textContent='Starlight Walk — Underway';
-    } else if(totalMins < 23*60+30){
-      pill.className='ex-clock-phase live'; pill.textContent='● LIVE INCIDENT';
-      if(scenario) scenario.textContent='Vehicle RTC — Aspley Bridge';
-    } else {
-      pill.className='ex-clock-phase recovery'; pill.textContent='Recovery';
-      if(scenario) scenario.textContent='Starlight Walk — Recovery Phase';
-    }
+    const p=state.phase||'pre';
+    if(p==='phase1'){ pill.className='ex-clock-phase live'; pill.textContent='● LIVE INCIDENT'; }
+    else if(p==='phase2'){ pill.className='ex-clock-phase live'; pill.textContent='● LIVE INCIDENT'; }
+    else if(p==='recovery'){ pill.className='ex-clock-phase recovery'; pill.textContent='Recovery'; }
+    else { pill.className='ex-clock-phase pre'; pill.textContent='Pre-incident'; }
   }
 }
 
-// Hook the clock into the phase start buttons
-// Phase 1 starts at 00:13 scenario time
+// Listen for clock state from Firebase — works on ALL devices including participants
+onValue(ref(db,'clock'),snap=>{
+  const state=snap.val();
+  if(state) applyClockState(state);
+});
+
+// Also show clock bar whenever a participant opens any feed
+// (starts pre-incident clock if admin hasn't started one yet)
+const _origSwitchPlatClock = switchPlat;
+// Patch: show clock bar on feed open
+document.getElementById('btn-plat-x').addEventListener('click',()=>document.getElementById('ex-clock-bar').classList.add('visible'));
+document.getElementById('btn-plat-fb').addEventListener('click',()=>document.getElementById('ex-clock-bar').classList.add('visible'));
+document.getElementById('btn-plat-ig').addEventListener('click',()=>document.getElementById('ex-clock-bar').classList.add('visible'));
+
+// Hook phase start buttons to write clock state to Firebase
 document.getElementById('btn-s1-start').addEventListener('click',()=>{
-  startExClock(0*60+13);
-  document.getElementById('ex-clock-phase-pill').className='ex-clock-phase live';
-  document.getElementById('ex-clock-phase-pill').textContent='● LIVE INCIDENT';
-  document.getElementById('ex-clock-scenario').textContent='Cardiac Arrest — Croftflat Road';
+  startExClock(0*60+13, 'Cardiac Arrest — Croftflat Road', 'phase1');
 },true);
 
-// Phase 2 starts at 22:18 scenario time
 document.getElementById('btn-s2-start').addEventListener('click',()=>{
-  startExClock(22*60+18);
+  startExClock(22*60+18, 'Vehicle RTC — Aspley Bridge', 'phase2');
 },true);
 </script>
 </body>
