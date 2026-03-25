@@ -2119,7 +2119,13 @@ function phaseTick(ph){
 }
 function fireScriptItem(item,ph){
   const clockTime=phaseClockTime(ph||1,item.delayMins);
-  push(ref(db,'posts'),clean({name:item.name,handle:item.handle,content:item.content,type:item.type,sentiment:item.sentiment,replies:ri(0,150),time:clockTime,ts:Date.now(),image:item.image,photo:item.photo}));
+  // Look up photo from persona roster if not already on the item
+  let photo=item.photo;
+  if(!photo){
+    const match=personas.find(p=>p.name===item.name || p.handle===item.handle);
+    if(match && match.photo) photo=match.photo;
+  }
+  push(ref(db,'posts'),clean({name:item.name,handle:item.handle,content:item.content,type:item.type,sentiment:item.sentiment,replies:ri(0,150),time:clockTime,ts:Date.now(),image:item.image,photo:photo}));
   addLog('Auto-fired (Ph'+ph+'): '+item.name+' ['+clockTime+']');
 }
 function updateNextLabel(ph,elapsedMins){
