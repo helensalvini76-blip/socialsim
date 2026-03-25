@@ -1118,6 +1118,9 @@ function switchPlat(p){
     const b=document.getElementById('btn-plat-'+pl);
     if(b) b.className='plat-btn'+(pl===p?' active-'+pl:'');
   });
+  // Start exercise clock on first platform open (pre-incident at 21:45)
+  if(!exClockInterval) startExClock(21*60+45);
+  document.getElementById('ex-clock-bar').classList.add('visible');
 }
 document.getElementById('btn-plat-x').addEventListener('click',()=>switchPlat('x'));
 document.getElementById('btn-plat-fb').addEventListener('click',()=>switchPlat('fb'));
@@ -2444,31 +2447,18 @@ function tickExClock(){
 }
 
 // Hook the clock into the phase start buttons
-// Phase 1 starts at 21:45 (pre-incident already underway), incident at 00:13
-// Phase 2 starts at 22:18
+// Phase 1 starts at 00:13 scenario time
 document.getElementById('btn-s1-start').addEventListener('click',()=>{
-  // Start clock at 00:13 scenario time
   startExClock(0*60+13);
   document.getElementById('ex-clock-phase-pill').className='ex-clock-phase live';
   document.getElementById('ex-clock-phase-pill').textContent='● LIVE INCIDENT';
   document.getElementById('ex-clock-scenario').textContent='Cardiac Arrest — Croftflat Road';
-},true); // capture phase so this fires before existing listener
-
-document.getElementById('btn-s2-start').addEventListener('click',()=>{
-  // Start clock at 22:18 scenario time
-  startExClock(22*60+18);
 },true);
 
-// Also show the clock bar whenever any participant feed is opened
-const origSwitchPlat = switchPlat;
-function switchPlat(p){
-  origSwitchPlat(p);
-  // Show clock if not already running (starts at 21:45 pre-incident)
-  if(!exClockInterval){
-    startExClock(21*60+45);
-  }
-  document.getElementById('ex-clock-bar').classList.add('visible');
-}
+// Phase 2 starts at 22:18 scenario time
+document.getElementById('btn-s2-start').addEventListener('click',()=>{
+  startExClock(22*60+18);
+},true);
 </script>
 </body>
 </html>
