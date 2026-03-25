@@ -6,9 +6,9 @@
 <title>MediaSim — Live Exercise Platform</title>
 <style>
 :root{
-  --bg:#0f1117;--surface:#1a1d27;--surface2:#222536;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-  --text:#e8eaf0;--muted:#7a7f96;
+  --bg:#1e2133;--surface:#272b3d;--surface2:#2f3449;
+  --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.18);
+  --text:#eceef5;--muted:#8b91aa;
   --accent:#1d9bf0;--accent2:#0f6eb5;
   --danger:#f4212e;--warning:#ffd400;--success:#00ba7c;
   --font:'Segoe UI',system-ui,-apple-system,sans-serif;
@@ -18,9 +18,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
 /* MODE SCREEN */
 #mode-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:0;padding:0;overflow:hidden;}
-#mode-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0d1a 0%,#0f1a2e 40%,#1a0d2e 70%,#0d1a1a 100%);pointer-events:none;z-index:0;}
+#mode-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a1f3a 0%,#1e2d4a 40%,#2a1f3d 70%,#1a2a2a 100%);pointer-events:none;z-index:0;}
 #mode-bubbles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
-.mbubble{position:absolute;border-radius:50%;opacity:0.12;animation:mfloat linear infinite;pointer-events:none;}
+.mbubble{position:absolute;border-radius:50%;opacity:0.18;animation:mfloat linear infinite;pointer-events:none;}
 @keyframes mfloat{0%{transform:translateY(100vh) scale(0.8);}100%{transform:translateY(-200px) scale(1.2);}}
 #mode-content{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;gap:32px;padding:24px;width:100%;max-width:900px;}
 .mode-cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%;position:relative;z-index:10;}
@@ -44,14 +44,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .mode-card{width:195px;border-radius:20px;padding:24px 18px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-align:center;position:relative;z-index:10;}
 .mode-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;pointer-events:none;}
 .mode-card:hover{transform:translateY(-4px);}
-.mc-x{background:linear-gradient(145deg,#0d1f35,#0a1825);border:1px solid rgba(29,155,240,0.3);box-shadow:0 4px 24px rgba(29,155,240,0.1);}
-.mc-x:hover{box-shadow:0 8px 32px rgba(29,155,240,0.25);border-color:rgba(29,155,240,0.6);}
-.mc-fb{background:linear-gradient(145deg,#0d1a35,#0a1428);border:1px solid rgba(24,119,242,0.3);box-shadow:0 4px 24px rgba(24,119,242,0.1);}
-.mc-fb:hover{box-shadow:0 8px 32px rgba(24,119,242,0.25);border-color:rgba(24,119,242,0.6);}
-.mc-ig{background:linear-gradient(145deg,#2d0d1f,#1a0a14);border:1px solid rgba(225,48,108,0.3);box-shadow:0 4px 24px rgba(225,48,108,0.1);}
-.mc-ig:hover{box-shadow:0 8px 32px rgba(225,48,108,0.25);border-color:rgba(225,48,108,0.6);}
-.mc-admin{background:linear-gradient(145deg,#1a1a2e,#12121f);border:1px solid rgba(255,255,255,0.12);box-shadow:0 4px 24px rgba(0,0,0,0.3);}
-.mc-admin:hover{box-shadow:0 8px 32px rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.25);}
+.mc-x{background:linear-gradient(145deg,#1a2e45,#162235);border:1px solid rgba(29,155,240,0.35);box-shadow:0 4px 24px rgba(29,155,240,0.12);}
+.mc-x:hover{box-shadow:0 8px 32px rgba(29,155,240,0.28);border-color:rgba(29,155,240,0.65);}
+.mc-fb{background:linear-gradient(145deg,#1a2845,#162038);border:1px solid rgba(24,119,242,0.35);box-shadow:0 4px 24px rgba(24,119,242,0.12);}
+.mc-fb:hover{box-shadow:0 8px 32px rgba(24,119,242,0.28);border-color:rgba(24,119,242,0.65);}
+.mc-ig{background:linear-gradient(145deg,#3d1a2e,#2a1020);border:1px solid rgba(225,48,108,0.35);box-shadow:0 4px 24px rgba(225,48,108,0.12);}
+.mc-ig:hover{box-shadow:0 8px 32px rgba(225,48,108,0.28);border-color:rgba(225,48,108,0.65);}
+.mc-admin{background:linear-gradient(145deg,#272b3d,#1e2133);border:1px solid rgba(255,255,255,0.15);box-shadow:0 4px 24px rgba(0,0,0,0.2);}
+.mc-admin:hover{box-shadow:0 8px 32px rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.28);}
 .mode-card-plat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;}
 .mcpi-x{background:linear-gradient(135deg,#1d9bf0,#0f6eb5);}
 .mcpi-fb{background:linear-gradient(135deg,#1877f2,#0d5cb8);}
@@ -495,7 +495,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ig-comment-item-time{font-size:10px;color:#888;margin-top:1px;}
 
 /* EXERCISE CLOCK BAR */
-#ex-clock-bar{display:none;background:linear-gradient(90deg,#0a1628,#0d1f35);border-bottom:1px solid rgba(29,155,240,0.25);padding:6px 14px;flex-shrink:0;align-items:center;justify-content:space-between;gap:12px;}
+#ex-clock-bar{display:none;background:linear-gradient(90deg,#1e2d4a,#243558);border-bottom:1px solid rgba(29,155,240,0.25);padding:6px 14px;flex-shrink:0;align-items:center;justify-content:space-between;gap:12px;}
 #ex-clock-bar.visible{display:flex;}
 .ex-clock-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);}
 .ex-clock-time{font-size:22px;font-weight:900;letter-spacing:0.05em;color:#fff;font-variant-numeric:tabular-nums;line-height:1;}
