@@ -1059,7 +1059,9 @@ function launch(mode, plat){
           // Push pre-incident atmosphere posts with staggered timestamps
           PREINCIDENT_POSTS.forEach((post,i)=>{
             setTimeout(()=>{
-              push(ref(db,'posts'),clean({...post,replies:ri(10,300),ts:Date.now()-(PREINCIDENT_POSTS.length-i)*120000}));
+              const match=personas.find(p=>p.name===post.name||p.handle===post.handle);
+              const photo=match&&match.photo?match.photo:undefined;
+              push(ref(db,'posts'),clean({...post,photo,replies:ri(10,300),ts:Date.now()-(PREINCIDENT_POSTS.length-i)*120000}));
             },i*400);
           });
           push(ref(db,'trending'),{tag:'#StarlightWalk',count:8420,ts:Date.now()});
