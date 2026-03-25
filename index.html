@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SocialSim — Live Exercise Platform</title>
+<title>MediaSim — Live Exercise Platform</title>
 <style>
 :root{
   --bg:#0f1117;--surface:#1a1d27;--surface2:#222536;
@@ -494,7 +494,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .ig-comment-item-text{font-size:13px;color:#e0e0e0;word-break:break-word;}
 .ig-comment-item-time{font-size:10px;color:#888;margin-top:1px;}
 
-/* THREADED INLINE REPLIES ON X */
+/* EXERCISE CLOCK BAR */
+#ex-clock-bar{display:none;background:linear-gradient(90deg,#0a1628,#0d1f35);border-bottom:1px solid rgba(29,155,240,0.25);padding:6px 14px;flex-shrink:0;align-items:center;justify-content:space-between;gap:12px;}
+#ex-clock-bar.visible{display:flex;}
+.ex-clock-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+.ex-clock-time{font-size:22px;font-weight:900;letter-spacing:0.05em;color:#fff;font-variant-numeric:tabular-nums;line-height:1;}
+.ex-clock-phase{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:0.06em;text-transform:uppercase;}
+.ex-clock-phase.pre{background:rgba(0,186,124,0.15);color:#00ba7c;}
+.ex-clock-phase.live{background:rgba(244,33,46,0.15);color:#f4212e;animation:blink 1s infinite;}
+.ex-clock-phase.recovery{background:rgba(255,212,0,0.15);color:#ffd400;}
+.ex-clock-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.ex-clock-scenario{font-size:10px;color:rgba(255,255,255,0.5);max-width:180px;text-align:right;line-height:1.3;}
 .x-replies{border-top:1px solid var(--border);}
 .x-reply{display:flex;gap:8px;padding:9px 13px;border-bottom:1px solid var(--border);animation:fadeIn 0.25s ease;}
 .x-reply:last-child{border-bottom:none;}
@@ -527,8 +537,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
         <div class="mode-brand-icon mbi-fb">👥</div>
         <div class="mode-brand-icon mbi-ig">📸</div>
       </div>
-      <div class="mode-title">SocialSim</div>
-      <div class="mode-sub">Emergency Exercise Social Media Simulator</div>
+      <div class="mode-title">MediaSim</div>
+      <div class="mode-sub">Media Simulator</div>
     </div>
     <div class="mode-cards">
       <div class="mode-card mc-x" id="card-x">
@@ -836,6 +846,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 
   <!-- FEED AREA -->
   <div id="feed-area" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+    <!-- EXERCISE CLOCK BAR -->
+    <div id="ex-clock-bar">
+      <div>
+        <div class="ex-clock-label">Exercise Time</div>
+        <div class="ex-clock-time" id="ex-clock-time">21:45</div>
+      </div>
+      <div id="ex-clock-phase-pill" class="ex-clock-phase pre">Pre-incident</div>
+      <div class="ex-clock-right">
+        <div class="ex-clock-label">Scenario</div>
+        <div class="ex-clock-scenario" id="ex-clock-scenario">Starlight Walk — Exercise</div>
+      </div>
+    </div>
+
     <div class="platform-switcher" id="plat-switcher" style="display:none;">
       <button class="back-home-btn" id="btn-back-home">← Home</button>
       <button class="plat-btn" id="btn-plat-x">💬 &nbsp;X / Twitter</button>
@@ -1033,6 +1056,12 @@ function launch(mode, plat){
           const phase2 = STARLIGHT_SCRIPT.filter(i=>parseInt(i.id.replace('sw_',''))>=14);
           set(ref(db,'script1'), phase1);
           set(ref(db,'script2'), phase2);
+          // Push pre-incident atmosphere posts with staggered timestamps
+          PREINCIDENT_POSTS.forEach((post,i)=>{
+            setTimeout(()=>{
+              push(ref(db,'posts'),clean({...post,replies:ri(10,300),ts:Date.now()-(PREINCIDENT_POSTS.length-i)*120000}));
+            },i*400);
+          });
           push(ref(db,'trending'),{tag:'#StarlightWalk',count:8420,ts:Date.now()});
           push(ref(db,'trending'),{tag:'#Huddersfield',count:3210,ts:Date.now()-1000});
           push(ref(db,'trending'),{tag:'#StarlightWalkHX',count:1840,ts:Date.now()-2000});
@@ -1893,6 +1922,26 @@ const PRESETS=[
 // ── STARLIGHT WALK AUTO SCRIPT ──
 // Pre-loaded inject timeline for the full exercise.
 // Loads into Firebase 'script' node on first admin login if no script exists.
+// Pre-incident atmosphere posts — pushed immediately on first admin login
+// to give participants a live-feeling feed before the incidents begin
+const PREINCIDENT_POSTS = [
+  {name:'Starlight Walk',        handle:'@StarlightWalkHX',    type:'official', sentiment:'positive',  content:'🌟 The Starlight Walk is officially underway! Over 1,000 walkers setting off tonight from John Smith\'s Stadium. Thank you all for your incredible support for the hospice. #StarlightWalk #Huddersfield 💛',                                       time:'21:45'},
+  {name:'Karen Whitfield',       handle:'@karen_whitfield',    type:'public',   sentiment:'positive',  content:'So proud to be doing the #StarlightWalk again this year! Third time for me. Beautiful night for it 🌙 Raising money for an amazing cause. #Huddersfield 💛',                                                                                        time:'21:47'},
+  {name:'Tom Ashworth',          handle:'@tom_ashworth',       type:'public',   sentiment:'positive',  content:'Here we go!! 10 miles tonight for the hospice 💪 Wish me luck everyone! Already regretting not training more 😂 #StarlightWalk #Huddersfield',                                                                                                    time:'21:49'},
+  {name:'Becky Turner',          handle:'@beckyturner81',       type:'public',   sentiment:'positive',  content:'The atmosphere at the start of the #StarlightWalk is incredible. Thousands of people, glow sticks everywhere, fundraising for the hospice. This is what community looks like 💛 #Huddersfield',                                                   time:'21:50'},
+  {name:'Huddersfield Examiner', handle:'@ExaminerHD',         type:'media',    sentiment:'positive',  content:'The annual #StarlightWalk is underway tonight in Huddersfield with over 1,000 participants taking on routes of 3, 6 and 10 miles. Walkers set off from John Smith\'s Stadium at 22:00. Full coverage on our website.',                           time:'21:52'},
+  {name:'Gary Bolton',           handle:'@garybolton_fc',      type:'public',   sentiment:'positive',  content:'Marshalling at the Starlight Walk again this year. Brilliant turnout. Stay safe everyone and keep to the route! 🌟 #StarlightWalk',                                                                                                                time:'21:53'},
+  {name:'Amelia Cross',          handle:'@ameliacross_uk',     type:'public',   sentiment:'positive',  content:'Team Cross ready to go for the #StarlightWalk! 🌟 Me and the kids doing the 3 mile route tonight. So excited. #hospice #Huddersfield 💛',                                                                                                        time:'21:55'},
+  {name:'Cllr James Walsh',      handle:'@cllr_james_w',       type:'public',   sentiment:'positive',  content:'Delighted to see so many local people taking part in the #StarlightWalk tonight. A tremendous show of community spirit and fundraising for the hospice. Well done to all involved. #Huddersfield',                                                time:'21:56'},
+  {name:'Starlight Walk',        handle:'@StarlightWalkHX',    type:'official', sentiment:'positive',  content:'We\'re off! 🌟 Walkers now setting out on the 3, 6 and 10 mile routes. Stay with your group, follow the marshals and enjoy the night! Event control is at John Smith\'s Stadium if you need us. #StarlightWalk',                               time:'22:00'},
+  {name:'Ryan Stephens',         handle:'@ryanstephens_',      type:'public',   sentiment:'positive',  content:'Never done anything like this before. The 6 mile #StarlightWalk starts tonight and I am absolutely not prepared 😂 But it\'s for the hospice so let\'s go!! #Huddersfield 🌙',                                                                   time:'22:02'},
+  {name:'Fiona MacLeod',         handle:'@fionamacleod_',      type:'public',   sentiment:'positive',  content:'As a community nurse I see what the hospice does every day. Walking tonight feels like the least I can do. #StarlightWalk 💛 Proud to be part of this community.',                                                                               time:'22:04'},
+  {name:'Liam Carr',             handle:'@liamcarr92',         type:'public',   sentiment:'positive',  content:'Driving past the Starlight Walk route and there are hundreds of people out there! Glow sticks as far as the eye can see 🌟 Amazing. #StarlightWalk #Huddersfield',                                                                               time:'22:06'},
+  {name:'BBC Yorkshire',         handle:'@BBCYorkshire',       type:'media',    sentiment:'positive',  content:'The Starlight Walk charity event is underway in Huddersfield tonight. Around 1,000 walkers are taking part across three routes in aid of the local hospice. @StarlightWalkHX #StarlightWalk',                                                    time:'22:08'},
+  {name:'Sandra Yates',          handle:'@sandra_yates',       type:'public',   sentiment:'positive',  content:'Lovely to see the community come out for the #StarlightWalk tonight. I\'m at the finish line ready to cheer everyone in! Come on Huddersfield 💛 #hospice',                                                                                      time:'22:10'},
+  {name:'Darren Stubbs',         handle:'@darrenstubbs',       type:'public',   sentiment:'positive',  content:'Road is buzzing with walkers on the #StarlightWalk route. Fair play to every single one of them. Makes you proud of this town. #Huddersfield 🌟',                                                                                                time:'22:12'},
+];
+
 const STARLIGHT_SCRIPT = [
   // ── PHASE 1: CARDIAC ARREST (H+00 to H+25) ──
   {id:'sw_1',delayMins:0,  name:'Karen Whitfield',   handle:'@karen_whitfield',  type:'public',   sentiment:'concerned', content:'Something\'s happened on the #StarlightWalk near Fenay Bridge. Lots of people stopped in the road. Marshals running. Hope everyone is alright 🙏',fired:false},
@@ -2345,6 +2394,80 @@ function addLog(msg){
 function updateClock(){
   const el=document.getElementById('admin-clock');
   if(el) el.textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ─────────────────────────────────────────────
+// EXERCISE CLOCK
+// Shows fictional scenario time on participant feeds
+// Phase 1 (cardiac arrest) scenario time starts at 21:45 (pre-incident build-up)
+// Phase 2 (vehicle incident) scenario time starts at 22:18
+// The clock counts forward in real time from when it is started
+// ─────────────────────────────────────────────
+let exClockInterval = null;
+let exClockStartReal = null;   // real Date.now() when clock started
+let exClockStartMins = 21*60+45; // scenario start time in minutes (21:45)
+
+function startExClock(scenarioStartMins){
+  exClockStartReal = Date.now();
+  exClockStartMins = scenarioStartMins;
+  if(exClockInterval) clearInterval(exClockInterval);
+  exClockInterval = setInterval(tickExClock, 1000);
+  tickExClock();
+  document.getElementById('ex-clock-bar').classList.add('visible');
+}
+
+function tickExClock(){
+  if(!exClockStartReal) return;
+  const elapsedMins = (Date.now()-exClockStartReal)/60000;
+  const totalMins = exClockStartMins + elapsedMins;
+  const hh = Math.floor(totalMins/60)%24;
+  const mm = Math.floor(totalMins%60);
+  const ss = Math.floor((totalMins*60)%60);
+  const timeStr = String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+  const el=document.getElementById('ex-clock-time'); if(el) el.textContent=timeStr;
+
+  // Update phase pill based on scenario time
+  const pill=document.getElementById('ex-clock-phase-pill');
+  const scenario=document.getElementById('ex-clock-scenario');
+  if(pill){
+    if(totalMins < 22*60+18){
+      pill.className='ex-clock-phase pre'; pill.textContent='Pre-incident';
+      if(scenario) scenario.textContent='Starlight Walk — Underway';
+    } else if(totalMins < 23*60+30){
+      pill.className='ex-clock-phase live'; pill.textContent='● LIVE INCIDENT';
+      if(scenario) scenario.textContent='Vehicle RTC — Aspley Bridge';
+    } else {
+      pill.className='ex-clock-phase recovery'; pill.textContent='Recovery';
+      if(scenario) scenario.textContent='Starlight Walk — Recovery Phase';
+    }
+  }
+}
+
+// Hook the clock into the phase start buttons
+// Phase 1 starts at 21:45 (pre-incident already underway), incident at 00:13
+// Phase 2 starts at 22:18
+document.getElementById('btn-s1-start').addEventListener('click',()=>{
+  // Start clock at 00:13 scenario time
+  startExClock(0*60+13);
+  document.getElementById('ex-clock-phase-pill').className='ex-clock-phase live';
+  document.getElementById('ex-clock-phase-pill').textContent='● LIVE INCIDENT';
+  document.getElementById('ex-clock-scenario').textContent='Cardiac Arrest — Croftflat Road';
+},true); // capture phase so this fires before existing listener
+
+document.getElementById('btn-s2-start').addEventListener('click',()=>{
+  // Start clock at 22:18 scenario time
+  startExClock(22*60+18);
+},true);
+
+// Also show the clock bar whenever any participant feed is opened
+const origSwitchPlat = switchPlat;
+function switchPlat(p){
+  origSwitchPlat(p);
+  // Show clock if not already running (starts at 21:45 pre-incident)
+  if(!exClockInterval){
+    startExClock(21*60+45);
+  }
+  document.getElementById('ex-clock-bar').classList.add('visible');
 }
 </script>
 </body>
