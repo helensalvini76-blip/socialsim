@@ -433,6 +433,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .replies-empty{font-size:12px;color:var(--muted);text-align:center;padding:16px 0;}
 .replies-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;background:var(--danger);border-radius:8px;font-size:9px;font-weight:700;color:#fff;padding:0 4px;margin-left:6px;}
 
+/* ── JOIN CODE OVERLAY ── */
+#join-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3500;display:none;align-items:center;justify-content:center;padding:20px;}
+#join-overlay.open{display:flex;}
+.join-modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:28px 24px;width:100%;max-width:340px;text-align:center;}
+.join-modal-icon{font-size:36px;margin-bottom:12px;}
+.join-modal-title{font-size:18px;font-weight:800;margin-bottom:6px;}
+.join-modal-sub{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+.join-modal-plat{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;margin-bottom:16px;letter-spacing:0.06em;text-transform:uppercase;}
+.join-plat-x{background:rgba(29,155,240,0.15);color:var(--accent);}
+.join-plat-fb{background:rgba(24,119,242,0.15);color:#5b9cf6;}
+.join-plat-ig{background:rgba(225,48,108,0.15);color:#e1306c;}
+.join-code-input{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-size:20px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;text-align:center;padding:12px;outline:none;margin-bottom:8px;font-family:var(--font);}
+.join-code-input:focus{border-color:var(--accent);}
+.join-code-input::placeholder{font-size:13px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);}
+.join-error{font-size:12px;color:var(--danger);margin-bottom:10px;display:none;}
+.join-btn{width:100%;padding:11px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;}
+.join-btn:hover{background:var(--accent2);}
+.join-cancel{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:4px;}
+.join-cancel:hover{color:var(--text);}
+
 /* ── NAME PICKER OVERLAY ── */
 #name-picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;}
 #name-picker-overlay.open{display:flex;}
@@ -638,6 +658,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
             <input type="text" id="new-p-photo" placeholder="Photo URL (optional — thispersondoesnotexist.com)"/>
           </div>
           <button class="btn-add-persona" id="btn-save-persona">Save Persona</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔑 Participant Join Code</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Participants enter this code to access the live feeds. Share it on the day.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <input type="text" id="join-code-admin" placeholder="e.g. STARLIGHT24" style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:16px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:8px 12px;outline:none;font-family:var(--font);"/>
+          <button class="btn-primary" id="btn-save-join-code" style="white-space:nowrap;">💾 Save</button>
+        </div>
+        <div id="join-code-display" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;display:none;">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Current join code</div>
+          <div id="join-code-current" style="font-size:24px;font-weight:900;letter-spacing:0.15em;color:var(--accent);"></div>
         </div>
       </div>
 
@@ -979,6 +1012,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
   </div>
 </div>
 
+<!-- JOIN CODE OVERLAY -->
+<div id="join-overlay">
+  <div class="join-modal">
+    <div class="join-modal-icon" id="join-icon">💬</div>
+    <div class="join-modal-title" id="join-title">Join the exercise</div>
+    <div id="join-plat-pill" class="join-modal-plat join-plat-x">X / Twitter</div>
+    <div class="join-modal-sub">Enter the join code provided by your exercise facilitator to access the live feed.</div>
+    <input type="text" class="join-code-input" id="join-code-input" placeholder="Enter join code" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <div class="join-error" id="join-error">Incorrect code — please try again</div>
+    <button class="join-btn" id="join-btn">Join Exercise →</button>
+    <button class="join-cancel" id="join-cancel">← Back</button>
+  </div>
+</div>
+
 <!-- NAME PICKER OVERLAY -->
 <div id="name-picker-overlay">
   <div class="name-picker-modal">
@@ -999,6 +1046,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDezHiKveTfhlEuJtnFrVjYbj3tglZZ-pE",
@@ -1012,6 +1060,8 @@ const firebaseConfig = {
 const ADMIN_PW = "exercise2024";
 const fbApp = initializeApp(firebaseConfig);
 const db = getDatabase(fbApp);
+const auth = getAuth(fbApp);
+let isAuthenticated = false; // set to true once signed in anonymously
 
 // ── helpers ──
 const AVC=['#1d9bf0','#00ba7c','#f4212e','#ffd400','#7856ff','#ff6b35','#17bf63','#e0245e','#1877f2','#e1306c'];
@@ -1086,24 +1136,119 @@ function launch(mode, plat){
   addLog('Connected to live exercise feed');
 }
 
-document.getElementById('card-x').addEventListener('click',()=>{
-  document.getElementById('conn-msg').style.display='flex';
-  setTimeout(()=>launch('feed','x'),700);
+// ─────────────────────────────────────────────
+// JOIN CODE SYSTEM
+// ─────────────────────────────────────────────
+let pendingPlatform = null; // which platform the participant clicked
+let joinCodeValue = '';     // current join code stored in Firebase
+
+// Load join code from Firebase and keep in sync
+onValue(ref(db,'joinCode'), snap=>{
+  const val = snap.val();
+  joinCodeValue = val ? String(val).toUpperCase().trim() : '';
+  // Update admin display
+  const display = document.getElementById('join-code-display');
+  const current = document.getElementById('join-code-current');
+  if(display && current){
+    if(joinCodeValue){ display.style.display='block'; current.textContent=joinCodeValue; }
+    else display.style.display='none';
+  }
 });
-document.getElementById('card-fb').addEventListener('click',()=>{
-  document.getElementById('conn-msg').style.display='flex';
-  setTimeout(()=>launch('feed','fb'),700);
+
+// Admin: save join code to Firebase
+document.getElementById('btn-save-join-code').addEventListener('click',()=>{
+  const val = document.getElementById('join-code-admin').value.trim().toUpperCase();
+  if(!val){ alert('Please enter a join code'); return; }
+  set(ref(db,'joinCode'), val);
+  document.getElementById('join-code-admin').value='';
+  addLog('Join code updated: '+val);
 });
-document.getElementById('card-ig').addEventListener('click',()=>{
-  document.getElementById('conn-msg').style.display='flex';
-  setTimeout(()=>launch('feed','ig'),700);
+
+// Platform card clicks — show join code overlay instead of launching directly
+const platMeta = {
+  x:  {icon:'💬', label:'X / Twitter',  pill:'join-plat-x'},
+  fb: {icon:'👥', label:'Facebook',      pill:'join-plat-fb'},
+  ig: {icon:'📸', label:'Instagram',     pill:'join-plat-ig'},
+};
+
+function showJoinOverlay(plat){
+  pendingPlatform = plat;
+  const meta = platMeta[plat];
+  document.getElementById('join-icon').textContent = meta.icon;
+  document.getElementById('join-title').textContent = 'Join the exercise';
+  const pill = document.getElementById('join-plat-pill');
+  pill.textContent = meta.label;
+  pill.className = 'join-modal-plat ' + meta.pill;
+  document.getElementById('join-code-input').value = '';
+  document.getElementById('join-error').style.display = 'none';
+  document.getElementById('join-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('join-code-input').focus(), 100);
+}
+
+document.getElementById('card-x').addEventListener('click',()=>showJoinOverlay('x'));
+document.getElementById('card-fb').addEventListener('click',()=>showJoinOverlay('fb'));
+document.getElementById('card-ig').addEventListener('click',()=>showJoinOverlay('ig'));
+
+document.getElementById('join-cancel').addEventListener('click',()=>{
+  document.getElementById('join-overlay').classList.remove('open');
+  pendingPlatform = null;
 });
+
+document.getElementById('join-overlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('join-overlay')){
+    document.getElementById('join-overlay').classList.remove('open');
+    pendingPlatform=null;
+  }
+});
+
+function attemptJoin(){
+  const entered = document.getElementById('join-code-input').value.trim().toUpperCase();
+  const errorEl = document.getElementById('join-error');
+
+  if(!joinCodeValue){
+    // No join code set — allow open access (useful during setup/testing)
+    proceedToFeed();
+    return;
+  }
+  if(entered !== joinCodeValue){
+    errorEl.style.display='block';
+    document.getElementById('join-code-input').value='';
+    document.getElementById('join-code-input').focus();
+    return;
+  }
+  errorEl.style.display='none';
+  proceedToFeed();
+}
+
+function proceedToFeed(){
+  document.getElementById('join-overlay').classList.remove('open');
+  document.getElementById('conn-msg').style.display='flex';
+  // Sign in anonymously with Firebase Auth to get write access
+  signInAnonymously(auth).then(()=>{
+    isAuthenticated = true;
+    setTimeout(()=>launch('feed', pendingPlatform||'x'), 500);
+  }).catch(err=>{
+    console.error('Auth error:', err);
+    // Fall back to launching anyway if auth fails
+    setTimeout(()=>launch('feed', pendingPlatform||'x'), 500);
+  });
+}
+
+document.getElementById('join-btn').addEventListener('click', attemptJoin);
+document.getElementById('join-code-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter') attemptJoin();
+});
+
 function tryAdmin(){
   const pw=document.getElementById('pw-input').value;
   if(pw===ADMIN_PW){
     document.getElementById('pw-error').style.display='none';
     document.getElementById('conn-msg').style.display='flex';
-    setTimeout(()=>launch('admin','x'),700);
+    // Admin signs in anonymously too to get write access
+    signInAnonymously(auth).then(()=>{
+      isAuthenticated = true;
+      setTimeout(()=>launch('admin','x'),700);
+    }).catch(()=>setTimeout(()=>launch('admin','x'),700));
   } else {
     document.getElementById('pw-error').style.display='block';
   }
@@ -1667,6 +1812,7 @@ document.getElementById('btn-reset').addEventListener('click',()=>{
   set(ref(db,'replies'),null);
   set(ref(db,'script1'),null); set(ref(db,'script2'),null);
   set(ref(db,'clock'),null);
+  // Note: joinCode is intentionally NOT cleared on reset so it persists between phases
   phases[1].items=[]; phases[2].items=[];
   stopPhase(1); stopPhase(2);
   repliesData=[]; unreadCount=0; renderRepliesMonitor();
