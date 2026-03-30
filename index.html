@@ -739,7 +739,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
           <button class="btn-primary" id="btn-push-news">📰 Push Article</button>
           <button class="btn-primary" id="btn-preview-news" style="background:var(--surface2);color:var(--text);">👁 Preview</button>
         </div>
-        <button class="btn-primary" id="btn-load-saved-article" style="background:var(--surface2);color:var(--accent);margin-top:7px;border:1px solid var(--accent);">⬇ Load Starlight Walk Article</button>
+        <button class="btn-primary" id="btn-load-saved-article" style="background:var(--surface2);color:var(--accent);margin-top:7px;border:1px solid var(--accent);">⬇ Load Incident Article</button>
       </div>
 
       <div class="card">
@@ -1858,7 +1858,7 @@ document.getElementById('btn-load-saved-article').addEventListener('click',()=>{
       document.getElementById('news-quote').value=a.quote||'';
       document.getElementById('news-img').value=a.image||'';
       document.getElementById('news-reporter').value=a.reporter||'';
-      addLog('Starlight Walk news article loaded');
+      addLog('Incident article loaded into news form');
     });
   }).catch(()=>addLog('Could not load saved article'));
 });
