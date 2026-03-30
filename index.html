@@ -2245,6 +2245,66 @@ const STARLIGHT_SCRIPT = [
   {id:'sw_68',delayMins:67,name:'Nikki Rhodes',          handle:'@nikkiRhodes_',      type:'public',  sentiment:'positive',  content:'My sister is absolutely fine — she was on a different part of the route. I feel so relieved and so stupid for the panic. Huge respect to all the emergency services and volunteers. #StarlightWalk 💛',fired:false},
   {id:'sw_69',delayMins:70,name:'Viral Rumour Account',  handle:'@sharethis_now',     type:'rumour',  sentiment:'concerned', content:'So it wasn\'t a terror attack and there were no fatalities. I shared some things tonight based on what I was hearing. I\'m deleting those posts. Sorry. #StarlightWalk',fired:false},
 ];
+
+// ─────────────────────────────────────────────
+// KIRKWOOD HOSPICE — FIRE & EVACUATION SCENARIO
+// Night fire at The Kirkwood, Huddersfield
+// 16 inpatient beds, minimal night staff, all patients in bed
+// ─────────────────────────────────────────────
+
+const KIRKWOOD_PREINCIDENT = [
+  {name:'The Kirkwood',          handle:'@TheKirkwoodHos',    type:'official', sentiment:'positive',  content:'A huge thank you to everyone who donated to The Kirkwood this week. Your generosity means we can keep providing free care to patients and families across Kirklees. 💛 #TheKirkwood #Huddersfield',                                       time:'20:15'},
+  {name:'Fiona MacLeod',         handle:'@fionamacleod_',     type:'public',   sentiment:'positive',  content:'Just finished a late shift at The Kirkwood. These patients and families are the most incredible people. Proud to work alongside such a dedicated team every single day 💛 #TheKirkwood',                                                   time:'20:42'},
+  {name:'Karen Whitfield',       handle:'@karen_whitfield',   type:'public',   sentiment:'positive',  content:'My dad spent his final weeks at The Kirkwood. I can never repay what they did for our family. Just made another donation — please give if you can. #TheKirkwood #Huddersfield 💛',                                                        time:'21:10'},
+  {name:'Huddersfield Examiner', handle:'@ExaminerHD',        type:'media',    sentiment:'positive',  content:'The Kirkwood Hospice in Huddersfield has been named among the top-rated end of life care providers in Yorkshire for the third consecutive year. Full story on our website. #TheKirkwood #Huddersfield',                                   time:'21:35'},
+  {name:'Sandra Yates',          handle:'@sandra_yates',      type:'public',   sentiment:'positive',  content:'Attending a volunteer fundraising meeting for The Kirkwood tonight. Such a wonderful organisation. If you\'ve never volunteered before, do get in touch — they always need help 💛 #TheKirkwood',                                          time:'21:58'},
+  {name:'Cllr James Walsh',      handle:'@cllr_james_w',      type:'public',   sentiment:'positive',  content:'The Kirkwood Hospice is one of Huddersfield\'s most treasured organisations. Tonight I\'m thinking of all the staff, volunteers and patients who make it the special place it is. #TheKirkwood 💛',                                       time:'22:30'},
+];
+
+const KIRKWOOD_PHASE1 = [
+  // ── PHASE 1: FIRE DISCOVERED — 02:00 start ──
+  {id:'kw_1', delayMins:0,  name:'Liam Carr',            handle:'@liamcarr92',        type:'public',  sentiment:'panic',     content:'FIRE ENGINES racing down Kirkgate toward Dalton. Multiple engines, blue lights everywhere. Something serious going on. #Huddersfield',fired:false},
+  {id:'kw_2', delayMins:1,  name:'Darren Stubbs',        handle:'@darrenstubbs',      type:'public',  sentiment:'panic',     content:'Can see flames and smoke near The Kirkwood Hospice from my window. Please God everyone is OK. #TheKirkwood #Huddersfield',fired:false},
+  {id:'kw_3', delayMins:2,  name:'Local Watch Account',  handle:'@northfield_watch',  type:'rumour',  sentiment:'panic',     content:'Reports of a fire at The Kirkwood Hospice, Huddersfield. Multiple fire engines on scene. PATIENTS ARE STILL INSIDE according to source. Unconfirmed. #TheKirkwood #Huddersfield',fired:false},
+  {id:'kw_4', delayMins:3,  name:'Ryan Stephens',        handle:'@ryanstephens_',     type:'public',  sentiment:'panic',     content:'Oh no — is that The Kirkwood on fire?? Just seen an ambulance and 3 fire engines heading that way. So worried for the patients 😢 #Huddersfield #TheKirkwood',fired:false},
+  {id:'kw_5', delayMins:4,  name:'Worried Parent',       handle:'@worried_mum_uk',    type:'public',  sentiment:'panic',     content:'My mother is an inpatient at The Kirkwood tonight. I cannot get through on the phone. Someone please tell me she is safe 😭 @TheKirkwoodHos #TheKirkwood',fired:false},
+  {id:'kw_6', delayMins:5,  name:'Viral Rumour Account', handle:'@sharethis_now',     type:'rumour',  sentiment:'panic',     content:'🚨 SHARE: Fire at The Kirkwood Hospice Huddersfield. Patients being evacuated in the middle of the night. Multiple casualties feared. PRAY FOR THEM 🙏 #TheKirkwood',fired:false},
+  {id:'kw_7', delayMins:6,  name:'BBC Yorkshire',        handle:'@BBCYorkshire',      type:'media',   sentiment:'concerned', content:'We are receiving reports of a fire at The Kirkwood Hospice in Huddersfield. Emergency services are on scene. We are attempting to establish further details. #TheKirkwood',fired:false},
+  {id:'kw_8', delayMins:7,  name:'Huddersfield Examiner',handle:'@ExaminerHD',        type:'media',   sentiment:'concerned', content:'BREAKING: Emergency services responding to a fire at The Kirkwood Hospice, Huddersfield. We understand this is an inpatient facility with up to 16 patients. @TheKirkwoodHos and @WestYorksFireRescue have been contacted for comment.',fired:false},
+  {id:'kw_9', delayMins:8,  name:'Karen Whitfield',      handle:'@karen_whitfield',   type:'public',  sentiment:'panic',     content:'I cannot breathe. My friend\'s husband is a patient at The Kirkwood. We can\'t reach anyone. Please @TheKirkwoodHos tell us what is happening. Are the patients safe?? 😭 #TheKirkwood',fired:false},
+  {id:'kw_10',delayMins:9,  name:'Conspiracy Account',   handle:'@truth_seeker_uk',   type:'rumour',  sentiment:'panic',     content:'Fire at The Kirkwood Hospice Huddersfield at 2am. Patients in end of life care. No statement from the organisation. Why are @TheKirkwoodHos silent?? People deserve answers NOW. #TheKirkwood',fired:false},
+  {id:'kw_11',delayMins:11, name:'Cllr James Walsh',     handle:'@cllr_james_w',      type:'public',  sentiment:'concerned', content:'I am deeply concerned by reports of a fire at @TheKirkwoodHos tonight. I have contacted the Chief Executive for an urgent update. My thoughts are with every patient, family member and member of staff. #TheKirkwood',fired:false},
+  {id:'kw_12',delayMins:13, name:'Distressed Relative',  handle:'@relative_at_gate',  type:'public',  sentiment:'panic',     content:'I\'m standing outside The Kirkwood right now. Police won\'t let me in. My dad is a patient here. NOBODY is telling me anything. I am begging someone to help me 😭 @TheKirkwoodHos #TheKirkwood',fired:false},
+  {id:'kw_13',delayMins:15, name:'West Yorkshire Police',handle:'@WestYorksPolice',   type:'official',sentiment:'neutral',   content:'Officers are currently at the scene of a fire at a care facility in Huddersfield. A cordon is in place. We ask the public to avoid the area and not to attend in person. Further information will be released shortly.',fired:false},
+];
+
+const KIRKWOOD_PHASE2 = [
+  // ── PHASE 2: FULL EVACUATION UNDERWAY — continues from Phase 1 ──
+  {id:'kw_14',delayMins:0,  name:'Becky Turner',         handle:'@beckyturner81',     type:'public',  sentiment:'panic',     content:'UPDATE: The Kirkwood fire — I\'m hearing all 16 patients have been evacuated. Some in nightwear being helped into ambulances. Families arriving at the cordon. This is heartbreaking. #TheKirkwood #Huddersfield',fired:false},
+  {id:'kw_15',delayMins:1,  name:'Viral Rumour Account', handle:'@sharethis_now',     type:'rumour',  sentiment:'panic',     content:'Witnesses saying TWO patients could not be moved under their own power and had to be carried out by firefighters. One person taken to hospital by ambulance. ARE THEY OK?? @TheKirkwoodHos say NOTHING #TheKirkwood',fired:false},
+  {id:'kw_16',delayMins:2,  name:'Huddersfield Examiner',handle:'@ExaminerHD',        type:'media',   sentiment:'concerned', content:'UPDATE: Our reporter is at the scene. Patients from The Kirkwood have been evacuated to a nearby location. Fire crews from three stations are tackling the blaze. @TheKirkwoodHos has not yet issued any public statement. @WestYorksFireRescue are you able to confirm patient welfare? #TheKirkwood',fired:false},
+  {id:'kw_17',delayMins:3,  name:'Anxious Family',       handle:'@anxious_family_uk', type:'public',  sentiment:'panic',     content:'We have been standing in the car park for 45 minutes. Staff are doing their best but there are families here from all 16 rooms and nobody can tell us where our loved ones have been taken. @TheKirkwoodHos PLEASE communicate with us 💔 #TheKirkwood',fired:false},
+  {id:'kw_18',delayMins:4,  name:'Local Watch Account',  handle:'@northfield_watch',  type:'rumour',  sentiment:'panic',     content:'Source at scene: one patient taken by ambulance to Huddersfield Royal Infirmary. Condition unknown. Rest evacuated to nearby building. Building damage reported to be significant. @TheKirkwoodHos still no statement — 30 minutes in. UNACCEPTABLE. #TheKirkwood',fired:false},
+  {id:'kw_19',delayMins:5,  name:'Staff Member',         handle:'@frontline_staff',   type:'public',  sentiment:'concerned', content:'I\'m a nurse at The Kirkwood. I can\'t say much but I want people to know — our night team did everything right tonight. Every single patient was evacuated safely. The team were extraordinary. Please stop spreading rumours about casualties. 💛 #TheKirkwood',fired:false},
+  {id:'kw_20',delayMins:6,  name:'BBC Yorkshire',        handle:'@BBCYorkshire',      type:'media',   sentiment:'concerned', content:'UPDATE: All patients understood to have been evacuated from The Kirkwood Hospice fire in Huddersfield. One person taken to hospital as a precaution. Fire crews from Huddersfield, Cleckheaton and Rastrick stations are at the scene. @TheKirkwoodHos have not yet made a public statement.',fired:false},
+  {id:'kw_21',delayMins:7,  name:'Union Representative', handle:'@unison_rep',        type:'public',  sentiment:'concerned', content:'Thinking of all the staff at @TheKirkwoodHos tonight. These are people who chose to dedicate their careers to end of life care. What they are facing right now is beyond anything. Staff welfare support must be a priority. #TheKirkwood',fired:false},
+  {id:'kw_22',delayMins:9,  name:'Gary Bolton',          handle:'@garybolton_fc',     type:'public',  sentiment:'positive',  content:'The night staff at The Kirkwood evacuated 16 patients in the middle of the night. All safely. Let that sink in. These are heroes. 💛 #TheKirkwood #Huddersfield',fired:false},
+  {id:'kw_23',delayMins:11, name:'Cllr James Walsh',     handle:'@cllr_james_w',      type:'public',  sentiment:'concerned', content:'I have now spoken to the Chief Executive at @TheKirkwoodHos. All patients are safe and accounted for. One patient taken to HRI as a precaution. I am urging the organisation to issue a public statement immediately. Families need information. #TheKirkwood',fired:false},
+  {id:'kw_24',delayMins:13, name:'Conspiracy Account',   handle:'@truth_seeker_uk',   type:'rumour',  sentiment:'concerned', content:'Now hearing The Kirkwood fire may have started in an electrical cupboard. Were safety checks up to date? Was there adequate night staffing? These are questions the CQC will be asking. #TheKirkwood #accountability',fired:false},
+  {id:'kw_25',delayMins:15, name:'Huddersfield Examiner',handle:'@ExaminerHD',        type:'media',   sentiment:'concerned', content:'It is now 45 minutes since the fire was first reported at @TheKirkwoodHos. All patients are understood to be safe but the organisation has issued no public statement. Our reporter is at the scene. We will be publishing online shortly. @TheKirkwoodHos — your response?',fired:false},
+  {id:'kw_26',delayMins:17, name:'Worried Parent',       handle:'@worried_mum_uk',    type:'public',  sentiment:'positive',  content:'UPDATE: My mother is safe 💛 She is warm, she is comfortable, and she is being cared for. Thank you to every single member of staff at @TheKirkwoodHos. I am so proud of them. #TheKirkwood',fired:false},
+  {id:'kw_27',delayMins:19, name:'Fiona MacLeod',        handle:'@fionamacleod_',     type:'public',  sentiment:'positive',  content:'As someone who works in community nursing I know how hard hospice night staff work. What happened tonight shows exactly why The Kirkwood is so special. Incredible people. Please hold off on the criticism until we know the full picture. 💛 #TheKirkwood',fired:false},
+  {id:'kw_28',delayMins:22, name:'Sky News',             handle:'@SkyNews',           type:'media',   sentiment:'concerned', content:'All patients have been safely evacuated from a fire at The Kirkwood Hospice in Huddersfield. One person taken to hospital as a precaution. The hospice has not yet issued a statement. Emergency services remain at the scene.',fired:false},
+  {id:'kw_29',delayMins:25, name:'Local MP',             handle:'@mp_local',          type:'official',sentiment:'concerned', content:'I have been briefed on the fire at @TheKirkwoodHos tonight. All patients safe — that is the most important thing. I am asking the hospice to communicate clearly with families and the public as soon as possible. They deserve information. #TheKirkwood',fired:false},
+  {id:'kw_30',delayMins:28, name:'Health & Safety Lead', handle:'@hse_watch_uk',      type:'media',   sentiment:'concerned', content:'Questions will inevitably be asked about the cause of the fire at @TheKirkwoodHos and whether the building\'s fire safety measures performed as expected. The CQC and fire investigation teams will want answers. This is not a criticism — it is standard process. #TheKirkwood',fired:false},
+  {id:'kw_31',delayMins:32, name:'Becky Turner',         handle:'@beckyturner81',     type:'public',  sentiment:'concerned', content:'One hour since the fire at @TheKirkwoodHos. Still no statement. I understand they are dealing with a crisis but even a holding tweet — "all patients safe, more to follow" — would stop so much of the fear and speculation right now. #TheKirkwood',fired:false},
+  {id:'kw_32',delayMins:36, name:'Huddersfield Examiner',handle:'@ExaminerHD',        type:'media',   sentiment:'concerned', content:'FINAL CALL: @TheKirkwoodHos we are publishing our story in the next 20 minutes. We want to give you the opportunity to provide a statement. Please contact our news desk urgently. #TheKirkwood',fired:false},
+  // Recovery
+  {id:'kw_33',delayMins:42, name:'Community Responder',  handle:'@community_response', type:'public', sentiment:'positive',  content:'Hot drinks and snacks outside the cordon for families waiting for news from @TheKirkwoodHos. Come and find me — I\'m in the red coat. You shouldn\'t have to wait in the cold alone. 💛 #TheKirkwood',fired:false},
+  {id:'kw_34',delayMins:48, name:'Distressed Relative',  handle:'@relative_at_gate',  type:'public',  sentiment:'positive',  content:'Dad is safe. He is warm and being looked after. I want to say to every member of staff at @TheKirkwoodHos tonight — you are remarkable people. Thank you from the bottom of my heart. 💛 #TheKirkwood',fired:false},
+  {id:'kw_35',delayMins:55, name:'BBC Yorkshire',        handle:'@BBCYorkshire',      type:'media',   sentiment:'concerned', content:'The cause of the fire at @TheKirkwoodHos is not yet known. The building has sustained damage and it is not yet clear when patients will be able to return. The hospice has still not issued a public statement — now over an hour after the incident began.',fired:false},
+];
+
 // ─────────────────────────────────────────────
 // SCENARIO LIBRARY
 // ─────────────────────────────────────────────
@@ -2302,20 +2362,22 @@ const BUILTIN_SCENARIOS = [
   },
   {
     id:'builtin_fire',
-    name:'Fire & Evacuation of Clinical Services',
-    client:'Generic — Healthcare / Care',
-    desc:'Fire in a clinical ward, care home or operational facility requiring full evacuation of non-ambulatory patients or service users. Tests evacuation procedures, public communication, family notification, media handling and mutual aid requests.',
-    trending:['#FireAlert','#Evacuation','#EmergencyServices'],
-    trendingCounts:[16200,8900,6400],
+    name:'Fire & Evacuation — The Kirkwood Hospice',
+    client:'The Kirkwood, Huddersfield',
+    desc:'Night fire at The Kirkwood Hospice (02:00). 16 inpatient beds, minimal night staff, all patients in bed. Full evacuation required. Tests evacuation comms, family notification, managing social media speculation about patient welfare, and media pressure when no statement has been issued.',
+    trending:['#TheKirkwood','#Huddersfield','#KirkwoodHospice'],
+    trendingCounts:[14800,6200,4100],
     newsArticle:{
-      pub:'Local News Network',
-      headline:'Patients evacuated after fire breaks out in clinical area',
-      standfirst:'Emergency services responded to a fire at a clinical facility overnight, prompting the evacuation of patients from an affected area.',
-      body:'Fire crews were called to the facility in the early hours after a fire broke out in a clinical area. | Patients in the affected area were evacuated by staff and firefighters, with some requiring assistance to move. | The organisation declared a major incident and activated its emergency plan. | Relatives began arriving after reports spread on social media, with many unable to get information about their loved ones. | The organisation has asked relatives not to attend unless absolutely necessary and to monitor official channels for updates. | No fatalities have been reported and those evacuated have been moved to alternative areas of the building.',
-      quote:'Our staff responded with extraordinary professionalism to keep everyone safe — Director of Nursing',
-      image:'',reporter:'A. Collins, Local Affairs Reporter',
+      pub:'Huddersfield Examiner',
+      headline:'All patients safe after fire at The Kirkwood Hospice — but questions remain unanswered',
+      standfirst:'All 16 inpatients at The Kirkwood Hospice in Huddersfield were safely evacuated following a fire in the early hours. One patient was taken to hospital as a precaution. The hospice did not issue a public statement for over an hour.',
+      body:'Emergency services were called to The Kirkwood Hospice on Briestfield Road in the early hours after a fire broke out in the building. | Multiple fire engines from stations across Kirklees attended the scene and crews worked to evacuate all 16 inpatients, some of whom required assistance to move. | One patient was taken to Huddersfield Royal Infirmary as a precautionary measure. The remaining patients were relocated to a safe area while crews tackled the blaze. | Dozens of relatives arrived at the cordon in the hours following the incident, many having seen reports on social media. Families reported difficulty getting information from the hospice in the immediate aftermath. | West Yorkshire Police maintained a cordon around the building and urged the public not to attend. | The Kirkwood has not yet confirmed the cause of the fire, which remains under investigation by West Yorkshire Fire and Rescue Service.',
+      quote:'Our night team showed extraordinary courage and professionalism. Every single patient was evacuated safely and that is entirely down to them — The Kirkwood Chief Executive',
+      image:'',reporter:'James Whitmore, Senior Reporter',
     },
     tag:'fire',
+    hasScript: true,
+    scriptKey: 'kirkwood',
   },
   {
     id:'builtin_weather',
@@ -2363,10 +2425,24 @@ async function loadScenario(scenario){
       });
     }
 
-    // 3. Record active scenario
+    // 3. Load scripts if this scenario has them
+    if(scenario.hasScript && scenario.scriptKey === 'kirkwood'){
+      await set(ref(db,'script1'), KIRKWOOD_PHASE1);
+      await set(ref(db,'script2'), KIRKWOOD_PHASE2);
+      // Push pre-incident posts
+      for(let i=0;i<KIRKWOOD_PREINCIDENT.length;i++){
+        const post=KIRKWOOD_PREINCIDENT[i];
+        const match=personas.find(p=>p.name===post.name||p.handle===post.handle);
+        const photo=match&&match.photo?match.photo:undefined;
+        await push(ref(db,'posts'),clean({...post,photo,replies:ri(5,180),ts:Date.now()-(KIRKWOOD_PREINCIDENT.length-i)*120000}));
+      }
+    }
+
+    // 4. Record active scenario
     await set(ref(db,'activeScenario'),{name, client:scenario.client||'', loadedAt:Date.now()});
 
-    alert('✓ Scenario loaded: "'+name+'"\n\nTrending topics set.\nNews article saved — click ⬇ Load Starlight Walk Article to push it to the feeds.');
+    const scriptMsg = scenario.hasScript ? '\nPhase 1 & Phase 2 scripts loaded.\nPre-incident posts added to feeds.' : '';
+    alert('✓ Scenario loaded: "'+name+'"'+scriptMsg+'\n\nTrending topics set.\nNews article saved — click ⬇ Load Starlight Walk Article to push it to the feeds.');
     try{ addLog('Scenario loaded: '+name); }catch(e){}
 
   } catch(err){
