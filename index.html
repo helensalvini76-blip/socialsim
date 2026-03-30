@@ -169,7 +169,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .btn-toggle-add{width:100%;padding:5px;background:transparent;border:1px dashed var(--border2);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;margin-top:4px;}
 .btn-toggle-add:hover{border-color:var(--success);color:var(--success);}
 
-/* SCRIPT BUILDER */
+/* SCENARIO LIBRARY */
+.scenario-list{display:flex;flex-direction:column;gap:6px;}
+.scenario-item{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer;transition:border-color 0.15s;}
+.scenario-item:hover{border-color:var(--accent);}
+.scenario-item-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:3px;}
+.scenario-item-name{font-size:13px;font-weight:700;flex:1;}
+.scenario-item-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.06em;}
+.sib-builtin{background:rgba(29,155,240,0.15);color:var(--accent);}
+.sib-custom{background:rgba(0,186,124,0.15);color:var(--success);}
+.scenario-item-client{font-size:11px;color:var(--muted);}
+.scenario-item-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.scenario-item-meta{display:flex;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.scenario-meta-pill{font-size:9px;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,0.06);color:var(--muted);}
+.scenario-item-actions{display:flex;gap:5px;margin-top:7px;}
+.scenario-load-btn{flex:1;padding:5px 8px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;}
+.scenario-load-btn:hover{background:var(--accent2);}
+.scenario-del-btn{padding:5px 8px;background:transparent;border:1px solid var(--border2);border-radius:7px;color:var(--muted);font-size:11px;cursor:pointer;}
+.scenario-del-btn:hover{border-color:var(--danger);color:var(--danger);}
+.scenario-save-form{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px;}
+.scenario-empty{font-size:12px;color:var(--muted);text-align:center;padding:14px 0;}
 .script-run-box{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-bottom:10px;}
 .script-status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .script-status-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
@@ -836,8 +855,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       </div>
 
       <div class="card">
-        <div class="card-title">Scenario Presets</div>
-        <div class="preset-list" id="preset-list"></div>
+        <div class="card-title">📚 Scenario Library</div>
+
+        <!-- Save current scenario -->
+        <div class="scenario-save-form" id="scenario-save-form" style="display:none;">
+          <div class="form-row"><label>Scenario name</label><input type="text" id="scenario-save-name" placeholder="e.g. Flood — River Calder 2025"/></div>
+          <div class="form-row"><label>Client / organisation</label><input type="text" id="scenario-save-client" placeholder="e.g. Calderdale Council"/></div>
+          <div class="form-row"><label>Description (optional)</label><input type="text" id="scenario-save-desc" placeholder="Brief summary of the scenario"/></div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Will save: trending topics, news article, current persona photos</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <button class="btn-primary" id="btn-scenario-save-confirm">💾 Save Scenario</button>
+            <button class="btn-primary" id="btn-scenario-save-cancel" style="background:var(--surface2);color:var(--text);">Cancel</button>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-scenario-save-open" style="margin-bottom:10px;background:var(--surface2);color:var(--accent);border:1px solid var(--accent);">＋ Save Current Setup as Scenario</button>
+
+        <!-- Built-in scenarios -->
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px;">Built-in Scenarios</div>
+        <div class="scenario-list" id="builtin-scenario-list"></div>
+
+        <!-- Custom saved scenarios -->
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin:10px 0 6px;">My Saved Scenarios</div>
+        <div class="scenario-list" id="custom-scenario-list">
+          <div class="scenario-empty">No saved scenarios yet</div>
+        </div>
       </div>
 
       <div class="card">
@@ -1091,6 +1133,7 @@ function launch(mode, plat){
   switchPlat(plat||'x');
   initListeners();
   renderPresets();
+  renderCustomScenarios();
   renderSuggested();
   renderBaseStories();
   loadPersonas();
@@ -1137,22 +1180,33 @@ function launch(mode, plat){
 }
 
 // ─────────────────────────────────────────────
-// JOIN CODE SYSTEM
 // ─────────────────────────────────────────────
-let pendingPlatform = null; // which platform the participant clicked
-let joinCodeValue = '';     // current join code stored in Firebase
+// JOIN CODE SYSTEM
+// All Firebase reads happen AFTER signInAnonymously
+// so that ".read": "auth != null" rules are satisfied
+// ─────────────────────────────────────────────
+let pendingPlatform = null;
+let joinCodeValue = '';
 
-// Load join code from Firebase and keep in sync
-onValue(ref(db,'joinCode'), snap=>{
-  const val = snap.val();
-  joinCodeValue = val ? String(val).toUpperCase().trim() : '';
-  // Update admin display
-  const display = document.getElementById('join-code-display');
-  const current = document.getElementById('join-code-current');
-  if(display && current){
-    if(joinCodeValue){ display.style.display='block'; current.textContent=joinCodeValue; }
-    else display.style.display='none';
-  }
+// Sign in anonymously on page load so we can read the join code
+// This is a silent background auth — no user action needed
+signInAnonymously(auth).then(()=>{
+  isAuthenticated = true;
+  // Now we're authenticated, we can read the join code from Firebase
+  onValue(ref(db,'joinCode'), snap=>{
+    const val = snap.val();
+    joinCodeValue = val ? String(val).toUpperCase().trim() : '';
+    const display = document.getElementById('join-code-display');
+    const current = document.getElementById('join-code-current');
+    if(display && current){
+      if(joinCodeValue){ display.style.display='block'; current.textContent=joinCodeValue; }
+      else display.style.display='none';
+    }
+  });
+}).catch(err=>{
+  // Auth failed — fall back to no join code required
+  console.warn('Background auth failed:', err);
+  joinCodeValue = '';
 });
 
 // Admin: save join code to Firebase
@@ -1164,7 +1218,7 @@ document.getElementById('btn-save-join-code').addEventListener('click',()=>{
   addLog('Join code updated: '+val);
 });
 
-// Platform card clicks — show join code overlay instead of launching directly
+// Platform card clicks — show join code overlay
 const platMeta = {
   x:  {icon:'💬', label:'X / Twitter',  pill:'join-plat-x'},
   fb: {icon:'👥', label:'Facebook',      pill:'join-plat-fb'},
@@ -1204,9 +1258,8 @@ document.getElementById('join-overlay').addEventListener('click',e=>{
 function attemptJoin(){
   const entered = document.getElementById('join-code-input').value.trim().toUpperCase();
   const errorEl = document.getElementById('join-error');
-
   if(!joinCodeValue){
-    // No join code set — allow open access (useful during setup/testing)
+    // No join code set — allow open access
     proceedToFeed();
     return;
   }
@@ -1223,15 +1276,8 @@ function attemptJoin(){
 function proceedToFeed(){
   document.getElementById('join-overlay').classList.remove('open');
   document.getElementById('conn-msg').style.display='flex';
-  // Sign in anonymously with Firebase Auth to get write access
-  signInAnonymously(auth).then(()=>{
-    isAuthenticated = true;
-    setTimeout(()=>launch('feed', pendingPlatform||'x'), 500);
-  }).catch(err=>{
-    console.error('Auth error:', err);
-    // Fall back to launching anyway if auth fails
-    setTimeout(()=>launch('feed', pendingPlatform||'x'), 500);
-  });
+  // Already authenticated from background sign-in — just launch
+  setTimeout(()=>launch('feed', pendingPlatform||'x'), 500);
 }
 
 document.getElementById('join-btn').addEventListener('click', attemptJoin);
@@ -1244,11 +1290,8 @@ function tryAdmin(){
   if(pw===ADMIN_PW){
     document.getElementById('pw-error').style.display='none';
     document.getElementById('conn-msg').style.display='flex';
-    // Admin signs in anonymously too to get write access
-    signInAnonymously(auth).then(()=>{
-      isAuthenticated = true;
-      setTimeout(()=>launch('admin','x'),700);
-    }).catch(()=>setTimeout(()=>launch('admin','x'),700));
+    // Already authenticated from background sign-in — just launch
+    setTimeout(()=>launch('admin','x'),700);
   } else {
     document.getElementById('pw-error').style.display='block';
   }
@@ -1888,7 +1931,7 @@ const DEFAULT_PERSONAS=[
   {name:'Fire & Rescue Service', handle:'@CountyFireRescue',    type:'official', bio:'Fire, rescue, hazmat',                       photo:''},
   {name:'District Council',      handle:'@DistrictCouncil',     type:'official', bio:'Local authority comms',                      photo:''},
   {name:'Emergency Services',    handle:'@EmergencyServices',   type:'official', bio:'Joint emergency comms',                      photo:''},
-  {name:'Public Health England', handle:'@PHE_uk',              type:'official', bio:'Health protection & alerts',                 photo:''},
+  {name:'UKHSA',                 handle:'@UKHSA',               type:'official', bio:'UK Health Security Agency — health protection', photo:''},
   {name:'NHS Trust',             handle:'@NHSTrust',            type:'official', bio:'Health service updates',                     photo:''},
   {name:'National Grid',         handle:'@NationalGrid',        type:'official', bio:'Energy infrastructure',                      photo:''},
   {name:'Network Rail',          handle:'@NetworkRail',         type:'official', bio:'Rail network disruption',                    photo:''},
@@ -1954,6 +1997,38 @@ const DEFAULT_PERSONAS=[
   {name:'Anonymous Tip',         handle:'@anon_tip_uk',         type:'rumour',   bio:'Unverified anonymous source',                photo:''},
   {name:'Concerned Sceptic',     handle:'@dont_trust_them',     type:'rumour',   bio:'Anti-authority account',                     photo:''},
   {name:'Viral Rumour Account',  handle:'@sharethis_now',       type:'rumour',   bio:'Amplifies unverified claims',                photo:'https://raw.githubusercontent.com/helensalvini76-blip/socialsim/main/images/viral-rumour-account.jpg'},
+
+  // ── ADDITIONAL — CROSS-SCENARIO ──
+  {name:'Local MP',              handle:'@mp_local',            type:'official', bio:'Member of Parliament — local constituency',  photo:''},
+  {name:'Union Representative',  handle:'@unison_rep',          type:'public',   bio:'Trade union rep — staff welfare concerns',   photo:''},
+  {name:'Misinformation Buster', handle:'@factcheck_uk',        type:'media',    bio:'Debunking viral misinformation',             photo:''},
+  {name:'Concerned Relative',    handle:'@anxious_family_uk',   type:'public',   bio:'Family member seeking information',          photo:''},
+  {name:'Staff Member',          handle:'@frontline_staff',     type:'public',   bio:'Employee posting from the situation',        photo:''},
+  {name:'Volunteer Co-ordinator',handle:'@volunteer_coord',     type:'public',   bio:'Organising community volunteer response',    photo:''},
+  {name:'Community Group Leader',handle:'@community_leader_uk', type:'public',   bio:'Local community group spokesperson',         photo:''},
+
+  // ── CYBER SCENARIO ──
+  {name:'IT Director',           handle:'@it_director_uk',      type:'official', bio:'Head of IT — systems and cyber response',   photo:''},
+  {name:'Cyber Security Expert', handle:'@cybersec_analyst',    type:'media',    bio:'Independent cyber security commentator',    photo:''},
+  {name:'NCSC',                  handle:'@NCSC',                type:'official', bio:'National Cyber Security Centre',            photo:''},
+  {name:'Affected Patient',      handle:'@patient_concern_uk',  type:'public',   bio:'Appointment cancelled — seeking answers',   photo:''},
+  {name:'NHS England',           handle:'@NHSEngland',          type:'official', bio:'NHS England — national health service',     photo:''},
+
+  // ── POWER / UTILITIES ──
+  {name:'National Grid ESO',     handle:'@NationalGridESO',     type:'official', bio:'Electricity system operator — outage updates', photo:''},
+  {name:'Facilities Manager',    handle:'@facilities_mgr',      type:'public',   bio:'On-site facilities — operational updates',  photo:''},
+  {name:'Medical Equipment User',handle:'@home_patient_uk',     type:'public',   bio:'Home dialysis patient — power dependent',   photo:''},
+
+  // ── FIRE / EVACUATION ──
+  {name:'Fire Investigation Unit',handle:'@fire_invest_uk',     type:'official', bio:'Fire investigation — official updates',     photo:''},
+  {name:'Health & Safety Lead',  handle:'@hse_watch_uk',        type:'media',    bio:'Health and safety commentary and scrutiny', photo:''},
+  {name:'Distressed Relative',   handle:'@relative_at_gate',    type:'public',   bio:'Relative arrived at site seeking information', photo:''},
+
+  // ── WEATHER ──
+  {name:'Highways England',      handle:'@HighwaysEngland',     type:'official', bio:'Road conditions and closures',              photo:''},
+  {name:'Stranded Staff Member', handle:'@stuck_in_snow_uk',    type:'public',   bio:'Cannot reach work due to severe weather',   photo:''},
+  {name:'Rural Resident',        handle:'@rural_isolated_uk',   type:'public',   bio:'Cut off by snow — seeking welfare support', photo:''},
+  {name:'Community Responder',   handle:'@community_response',  type:'public',   bio:'Volunteer helping neighbours in crisis',    photo:''},
 ];
 
 function savePersonas(){try{localStorage.setItem('ss_personas',JSON.stringify(personas.slice(DEFAULT_PERSONAS.length)));}catch(e){}}
@@ -2170,20 +2245,246 @@ const STARLIGHT_SCRIPT = [
   {id:'sw_68',delayMins:67,name:'Nikki Rhodes',          handle:'@nikkiRhodes_',      type:'public',  sentiment:'positive',  content:'My sister is absolutely fine — she was on a different part of the route. I feel so relieved and so stupid for the panic. Huge respect to all the emergency services and volunteers. #StarlightWalk 💛',fired:false},
   {id:'sw_69',delayMins:70,name:'Viral Rumour Account',  handle:'@sharethis_now',     type:'rumour',  sentiment:'concerned', content:'So it wasn\'t a terror attack and there were no fatalities. I shared some things tonight based on what I was hearing. I\'m deleting those posts. Sorry. #StarlightWalk',fired:false},
 ];
-function renderPresets(){
-  const el=document.getElementById('preset-list'); if(!el) return;
-  el.innerHTML='';
-  PRESETS.forEach((p,i)=>{
-    const d=document.createElement('div'); d.className='preset-item';
-    d.innerHTML=`<span class="preset-name">${p.name}</span><span class="preset-tag tag-${p.tag}">${p.tag.toUpperCase()}</span>`;
-    d.addEventListener('click',()=>{
-      p.posts.forEach((post,j)=>{setTimeout(()=>{push(ref(db,'posts'),clean({...post,replies:ri(5,200),time:ts(),ts:Date.now()-(p.posts.length-j)*2000}));},j*600);});
-      push(ref(db,'trending'),{tag:'#'+p.tag+'Alert',count:ri(3000,45000),ts:Date.now()});
-      addLog('Preset: '+p.name);
+// ─────────────────────────────────────────────
+// SCENARIO LIBRARY
+// ─────────────────────────────────────────────
+const BUILTIN_SCENARIOS = [
+  {
+    id:'builtin_starlight',
+    name:'Starlight Walk — Dual Incident',
+    client:'BCR Ltd / Hospice Exercise',
+    desc:'Cardiac arrest on 10-mile route (Phase 1), vehicle into walkers at Aspley bridge (Phase 2). Two-phase overnight exercise with ~1,000 participants. Tests medical response, rumour management, media handling and public communications.',
+    trending:['#StarlightWalk','#Huddersfield','#StarlightWalkHX'],
+    trendingCounts:[8420,3210,1840],
+    newsArticle:{
+      pub:'Huddersfield Examiner',
+      headline:'Emergency services respond to serious incidents at Starlight Walk charity event',
+      standfirst:'Two separate incidents — including a cardiac arrest and a vehicle collision — disrupted the annual overnight fundraising walk in Huddersfield.',
+      body:'Emergency services were called to two separate incidents during the Starlight Walk charity event overnight, which takes place across 3, 6 and 10-mile routes finishing at John Smith\'s Stadium. | The first incident, a medical emergency, was reported on the 10-mile route near Croftflat Road at approximately 00:13. Witnesses described CPR being administered by bystanders before paramedics arrived. A man was subsequently taken to hospital by ambulance. | The second and more serious incident occurred at approximately 22:18 at the Aspley bridge section, where a vehicle struck a group of walkers on the shared route immediately east of the A629 roundabout. | West Yorkshire Police confirmed the incident was being treated as a road traffic collision and was not terror-related.',
+      quote:'We urge the public not to speculate and to allow emergency services to do their work — West Yorkshire Police',
+      image:'',reporter:'James Whitmore, Senior Reporter',
+    },
+    tag:'starlight',
+  },
+  {
+    id:'builtin_cyber',
+    name:'Cyber Attack on Network',
+    client:'Generic — Healthcare / Public Sector',
+    desc:'Ransomware attack targeting organisational IT systems and network infrastructure. Electronic records inaccessible, systems taken offline, staff reverting to paper. Tests information management under uncertainty, public reassurance, staff communications and sustained media pressure.',
+    trending:['#CyberAttack','#Ransomware','#SystemsDown'],
+    trendingCounts:[28400,14600,9200],
+    newsArticle:{
+      pub:'Tech Observer',
+      headline:'Major cyber attack forces organisation offline — ransomware suspected',
+      standfirst:'A significant ransomware attack has forced an organisation to take its entire IT network offline, with systems and electronic records inaccessible across all sites.',
+      body:'Staff were alerted to the attack in the early hours when network systems became inaccessible and ransom messages began appearing on screens. | The organisation has activated its major incident plan, taken all systems offline as a precaution, and is reverting to manual paper-based processes. | The National Cyber Security Centre has been notified and forensic specialists are on site. | It is not yet known how the attackers gained access to the network or whether any data has been exfiltrated. | Services are continuing but at significantly reduced capacity. | The organisation has urged staff not to use any connected devices until further notice.',
+      quote:'We took the decision to take all systems offline immediately to contain the incident and protect our data — Director of IT',
+      image:'',reporter:'J. Park, Technology Correspondent',
+    },
+    tag:'cyber',
+  },
+  {
+    id:'builtin_power',
+    name:'Power Loss — Critical Site',
+    client:'Generic — Healthcare / Public Sector',
+    desc:'Unplanned total power failure at a critical operational site. Backup generators fail or provide insufficient capacity. Tests escalation, public messaging, patient or service user safety communications and coordination with utility providers under time pressure.',
+    trending:['#PowerFailure','#BlackOut','#EmergencyPower'],
+    trendingCounts:[11300,6800,4200],
+    newsArticle:{
+      pub:'Regional News Network',
+      headline:'Critical site on emergency power after major electricity failure',
+      standfirst:'An organisation is operating on limited emergency backup power following an unplanned total electricity failure affecting all areas of the site.',
+      body:'The power failure occurred without warning, triggering an immediate response from facilities and operational teams. | Backup generators came online but are providing limited capacity, with some essential systems still offline. | Operations in progress were completed safely under emergency lighting and procedures. | Some services have been suspended and capacity is significantly reduced across the site. | The electricity provider has been contacted and engineers are on site, but no restoration timescale has been confirmed. | The public and service users are being advised to contact the organisation before attending in person.',
+      quote:'We want to reassure everyone that safety is being maintained and our teams are responding professionally — Chief Operating Officer',
+      image:'',reporter:'D. Marsh, News Desk',
+    },
+    tag:'power',
+  },
+  {
+    id:'builtin_fire',
+    name:'Fire & Evacuation of Clinical Services',
+    client:'Generic — Healthcare / Care',
+    desc:'Fire in a clinical ward, care home or operational facility requiring full evacuation of non-ambulatory patients or service users. Tests evacuation procedures, public communication, family notification, media handling and mutual aid requests.',
+    trending:['#FireAlert','#Evacuation','#EmergencyServices'],
+    trendingCounts:[16200,8900,6400],
+    newsArticle:{
+      pub:'Local News Network',
+      headline:'Patients evacuated after fire breaks out in clinical area',
+      standfirst:'Emergency services responded to a fire at a clinical facility overnight, prompting the evacuation of patients from an affected area.',
+      body:'Fire crews were called to the facility in the early hours after a fire broke out in a clinical area. | Patients in the affected area were evacuated by staff and firefighters, with some requiring assistance to move. | The organisation declared a major incident and activated its emergency plan. | Relatives began arriving after reports spread on social media, with many unable to get information about their loved ones. | The organisation has asked relatives not to attend unless absolutely necessary and to monitor official channels for updates. | No fatalities have been reported and those evacuated have been moved to alternative areas of the building.',
+      quote:'Our staff responded with extraordinary professionalism to keep everyone safe — Director of Nursing',
+      image:'',reporter:'A. Collins, Local Affairs Reporter',
+    },
+    tag:'fire',
+  },
+  {
+    id:'builtin_weather',
+    name:'Extreme Weather — Storm & Snow',
+    client:'Generic — Public Sector / Healthcare',
+    desc:'Prolonged severe weather combining storm-force winds and heavy snowfall. Staff unable to travel, supply chains disrupted, vulnerable people isolated. Tests public communications, staff welfare messaging, media handling and multi-agency coordination.',
+    trending:['#SevereWeather','#RedWarning','#StormAlert'],
+    trendingCounts:[38600,22400,15800],
+    newsArticle:{
+      pub:'Regional News Network',
+      headline:'Red weather warning: storm and heavy snow bring region to a standstill',
+      standfirst:'A severe weather system has brought storm-force winds and heavy snow to the region, causing widespread disruption to public services and prompting urgent welfare concerns.',
+      body:'The Met Office issued a red weather warning as the storm brought gusts exceeding 80mph and up to 40cm of snow in higher areas overnight. | Health and care organisations are reporting critical staff shortages as workers are unable to travel safely. | Several major roads are closed and public transport has been suspended across most of the region. | Ambulance services have declared business continuity incidents and are prioritising life-threatening calls only. | Vulnerable and isolated residents are being contacted by welfare teams. | The public is being strongly urged to avoid all but essential travel, to check on neighbours, and to follow official guidance only — social media rumours about road conditions and service closures are causing significant confusion.',
+      quote:'This is one of the most serious weather events we have faced. Please stay home, stay safe, and let the emergency services do their work — Emergency Planning Lead',
+      image:'',reporter:'R. Thornton, Senior Reporter',
+    },
+    tag:'weather',
+  },
+];
+
+// Load a scenario — sets trending, news article, optionally personas
+function loadScenario(scenario, isCustom){
+  const name = scenario.name;
+  if(!confirm('Load scenario "'+name+'"?\n\nThis will replace your current trending topics and news article. Scripts and posts will NOT be changed.\n\nContinue?')) return;
+
+  // Set trending topics
+  set(ref(db,'trending'),null);
+  setTimeout(()=>{
+    (scenario.trending||[]).forEach((tag,i)=>{
+      push(ref(db,'trending'),{tag,count:scenario.trendingCounts?.[i]||ri(3000,20000),ts:Date.now()-i*1000});
     });
-    el.appendChild(d);
+  },300);
+
+  // Set news article
+  if(scenario.newsArticle){
+    set(ref(db,'savedArticle'), scenario.newsArticle);
+    // Also populate the news form fields
+    const fields={
+      'news-pub':scenario.newsArticle.pub,
+      'news-hed':scenario.newsArticle.headline,
+      'news-stand':scenario.newsArticle.standfirst,
+      'news-body':scenario.newsArticle.body,
+      'news-quote':scenario.newsArticle.quote,
+      'news-img':scenario.newsArticle.image||'',
+      'news-reporter':scenario.newsArticle.reporter,
+    };
+    Object.entries(fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value=val||''; });
+  }
+
+  // Save scenario name to Firebase for reference
+  set(ref(db,'activeScenario'),{name,client:scenario.client||'',loadedAt:Date.now()});
+
+  addLog('Scenario loaded: '+name);
+}
+
+// Save current setup as a custom scenario
+document.getElementById('btn-scenario-save-open').addEventListener('click',()=>{
+  const form=document.getElementById('scenario-save-form');
+  form.style.display=form.style.display==='none'?'block':'none';
+});
+
+document.getElementById('btn-scenario-save-cancel').addEventListener('click',()=>{
+  document.getElementById('scenario-save-form').style.display='none';
+});
+
+document.getElementById('btn-scenario-save-confirm').addEventListener('click',()=>{
+  const name=document.getElementById('scenario-save-name').value.trim();
+  const client=document.getElementById('scenario-save-client').value.trim();
+  const desc=document.getElementById('scenario-save-desc').value.trim();
+  if(!name){ alert('Please enter a scenario name'); return; }
+
+  // Gather current trending topics from Firebase
+  import('https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js').then(({get})=>{
+    Promise.all([
+      get(ref(db,'trending')),
+      get(ref(db,'savedArticle')),
+    ]).then(([trendSnap, artSnap])=>{
+      const trendData=trendSnap.val();
+      const trending=trendData?Object.values(trendData).map(t=>t.tag):[];
+      const trendingCounts=trendData?Object.values(trendData).map(t=>t.count||5000):[];
+      const newsArticle=artSnap.val()||null;
+
+      // Snapshot current persona photos
+      const personaPhotos={};
+      personas.forEach(p=>{ if(p.photo) personaPhotos[p.name]=p.photo; });
+
+      const scenario={
+        id:'custom_'+Date.now(),
+        name, client, desc,
+        trending, trendingCounts,
+        newsArticle,
+        personaPhotos,
+        savedAt:Date.now(),
+      };
+
+      // Save to Firebase under scenarios node
+      push(ref(db,'scenarios'), scenario);
+      document.getElementById('scenario-save-form').style.display='none';
+      ['scenario-save-name','scenario-save-client','scenario-save-desc'].forEach(id=>document.getElementById(id).value='');
+      addLog('Scenario saved: '+name);
+    });
+  }).catch(()=>alert('Could not save scenario — check your connection'));
+});
+
+// Render built-in scenarios
+function renderBuiltinScenarios(){
+  const container=document.getElementById('builtin-scenario-list'); if(!container) return;
+  container.innerHTML='';
+  BUILTIN_SCENARIOS.forEach(s=>{
+    const div=document.createElement('div'); div.className='scenario-item';
+    div.innerHTML=`
+      <div class="scenario-item-header">
+        <div class="scenario-item-name">${s.name}</div>
+        <span class="scenario-item-badge sib-builtin">Built-in</span>
+      </div>
+      <div class="scenario-item-client">${s.client}</div>
+      ${s.desc?`<div class="scenario-item-desc">${s.desc}</div>`:''}
+      <div class="scenario-item-meta">
+        ${(s.trending||[]).map(t=>`<span class="scenario-meta-pill">${t}</span>`).join('')}
+      </div>
+      <div class="scenario-item-actions">
+        <button class="scenario-load-btn">▶ Load Scenario</button>
+      </div>`;
+    div.querySelector('.scenario-load-btn').addEventListener('click',e=>{e.stopPropagation();loadScenario(s,false);});
+    container.appendChild(div);
   });
 }
+
+// Render custom saved scenarios from Firebase
+function renderCustomScenarios(){
+  onValue(ref(db,'scenarios'),snap=>{
+    const container=document.getElementById('custom-scenario-list'); if(!container) return;
+    const data=snap.val();
+    if(!data){ container.innerHTML='<div class="scenario-empty">No saved scenarios yet</div>'; return; }
+    container.innerHTML='';
+    const scenarios=Object.entries(data).map(([k,v])=>({...v,_key:k})).sort((a,b)=>(b.savedAt||0)-(a.savedAt||0));
+    scenarios.forEach(s=>{
+      const date=s.savedAt?new Date(s.savedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+      const div=document.createElement('div'); div.className='scenario-item';
+      div.innerHTML=`
+        <div class="scenario-item-header">
+          <div class="scenario-item-name">${s.name}</div>
+          <span class="scenario-item-badge sib-custom">Custom</span>
+        </div>
+        <div class="scenario-item-client">${s.client||''}</div>
+        ${s.desc?`<div class="scenario-item-desc">${s.desc}</div>`:''}
+        <div class="scenario-item-meta">
+          ${(s.trending||[]).map(t=>`<span class="scenario-meta-pill">${t}</span>`).join('')}
+          ${date?`<span class="scenario-meta-pill">Saved ${date}</span>`:''}
+        </div>
+        <div class="scenario-item-actions">
+          <button class="scenario-load-btn">▶ Load</button>
+          <button class="scenario-del-btn">🗑 Delete</button>
+        </div>`;
+      div.querySelector('.scenario-load-btn').addEventListener('click',e=>{e.stopPropagation();loadScenario(s,true);});
+      div.querySelector('.scenario-del-btn').addEventListener('click',e=>{
+        e.stopPropagation();
+        if(!confirm('Delete scenario "'+s.name+'"? This cannot be undone.')) return;
+        import('https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js').then(({remove})=>{
+          remove(ref(db,'scenarios/'+s._key));
+          addLog('Scenario deleted: '+s.name);
+        });
+      });
+      container.appendChild(div);
+    });
+  });
+}
+
+function renderPresets(){ renderBuiltinScenarios(); }
 
 // ─────────────────────────────────────────────
 // SUGGESTED ACCOUNTS (X sidebar)
