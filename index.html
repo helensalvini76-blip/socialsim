@@ -2336,39 +2336,43 @@ const BUILTIN_SCENARIOS = [
   },
 ];
 
-// Load a scenario — sets trending, news article, optionally personas
-function loadScenario(scenario, isCustom){
+// Load a scenario — sets trending topics and news article
+async function loadScenario(scenario){
   const name = scenario.name;
-  if(!confirm('Load scenario "'+name+'"?\n\nThis will replace your current trending topics and news article. Scripts and posts will NOT be changed.\n\nContinue?')) return;
+  if(!confirm('Load scenario "'+name+'"?\n\nThis will replace your current trending topics and news article.\nScripts and posts will NOT be changed.\n\nContinue?')) return;
 
-  // Set trending topics
-  set(ref(db,'trending'),null);
-  setTimeout(()=>{
-    (scenario.trending||[]).forEach((tag,i)=>{
-      push(ref(db,'trending'),{tag,count:scenario.trendingCounts?.[i]||ri(3000,20000),ts:Date.now()-i*1000});
-    });
-  },300);
+  try {
+    // 1. Clear and set trending topics
+    await set(ref(db,'trending'), null);
+    for(let i=0; i<(scenario.trending||[]).length; i++){
+      await push(ref(db,'trending'),{
+        tag: scenario.trending[i],
+        count: (scenario.trendingCounts||[])[i] || ri(3000,20000),
+        ts: Date.now()-i*1000
+      });
+    }
 
-  // Set news article
-  if(scenario.newsArticle){
-    set(ref(db,'savedArticle'), scenario.newsArticle);
-    // Also populate the news form fields
-    const fields={
-      'news-pub':scenario.newsArticle.pub,
-      'news-hed':scenario.newsArticle.headline,
-      'news-stand':scenario.newsArticle.standfirst,
-      'news-body':scenario.newsArticle.body,
-      'news-quote':scenario.newsArticle.quote,
-      'news-img':scenario.newsArticle.image||'',
-      'news-reporter':scenario.newsArticle.reporter,
-    };
-    Object.entries(fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value=val||''; });
+    // 2. Save and populate news article
+    if(scenario.newsArticle){
+      await set(ref(db,'savedArticle'), scenario.newsArticle);
+      const a = scenario.newsArticle;
+      [['news-pub',a.pub],['news-hed',a.headline],['news-stand',a.standfirst],
+       ['news-body',a.body],['news-quote',a.quote],['news-img',a.image||''],
+       ['news-reporter',a.reporter]].forEach(([id,val])=>{
+        const el=document.getElementById(id); if(el) el.value=val||'';
+      });
+    }
+
+    // 3. Record active scenario
+    await set(ref(db,'activeScenario'),{name, client:scenario.client||'', loadedAt:Date.now()});
+
+    alert('✓ Scenario loaded: "'+name+'"\n\nTrending topics set.\nNews article saved — click ⬇ Load Starlight Walk Article to push it to the feeds.');
+    try{ addLog('Scenario loaded: '+name); }catch(e){}
+
+  } catch(err){
+    console.error('loadScenario error:', err);
+    alert('Error loading scenario: '+err.message+'\n\nCheck the browser console (F12) for details.');
   }
-
-  // Save scenario name to Firebase for reference
-  set(ref(db,'activeScenario'),{name,client:scenario.client||'',loadedAt:Date.now()});
-
-  addLog('Scenario loaded: '+name);
 }
 
 // Save current setup as a custom scenario
@@ -2439,7 +2443,7 @@ function renderBuiltinScenarios(){
       <div class="scenario-item-actions">
         <button class="scenario-load-btn">▶ Load Scenario</button>
       </div>`;
-    div.querySelector('.scenario-load-btn').addEventListener('click',e=>{e.stopPropagation();loadScenario(s,false);});
+    div.querySelector('.scenario-load-btn').addEventListener('click',e=>{e.stopPropagation();loadScenario(s);});
     container.appendChild(div);
   });
 }
@@ -2470,7 +2474,7 @@ function renderCustomScenarios(){
           <button class="scenario-load-btn">▶ Load</button>
           <button class="scenario-del-btn">🗑 Delete</button>
         </div>`;
-      div.querySelector('.scenario-load-btn').addEventListener('click',e=>{e.stopPropagation();loadScenario(s,true);});
+      div.querySelector('.scenario-load-btn').addEventListener('click',e=>{e.stopPropagation();loadScenario(s);});
       div.querySelector('.scenario-del-btn').addEventListener('click',e=>{
         e.stopPropagation();
         if(!confirm('Delete scenario "'+s.name+'"? This cannot be undone.')) return;
