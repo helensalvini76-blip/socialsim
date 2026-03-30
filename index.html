@@ -1139,41 +1139,6 @@ function launch(mode, plat){
   loadPersonas();
   renderPersonas();
   loadScriptFromFirebase();
-  // Auto-load Starlight Walk script if no script exists yet
-  if(mode==='admin'){
-    import('https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js').then(({get})=>{
-      get(ref(db,'script1')).then(snap=>{
-        if(!snap.exists()){
-          // Split Starlight script into Phase 1 (sw_1–sw_13) and Phase 2 (sw_14–sw_31)
-          const phase1 = STARLIGHT_SCRIPT.filter(i=>parseInt(i.id.replace('sw_',''))<=13);
-          const phase2 = STARLIGHT_SCRIPT.filter(i=>parseInt(i.id.replace('sw_',''))>=14);
-          set(ref(db,'script1'), phase1);
-          set(ref(db,'script2'), phase2);
-          // Push pre-incident atmosphere posts with staggered timestamps
-          PREINCIDENT_POSTS.forEach((post,i)=>{
-            setTimeout(()=>{
-              const match=personas.find(p=>p.name===post.name||p.handle===post.handle);
-              const photo=match&&match.photo?match.photo:undefined;
-              push(ref(db,'posts'),clean({...post,photo,replies:ri(10,300),ts:Date.now()-(PREINCIDENT_POSTS.length-i)*120000}));
-            },i*400);
-          });
-          push(ref(db,'trending'),{tag:'#StarlightWalk',count:8420,ts:Date.now()});
-          push(ref(db,'trending'),{tag:'#Huddersfield',count:3210,ts:Date.now()-1000});
-          push(ref(db,'trending'),{tag:'#StarlightWalkHX',count:1840,ts:Date.now()-2000});
-          set(ref(db,'savedArticle'),{
-            pub:'Huddersfield Examiner',
-            headline:'Emergency services respond to serious incidents at Starlight Walk charity event',
-            standfirst:'Two separate incidents — including a cardiac arrest and a vehicle collision — disrupted the annual overnight fundraising walk in Huddersfield.',
-            body:'Emergency services were called to two separate incidents during the Starlight Walk charity event overnight, which takes place across 3, 6 and 10-mile routes finishing at John Smith\'s Stadium. | The first incident, a medical emergency, was reported on the 10-mile route near Croftflat Road at approximately 00:13. Witnesses described CPR being administered by bystanders before paramedics arrived. A man was subsequently taken to hospital by ambulance. | The second and more serious incident occurred at approximately 22:18 at the Aspley bridge section, where a vehicle is understood to have struck a group of walkers on the shared route immediately east of the A629 roundabout. Multiple casualties were reported, with emergency services describing at least one person as seriously injured. | West Yorkshire Police attended the scene and confirmed the incident was being treated as a road traffic collision. Officers stated there was no evidence to suggest the incident was deliberate, despite speculation on social media. | The Starlight Walk is an annual overnight charity walk raising funds for the local hospice, with approximately 1,000 participants taking part across three routes this year.',
-            quote:'We urge the public not to speculate and to allow emergency services to do their work — West Yorkshire Police',
-            image:'',
-            reporter:'James Whitmore, Senior Reporter',
-          });
-          addLog('Starlight Walk scenario auto-loaded — Phase 1 (13 injects) and Phase 2 (18 injects) ready');
-        }
-      }).catch(()=>{});
-    }).catch(()=>{});
-  }
   updateClock();
   setInterval(updateClock,1000);
   addLog('Connected to live exercise feed');
@@ -2325,6 +2290,8 @@ const BUILTIN_SCENARIOS = [
       image:'',reporter:'James Whitmore, Senior Reporter',
     },
     tag:'starlight',
+    hasScript: true,
+    scriptKey: 'starlight',
   },
   {
     id:'builtin_cyber',
@@ -2426,6 +2393,18 @@ async function loadScenario(scenario){
     }
 
     // 3. Load scripts if this scenario has them
+    if(scenario.hasScript && scenario.scriptKey === 'starlight'){
+      const phase1 = STARLIGHT_SCRIPT.filter(i=>parseInt(i.id.replace('sw_',''))<=13);
+      const phase2 = STARLIGHT_SCRIPT.filter(i=>parseInt(i.id.replace('sw_',''))>=14);
+      await set(ref(db,'script1'), phase1);
+      await set(ref(db,'script2'), phase2);
+      for(let i=0;i<PREINCIDENT_POSTS.length;i++){
+        const post=PREINCIDENT_POSTS[i];
+        const match=personas.find(p=>p.name===post.name||p.handle===post.handle);
+        const photo=match&&match.photo?match.photo:undefined;
+        await push(ref(db,'posts'),clean({...post,photo,replies:ri(10,300),ts:Date.now()-(PREINCIDENT_POSTS.length-i)*120000}));
+      }
+    }
     if(scenario.hasScript && scenario.scriptKey === 'kirkwood'){
       await set(ref(db,'script1'), KIRKWOOD_PHASE1);
       await set(ref(db,'script2'), KIRKWOOD_PHASE2);
