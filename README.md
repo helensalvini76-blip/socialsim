@@ -24,6 +24,7 @@ at **mediasim.bcrconsultants.co.uk**.
 |---|---|
 | Comms team | `jupiter.html` |
 | Facilitator | `dashboard.html` (passphrase `jupiter2026`, or `?key=jupiter2026`) |
+| ICC wall display | `wall.html` — read-only, for a projector |
 | Preview on one device | `jupiter.html?offline=1` |
 | Separate run | add `?session=dryrun` to both |
 

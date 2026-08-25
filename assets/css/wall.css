@@ -1,0 +1,98 @@
+/* Exercise Jupiter — ICC wall display.
+
+   Projected, read from across a room, never interacted with. Type is large,
+   contrast is high, and nothing depends on colour alone. It follows the
+   facilitator's clock and never controls it. */
+
+:root{
+  --bg:#0a0e14; --panel:#121a24; --line:#1f2a36;
+  --ink:#eef4fa; --dim:#93a4b5; --faint:#5f7185;
+  --accent:#4aa8ff; --good:#43c463; --warn:#e0a32e; --bad:#ff5f56;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"Cascadia Mono",Consolas,"SF Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);}
+
+/* ── Banner ──────────────────────────────────────────────────────── */
+#band{height:38px;display:flex;align-items:center;justify-content:center;gap:14px;
+  background:repeating-linear-gradient(135deg,#b8860b,#b8860b 16px,#8b6508 16px,#8b6508 32px);
+  color:#fff;font-size:14px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;}
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+#grid{position:absolute;top:38px;left:0;right:0;bottom:62px;
+  display:grid;grid-template-columns:1fr 400px;gap:2px;background:var(--line);}
+.side{background:var(--panel);display:flex;flex-direction:column;gap:2px;overflow:hidden;}
+.main{background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+
+.mhead{padding:12px 26px;display:flex;align-items:baseline;gap:18px;border-bottom:1px solid var(--line);}
+.mhead h1{font-size:19px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
+.mhead .vol{margin-left:auto;font-family:var(--mono);font-size:15px;color:var(--faint);}
+
+#feed{flex:1;overflow:hidden;padding:8px 26px;}
+.card{padding:16px 0;border-bottom:1px solid #16202c;animation:rise .5s ease-out;}
+@keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.card-h{display:flex;align-items:center;gap:12px;margin-bottom:7px;}
+.who{font-size:20px;font-weight:700;}
+.tagp{font-size:11.5px;font-weight:800;letter-spacing:.09em;padding:3px 9px;border-radius:5px;}
+.t-media{background:rgba(74,168,255,.18);color:var(--accent);}
+.t-rumour{background:rgba(255,95,86,.18);color:var(--bad);}
+.t-family{background:rgba(224,163,46,.18);color:var(--warn);}
+.t-org{background:rgba(67,196,99,.2);color:var(--good);}
+.t-public{background:rgba(147,164,181,.16);color:var(--dim);}
+.when{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--faint);}
+.body{font-size:23px;line-height:1.42;color:var(--ink);}
+
+/* ── Side panels ─────────────────────────────────────────────────── */
+.box{background:var(--panel);padding:16px 20px;}
+.box h2{font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:10px;}
+
+.clockbox{text-align:center;padding:18px 20px 20px;}
+.tplus{font-family:var(--mono);font-size:54px;font-weight:700;color:#ffd76e;line-height:1;
+  font-variant-numeric:tabular-nums;}
+.wall-time{font-family:var(--mono);font-size:20px;color:var(--dim);margin-top:4px;}
+.phase{margin-top:11px;font-size:15px;font-weight:600;color:var(--accent);}
+
+.since{text-align:center;padding:20px;flex:0 0 auto;}
+.since .n{font-family:var(--mono);font-size:60px;font-weight:700;line-height:1;
+  font-variant-numeric:tabular-nums;color:var(--good);}
+.since.warn .n{color:var(--warn);}
+.since.bad .n{color:var(--bad);animation:throb 1.8s ease-in-out infinite;}
+@keyframes throb{0%,100%{opacity:1;}50%{opacity:.55;}}
+.since .u{font-size:13px;color:var(--dim);margin-top:6px;letter-spacing:.05em;}
+.since .none{font-size:31px;font-weight:800;color:var(--bad);line-height:1.2;}
+
+.trend{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;
+  border-bottom:1px solid #18222e;}
+.trend:last-child{border-bottom:0;}
+.trend .tag{font-size:17px;font-weight:700;}
+.trend .n{font-family:var(--mono);font-size:14px;color:var(--faint);}
+
+.stat{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:15px;}
+.stat span{color:var(--dim);}
+.stat b{font-family:var(--mono);font-size:19px;}
+.stat b.ok{color:var(--good);} .stat b.bad{color:var(--bad);} .stat b.idle{color:var(--faint);}
+
+.latest{font-size:16px;line-height:1.45;color:var(--ink);
+  border-left:3px solid var(--good);padding-left:13px;}
+.latest.none{border-left-color:var(--bad);color:var(--bad);font-weight:600;}
+.latest-when{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin-top:7px;}
+
+/* ── Ticker ──────────────────────────────────────────────────────── */
+#ticker{position:absolute;bottom:0;left:0;right:0;height:62px;background:#16202c;
+  border-top:2px solid var(--bad);display:flex;align-items:center;overflow:hidden;}
+#ticker .label{flex:0 0 auto;background:var(--bad);color:#fff;font-weight:800;font-size:15px;
+  letter-spacing:.13em;padding:0 20px;height:100%;display:flex;align-items:center;}
+#ticker .track{white-space:nowrap;font-size:19px;padding-left:100%;
+  animation:slide 46s linear infinite;}
+#ticker .track span{margin-right:64px;}
+#ticker .track b{color:var(--accent);}
+@keyframes slide{from{transform:translateX(0);}to{transform:translateX(-100%);}}
+
+#holding{position:absolute;inset:38px 0 62px;background:var(--bg);display:flex;
+  align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;}
+#holding.hide{display:none;}
+#holding .big{font-size:34px;font-weight:800;color:var(--dim);}
+#holding .sub{font-size:17px;color:var(--faint);}

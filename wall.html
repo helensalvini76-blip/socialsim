@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="build" content="27">
+<title>Exercise Jupiter — ICC Wall Display</title>
+<link rel="stylesheet" href="assets/css/wall.css?v=27">
+</head>
+<body>
+
+<div id="band">⚠ Exercise Jupiter — simulated content — exercise only ⚠</div>
+
+<div id="grid">
+  <div class="main">
+    <div class="mhead">
+      <h1>What the public is seeing</h1>
+      <div class="vol" id="vol"></div>
+    </div>
+    <div id="feed"></div>
+  </div>
+
+  <div class="side">
+    <div class="box clockbox">
+      <div class="tplus" id="tplus">T+000</div>
+      <div class="wall-time" id="wall-time">13:00</div>
+      <div class="phase" id="phase">Alarm &amp; escalation</div>
+    </div>
+
+    <div class="box since" id="since">
+      <h2>Since our last statement</h2>
+      <div class="n" id="since-n">—</div>
+      <div class="u" id="since-u">no statement issued yet</div>
+    </div>
+
+    <div class="box">
+      <h2>Our last public message</h2>
+      <div class="latest none" id="latest">Nothing has been issued.</div>
+      <div class="latest-when" id="latest-when"></div>
+    </div>
+
+    <div class="box">
+      <h2>Trending in Huddersfield</h2>
+      <div id="trending"></div>
+    </div>
+
+    <div class="box">
+      <h2>Pressure</h2>
+      <div class="stat"><span>Enquiries unanswered</span><b id="s-enq" class="idle">0</b></div>
+      <div class="stat"><span>Posts about the incident</span><b id="s-posts" class="idle">0</b></div>
+      <div class="stat"><span>Statements issued</span><b id="s-said" class="idle">0</b></div>
+    </div>
+  </div>
+</div>
+
+<div id="ticker">
+  <div class="label">BREAKING</div>
+  <div class="track" id="track"><span>Awaiting exercise start…</span></div>
+</div>
+
+<div id="holding">
+  <div class="big">Exercise Jupiter</div>
+  <div class="sub">Waiting for the exercise to start</div>
+</div>
+
+<script type="module" src="assets/js/wall.js?v=27"></script>
+</body>
+</html>
