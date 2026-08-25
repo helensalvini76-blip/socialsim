@@ -5,10 +5,10 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js?v=10';
-import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=10';
-import { rnd, pick, sample, agoLabel } from './util.js?v=10';
-import { stream } from './rng.js?v=10';
+import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, THREADS } from './scenario-jupiter.js?v=12';
+import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=12';
+import { rnd, pick, sample, agoLabel } from './util.js?v=12';
+import { stream } from './rng.js?v=12';
 
 export class Engine {
   constructor(feed, opts = {}){
@@ -32,29 +32,20 @@ export class Engine {
     this._build();
   }
 
-  /* Give a post a plausible comment thread, weighted by who posted it.
-     Rumour and media posts attract the biggest, nastiest threads. */
+  /* Build a post's thread from the authored list in THREADS, keyed by the
+     post's minute. Nothing is generated: a comment only ever appears under the
+     post it was written for. Likes are seeded so every device agrees. */
   _makeThread(item, p, postId){
-    const r = stream('thread:' + this.seed + ':' + item.who + ':' + item.min);
-    const mix = THREAD_MIX[p.type] || THREAD_MIX.public;
-    const n = (p.type === 'rumour' || p.type === 'media') ? r.int(3, 6) : r.int(1, 4);
-    const out = [];
-    // Seed with the author so nobody turns up commenting under their own post.
-    const used = new Set([item.who]);
-    for (let i = 0; i < n; i++){
-      const c = r.pick(COMMENT_POOL[r.pick(mix)] || []);
-      if (!c || used.has(c.who)) continue;
-      used.add(c.who);
-      out.push({
-        id: postId + '#c' + i,
-        persona: persona(c.who),
-        text: c.text,
-        min: item.min + 0.4 + i * 0.8,
-        likes: r.int(0, 22),
-        replies: [],
-      });
-    }
-    return out;
+    const authored = THREADS[String(item.min)] || THREADS[item.min] || [];
+    const r = stream('thread:' + this.seed + ':' + postId);
+    return authored.map((c, i) => ({
+      id: postId + '#c' + i,
+      persona: persona(c.who),
+      text: c.text,
+      min: item.min + 0.4 + i * 0.9,
+      likes: r.int(0, 18),
+      replies: [],
+    }));
   }
 
   _build(){

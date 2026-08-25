@@ -246,68 +246,221 @@ export const TRENDING_AFTER = [
 /* Accounts offered in the sidebar. */
 export const SUGGESTED = ['examiner', 'regional', 'fire', 'police', 'councillor'];
 
-/* ── Comment threads ───────────────────────────────────────────────
-   Every scripted post carries a thread underneath it. This is where a real
-   incident actually gets nasty — not in the post, but in the replies to it,
-   where the organisation is being discussed rather than addressed. The comms
-   team can open any thread and reply into it. */
+/* ── Comment threads, written per post ─────────────────────────────
+   Keyed by the post's minute. Every comment here was written to sit under
+   that specific post — nothing is generated from a pool, because a generic
+   pool produces comments about a fire underneath a post about strawberries.
 
-export const COMMENT_POOL = {
-  alarm: [
-    {who:'owen',    text:'whats happened? ive just seen 4 engines go past'},
-    {who:'nikki',   text:'oh no not the hospice 😢'},
-    {who:'kevin',   text:'my wife works nearby, she says the whole car park is full of staff'},
-    {who:'tracy',   text:'anyone know if the patients are ok??'},
-    {who:'dave',    text:'road is shut both ways at the top'},
-    {who:'gary',    text:'that explains the traffic earlier'},
+   Posts with no entry here simply have no comments, which is what most posts
+   in a real feed look like. Add or edit freely: the key is the `min` of the
+   inject, and the whole thread is auditable in one place.                  */
+
+export const THREADS = {
+
+  // ── Before the alarm — ordinary hospice life ────────────────────
+  '-180': [
+    {who:'norris',    text:'Dedicated one for my mum last year. Lovely thing to do.'},
+    {who:'tracy',     text:'just done ours 🌻'},
   ],
-  rumour: [
-    {who:'angry',   text:'my mate said theres been fatalities. not confirmed obviously'},
-    {who:'becky',   text:'someone in the dalton group is saying the same 😢'},
-    {who:'viral',   text:'We are hearing the same from multiple sources.'},
-    {who:'watch',   text:'Still unconfirmed. We will update when we know more.'},
-    {who:'darren',  text:'where are people getting this from though'},
+  '-140': [
+    {who:'amelia',    text:'They were the same with my dad. Absolute angels, every one of them.'},
+    {who:'sandra',    text:'Beautiful words Janet. They do such a lot for this town. 💛'},
+    {who:'fatima',    text:'❤️'},
   ],
-  correction: [
-    {who:'amelia',  text:'Please stop sharing this. You have no idea who is reading it.'},
-    {who:'john',    text:'this is exactly how misinformation spreads. wait for the hospice'},
-    {who:'tom',     text:'Nothing official has said that. At all.'},
-    {who:'norris',  text:'There are families on here. Have a think before you post.'},
-    {who:'priya',   text:'Reported this comment. Its not helpful.'},
+  '-120': [
+    {who:'gary',      text:'Marvellous. Another month of sitting in that queue then'},
+    {who:'owen',      text:'Is that the stretch by the lights or further up?'},
   ],
-  sympathy: [
-    {who:'fatima',  text:'Thinking of all the staff and patients 🤲'},
-    {who:'sandra',  text:'That place looked after my dad. Lovely people. 💛'},
-    {who:'norris',  text:'Sending love to everyone there tonight x'},
-    {who:'tracy',   text:'💛💛'},
-    {who:'neighbour',text:'If anyone needs a hot drink or the loo we are two doors down.'},
+  '-95': [
+    {who:'tracy',     text:'ooh are they the Yorkshire ones? 🍓'},
+    {who:'neighbour', text:'Popping down at dinner, save me a punnet!'},
   ],
-  angry: [
-    {who:'angry',   text:'and still not a word from them. says it all'},
-    {who:'exstaff', text:'ask them about the fire doors'},
-    {who:'viral',   text:'Complete silence from the hospice. Over an hour now.'},
-    {who:'paul',    text:'to be fair theyll be a bit busy right now'},
+  '-70': [
+    {who:'norris',    text:'214! That is a lot of families having a better day because of you.'},
   ],
-  question: [
-    {who:'karen',   text:'does anyone know where theyre taking them?'},
-    {who:'mohammed',text:'Has anyone actually been contacted by the hospice? Genuine question.'},
-    {who:'sarahm',  text:'is day therapy still on tomorrow does anyone know'},
-    {who:'fiona',   text:'are staff meant to be going in for the late shift or not'},
-    {who:'gary',    text:'whats the number to ring? the main one is engaged'},
+  '-40': [
+    {who:'nikki',     text:'well done you 👏'},
+    {who:'priya',     text:'Is it too late to bring something in?'},
   ],
-  practical: [
-    {who:'business',text:'We have opened up if anyone needs shelter, no charge.'},
-    {who:'worried', text:'I have a van and I can be there in 20 minutes if they need anything moving'},
-    {who:'owen',    text:'top road is clear if you need to get round'},
+  '-20': [
+    {who:'owen',      text:'roadworks by the lights, been like it all week'},
+    {who:'dave',      text:'took me 20 mins to get through this morning'},
+  ],
+
+  // ── Phase 1 — alarm and escalation ──────────────────────────────
+  2: [
+    {who:'neighbour', text:'I can hear it too. Been going a while now.'},
+    {who:'owen',      text:'probably a drill? they do them sometimes'},
+  ],
+  4: [
+    {who:'tracy',     text:'I have just seen people stood out on the grass by the car park'},
+    {who:'nikki',     text:'Hope it is nothing. Thinking of them.'},
+  ],
+  9: [
+    {who:'darren',    text:'can confirm, smoke visible from the top road'},
+    {who:'sandra',    text:'oh no. those poor patients.'},
+  ],
+  13: [
+    {who:'owen',      text:'Where are you getting that patients are still inside? Has anyone actually said that?'},
+    {who:'becky',     text:'😢😢'},
+    {who:'john',      text:'Careful. There will be families reading this.'},
+  ],
+  15: [
+    {who:'nikki',     text:'Please let everyone be ok'},
+    {who:'paul',      text:'The hospice have not said anything yet have they'},
+  ],
+  17: [
+    {who:'amelia',    text:'Karen I am so sorry. Keep trying, they will be overwhelmed right now.'},
+    {who:'neighbour', text:'Sending love. I hope you hear something soon. 💛'},
+    {who:'sandra',    text:'Has anyone got a number for the hospice that actually gets answered?'},
+  ],
+  22: [
+    {who:'nikki',     text:'Beds outside. That tells you how serious it is.'},
+    {who:'priya',     text:'It is going to rain as well. Those poor people.'},
+  ],
+
+  // ── Phase 2 — live movement ─────────────────────────────────────
+  25: [
+    {who:'karen',     text:'Diane does your friend know if the patients are ok?'},
+    {who:'john',      text:'Maybe let them get on with it rather than reporting live from your friends WhatsApp'},
+    {who:'tracy',     text:'my sister in law said the same thing'},
+  ],
+  27: [
+    {who:'amelia',    text:'"Unconfirmed reports of casualties" — so no reports then. Take this down.'},
+    {who:'angry',     text:'people have a right to know'},
+    {who:'tom',       text:'This account does this every single time. Wait for the actual services.'},
+  ],
+  29: [
+    {who:'john',      text:'they are dealing with an actual fire mate'},
+    {who:'viral',     text:'Half an hour is a long time in a crisis. Other organisations manage it.'},
+  ],
+  31: [
+    {who:'amelia',    text:'That is not right. You should have had a call before any of this was online.'},
+    {who:'karen',     text:'Same here. Nobody has rung me either.'},
+    {who:'neighbour', text:'I am so sorry. I hope someone gets to you soon. 💛'},
+  ],
+  35: [
+    {who:'john',      text:'Becky where has that come from? Genuinely asking.'},
+    {who:'becky',     text:'someone on the dalton group, I dont know if its true'},
+    {who:'amelia',    text:'Then please do not repeat it. There are families on here.'},
+  ],
+  37: [
+    {who:'tom',       text:'Nobody official has said anyone has died. Nobody.'},
+    {who:'john',      text:'You are repeating a rumour off Facebook as fact.'},
+    {who:'priya',     text:'This is horrible to read if you have family in there.'},
+  ],
+  43: [
+    {who:'paul',      text:'Three times and nothing. Not great is it'},
+    {who:'norris',    text:'Give them a chance. They will be moving patients right now.'},
+  ],
+  45: [
+    {who:'amelia',    text:'You can see patients in that photo. Take it down.'},
+    {who:'sandra',    text:'That is somebody’s mum in that bed. Have a word with yourself.'},
+    {who:'angry',     text:'its a public road, allowed to film'},
+  ],
+
+  // ── Phase 3 — clearing station and families ─────────────────────
+  47: [
+    {who:'angry',     text:'Knew it. There is always something.'},
+    {who:'tom',       text:'Michelle if you genuinely raised that, it needs to go to the fire service, not a post.'},
+    {who:'amelia',    text:'This is an ex employee making a serious allegation in the middle of an incident.'},
+    {who:'john',      text:'Might be true, might not. Today is not the day.'},
+  ],
+  52: [
+    {who:'tom',       text:'Well said. Sharing this.'},
+    {who:'becky',     text:'sorry. ive deleted mine.'},
+  ],
+  54: [
+    {who:'amelia',    text:'Going round the comms team straight to grieving families. Classy.'},
+    {who:'john',      text:'That is literally his job though'},
+  ],
+  57: [
+    {who:'worried',   text:'Can we take blankets down? Genuine offer.'},
+    {who:'neighbour', text:'We have a gazebo if it is any use to anyone.'},
+  ],
+  61: [
+    {who:'nikki',     text:'That does not necessarily mean anything bad. They will be transferring people.'},
+    {who:'becky',     text:'thats what I was hoping'},
+  ],
+  63: [
+    {who:'karen',     text:'I have now, finally. Keep ringing.'},
+    {who:'mohammed',  text:'Nothing here either.'},
+  ],
+
+  // ── Phase 4 — dispersal and media peak ──────────────────────────
+  68: [
+    {who:'tracy',     text:'Nobody has told us anything either. I am supposed to be on at 6.'},
+    {who:'nikki',     text:'Surely someone can send one message to all staff?'},
+    {who:'john',      text:'They will be firefighting, literally. It will come.'},
+  ],
+  70: [
+    {who:'paul',      text:'"approached for comment" is doing a lot of work there'},
+    {who:'amelia',    text:'They are a small hospice, not a press office with a night shift.'},
+  ],
+  75: [
+    {who:'sandra',    text:'This is why I love this town 💛'},
+    {who:'priya',     text:'Sharing this.'},
+  ],
+  77: [
+    {who:'amelia',    text:'Oh Karen that is such a relief. 💛'},
+    {who:'neighbour', text:'Thank goodness. Been thinking about you all afternoon.'},
+    {who:'nikki',     text:'Best news I have read today.'},
+  ],
+  79: [
+    {who:'john',      text:'Well meant but they cannot just hand patients to volunteers in vans.'},
+    {who:'amelia',    text:'Offer it to them properly rather than organising it on Facebook.'},
+    {who:'sandra',    text:'Heart is in the right place though.'},
+  ],
+  81: [
+    {who:'norris',    text:'They have been carrying people out of a burning building.'},
+    {who:'viral',     text:'Both things can be true.'},
+  ],
+  88: [
+    {who:'amelia',    text:'If the car park is full of patients and vehicles they cannot have people walking in.'},
+    {who:'karen',     text:'Somebody should still come out and speak to them though.'},
+    {who:'tracy',     text:'That is heartbreaking either way.'},
+  ],
+  93: [
+    {who:'tom',       text:'Agreed. Even three words would help.'},
+    {who:'john',      text:'The person who runs the page is probably carrying a bed.'},
+    {who:'priya',     text:'Fair, but someone in the building must be able to type.'},
+  ],
+  96: [
+    {who:'amelia',    text:'And where has this come from? You said casualties two hours ago.'},
+    {who:'becky',     text:'hope its right this time'},
+  ],
+  99: [
+    {who:'sandra',    text:'Thank you councillor. First clear thing anyone has said all afternoon.'},
+    {who:'nikki',     text:'😭 thank god'},
+  ],
+
+  // ── Phase 5 — recovery ──────────────────────────────────────────
+  102: [
+    {who:'sandra',    text:'Whatever they need. Just say the word.'},
+    {who:'priya',     text:'Count me in.'},
+    {who:'tracy',     text:'💛💛💛'},
+  ],
+  108: [
+    {who:'tom',       text:'Good point. There are always fake pages after something like this.'},
+    {who:'norris',    text:'Only give through their own website, everyone.'},
+  ],
+  116: [
+    {who:'amelia',    text:'That is a very fair way to put it.'},
+    {who:'karen',     text:'Exactly this. The waiting was the worst part.'},
+    {who:'nikki',     text:'Hope they read this one.'},
+  ],
+  124: [
+    {who:'fiona',     text:'I would ring in the morning before setting off.'},
+    {who:'neighbour', text:'Same question about the Wednesday group.'},
+  ],
+  132: [
+    {who:'amelia',    text:'Hospice at Home is still running as far as I know, it is the beds that are gone.'},
+    {who:'norris',    text:'Ring them, they will find a way. They always do.'},
+  ],
+  140: [
+    {who:'tracy',     text:'Every one of them 👏'},
+    {who:'gary',      text:'Absolute credit to the place.'},
   ],
 };
 
-/* Which pools a post attracts, by the kind of account that posted it. */
-export const THREAD_MIX = {
-  rumour:   ['rumour', 'correction', 'angry'],
-  media:    ['question', 'angry', 'correction'],
-  official: ['question', 'sympathy', 'practical'],
-  family:   ['sympathy', 'question', 'correction'],
-  public:   ['alarm', 'sympathy', 'question'],
-  org:      ['question', 'sympathy', 'angry'],
-};
+
