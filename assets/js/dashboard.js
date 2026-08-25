@@ -8,12 +8,12 @@
    inject always visible, an inject one click away, and the comms team's own
    activity on screen while doing something else. */
 
-import { Engine } from './engine.js?v=17';
-import { connect } from './sync.js?v=17';
-import { PHASES } from './scenario-jupiter.js?v=17';
-import { PERSONAS, persona } from './personas.js?v=17';
-import { QUICKFIRE, GROUPS } from './quickfire.js?v=17';
-import { clockLabel } from './util.js?v=17';
+import { Engine } from './engine.js?v=20';
+import { connect } from './sync.js?v=20';
+import { PHASES } from './scenario-jupiter.js?v=20';
+import { PERSONAS, persona } from './personas.js?v=20';
+import { QUICKFIRE, GROUPS } from './quickfire.js?v=20';
+import { clockLabel } from './util.js?v=20';
 
 const params  = new URLSearchParams(location.search);
 const SESSION = params.get('session') || 'jupiter';
@@ -57,9 +57,16 @@ function paintClock(){
   $('phasename').textContent = ph.name;
 }
 
+let generation = 1;
+
 function publishClock(){
   if (!transport || !transport.setClock) return;
-  transport.setClock({ anchorMin: engine.nowMin, speed: engine.speed, running: engine.running });
+  transport.setClock({
+    anchorMin: engine.nowMin,
+    speed: engine.speed,
+    running: engine.running,
+    gen: generation,
+  });
 }
 
 /* ── Timeline ────────────────────────────────────────────────────── */
@@ -362,14 +369,30 @@ function wireTop(){
   });
   $('export').addEventListener('click', exportDebrief);
   $('reset').addEventListener('click', async () => {
-    if (!confirm('Reset the exercise for everyone?\n\nThis clears every post and reply, for all devices.')) return;
+    const NL = String.fromCharCode(10);
+    const msg = 'Reset Exercise Jupiter back to the beginning?' + NL + NL
+              + 'The clock stops at T+0, every post and reply is cleared on every '
+              + 'device, and the exercise waits for you to press START again.';
+    if (!confirm(msg)) return;
+
+    engine.pause();                       // stop first, so nothing fires mid-reset
+    hasStarted = false;
+    generation += 1;
+
     if (transport && transport.clearAll) await transport.clearAll();
-    engine.reset();
+    engine.reset();                       // clears live records and rebuilds the script
     seenLog.clear();
-    $('monitor').innerHTML = '<div class="mon-empty">Reset. Waiting for the comms team.</div>';
+    $('monitor').innerHTML = '<div class="mon-empty">Reset to T+0.<br>Press START EXERCISE when ready.</div>';
     buildTimeline();
+    userScrolled = false;
+    engine.speed = 1;
+    document.querySelectorAll('[data-speed]').forEach(o => o.classList.toggle('on', o.dataset.speed === '1'));
+
+    setPlayUI();
     publishClock();
-    toast('Exercise reset');
+    paintClock();
+    paintStatus();
+    toast('Reset — waiting to start');
   });
 }
 
@@ -423,8 +446,21 @@ connect(SESSION, { offline: OFFLINE }).then(t => {
     if (adopted || !v || typeof v.anchorMin !== 'number') return;
     adopted = true;
     const serverNow = t.serverNow ? t.serverNow() : Date.now();
+
+    /* A dashboard heartbeats every 15 seconds while it is open. If a clock says
+       "running" but has not been touched for minutes, nobody is driving it — it
+       is the remains of a finished exercise, not one in progress. Resuming it
+       would silently restart an old run every time this page is opened. */
+    const STALE_MS = 3 * 60 * 1000;
+    if (v.running && (serverNow - (v.at || 0)) > STALE_MS){
+      generation = (v.gen || 1) + 1;      // new generation, so devices clear down
+      setPlayUI();                        // stay at T+0 waiting to be started
+      return;
+    }
+
     const elapsed = v.running ? Math.max(0, (serverNow - (v.at || serverNow)) / 60000) * (v.speed || 1) : 0;
     engine.speed = v.speed || 1;
+    generation = v.gen || 1;
     engine.seek(v.anchorMin + elapsed);
     document.querySelectorAll('[data-speed]').forEach(o =>
       o.classList.toggle('on', Number(o.dataset.speed) === engine.speed));

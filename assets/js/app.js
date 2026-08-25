@@ -4,12 +4,12 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=17';
-import { connect } from './sync.js?v=17';
-import { Engine } from './engine.js?v=17';
-import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=17';
-import { ORG, persona } from './personas.js?v=17';
-import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=17';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=20';
+import { connect } from './sync.js?v=20';
+import { Engine } from './engine.js?v=20';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=20';
+import { ORG, persona } from './personas.js?v=20';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=20';
 
 const PLATFORMS = ['x', 'fb', 'ig'];
 const screen  = document.getElementById('screen');
@@ -327,8 +327,19 @@ function publishClock(){
 
 /* Firebase stamps the clock with server time, so devices with wrong local
    clocks still land in the right place. */
+let lastGen = null;
+
 function applyClock(v){
   if (!v || typeof v.anchorMin !== 'number') return;
+
+  // A change of generation means the facilitator reset the exercise, not that
+  // the clock moved. Wipe local live records too, or posts from the previous
+  // run would be replayed back onto this device.
+  if (v.gen != null && lastGen != null && v.gen !== lastGen){
+    engine.reset();
+    engine.pause();
+  }
+  if (v.gen != null) lastGen = v.gen;
   const serverNow = transport.serverNow ? transport.serverNow() : Date.now();
   const elapsedMin = v.running ? Math.max(0, (serverNow - (v.at || serverNow)) / 60000) * (v.speed || 1) : 0;
   const target = v.anchorMin + elapsedMin;
