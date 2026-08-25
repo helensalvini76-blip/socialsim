@@ -5,7 +5,7 @@
    is rarely in the post itself, it is forty comments deep where the
    organisation is being talked about rather than talked to. */
 
-import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js?v=7';
+import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js?v=10';
 
 /* One shared reply target handler, used by posts and by individual comments. */
 let replyHandler = () => {};
@@ -108,7 +108,8 @@ function commentRow(post, c){
 /* Add a new top-level comment to a post. */
 export function pushComment(post, persona, text, opts = {}){
   post.thread = post.thread || [];
-  post.thread.push({ persona, text, min: opts.min ?? 0, likes: 0, own: !!opts.own, isNew: true, replies: [] });
+  if (opts.id && post.thread.some(c => c.id === opts.id)) return;
+  post.thread.push({ id: opts.id, persona, text, min: opts.min ?? 0, likes: 0, own: !!opts.own, isNew: true, replies: [] });
   post.threadExpanded = true;         // once it is live, keep it open
   renderThread(post);
   post.refresh && post.refresh();
@@ -117,7 +118,8 @@ export function pushComment(post, persona, text, opts = {}){
 /* Add a reply underneath one specific comment. */
 export function pushCommentReply(comment, persona, text, opts = {}){
   comment.replies = comment.replies || [];
-  const kid = { persona, text, min: opts.min ?? 0, likes: 0, own: !!opts.own, isNew: true, replies: [] };
+  if (opts.id && comment.replies.some(c => c.id === opts.id)) return;
+  const kid = { id: opts.id, persona, text, min: opts.min ?? 0, likes: 0, own: !!opts.own, isNew: true, replies: [] };
   comment.replies.push(kid);
   const post = comment.parentPost;
   if (post){

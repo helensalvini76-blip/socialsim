@@ -5,13 +5,15 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js?v=7';
-import { persona, ORG } from './personas.js?v=7';
-import { rnd, pick, sample, agoLabel } from './util.js?v=7';
+import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js?v=10';
+import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=10';
+import { rnd, pick, sample, agoLabel } from './util.js?v=10';
+import { stream } from './rng.js?v=10';
 
 export class Engine {
-  constructor(feed){
-    this.feed = feed;              // { add(post), comment(post, persona, text), all() }
+  constructor(feed, opts = {}){
+    this.feed = feed;
+    this.seed = opts.seed || 'jupiter-1';              // { add(post), comment(post, persona, text), all() }
     /* Time is derived from the wall clock rather than accumulated per frame.
        A phone that locks, or a tab left in the background, throttles timers and
        stops rAF entirely — accumulating would silently freeze that participant's
@@ -25,27 +27,30 @@ export class Engine {
     this.firstOrgPostMin = null;
     this.orgPostCount = 0;
     this.log = [];
+    this._localSeq = 0;
+    this.live = { posts: [], comments: [] };
     this._build();
   }
 
   /* Give a post a plausible comment thread, weighted by who posted it.
      Rumour and media posts attract the biggest, nastiest threads. */
-  _makeThread(item, p){
+  _makeThread(item, p, postId){
+    const r = stream('thread:' + this.seed + ':' + item.who + ':' + item.min);
     const mix = THREAD_MIX[p.type] || THREAD_MIX.public;
-    const n = (p.type === 'rumour' || p.type === 'media') ? rnd(3, 6) : rnd(1, 4);
+    const n = (p.type === 'rumour' || p.type === 'media') ? r.int(3, 6) : r.int(1, 4);
     const out = [];
     // Seed with the author so nobody turns up commenting under their own post.
     const used = new Set([item.who]);
     for (let i = 0; i < n; i++){
-      const c = pick(COMMENT_POOL[pick(mix)] || []);
+      const c = r.pick(COMMENT_POOL[r.pick(mix)] || []);
       if (!c || used.has(c.who)) continue;
       used.add(c.who);
       out.push({
+        id: postId + '#c' + i,
         persona: persona(c.who),
         text: c.text,
         min: item.min + 0.4 + i * 0.8,
-        nowMin: item.min + 0.4 + i * 0.8,
-        likes: rnd(0, 22),
+        likes: r.int(0, 22),
         replies: [],
       });
     }
@@ -54,13 +59,16 @@ export class Engine {
 
   _build(){
     this.queue = SCRIPT.map((s, i) => {
-      const jitter = s.burst ? (Math.random() * 0.35) : (Math.random() * 1.6 - 0.5);
+      // Seeded per item, so every device fires this inject at the same moment.
+      const r = stream('jitter:' + this.seed + ':' + i);
+      const jitter = s.burst ? r.range(0, 0.35) : r.range(-0.5, 1.1);
+      const postId = 'S' + i;
       return {
         ...s,
-        id: 'S' + i,
+        id: postId,
         fireAt: s.min + jitter,
         persona: persona(s.who),
-        thread: this._makeThread(s, persona(s.who)),
+        thread: this._makeThread(s, persona(s.who), postId),
         scripted: true,
         fired: false,
       };
@@ -72,7 +80,7 @@ export class Engine {
     BASELINE.forEach((b, i) => {
       const pp = persona(b.who);
       const post = { ...b, id: 'B' + i, persona: pp, min: b.min, scripted: true,
-                     thread: this._makeThread(b, pp) };
+                     thread: this._makeThread(b, pp, 'B' + i) };
       this.feed.add(post, { silent: true });
     });
   }
@@ -102,17 +110,20 @@ export class Engine {
     this.speed = s;
   }
 
-  /* Jump the clock. Anything skipped fires silently so the feed stays coherent. */
+  /* Jump the clock. Anything skipped fires silently so the feed stays coherent.
+     Going backwards rebuilds the scripted content — but live posts and replies
+     are replayed afterwards, never discarded. Firebase delivers each record
+     once, so anything dropped here would be gone from this device for good. */
   seek(min){
-    if (min < this.nowMin) this.reset();
+    if (min < this.nowMin) this._rebuildScripted();
     this._setNow(min);
     this._fireDue(true);
+    this._replayLive();
     this._refreshAges();
     if (this.onTick) this.onTick(this.nowMin, this.phase());
   }
 
-  reset(){
-    this._setNow(0);
+  _rebuildScripted(){
     this.pending = [];
     this.firstOrgPostMin = null;
     this.orgPostCount = 0;
@@ -122,13 +133,28 @@ export class Engine {
     this.seedBaseline();
   }
 
+  /* Re-apply anything live that belongs at or before the current time. */
+  _replayLive(){
+    this.live.posts.forEach(rec => {
+      if (rec.min <= this.nowMin && !this.findPost(rec.id)) this.applyPost(rec);
+    });
+    this.live.comments.forEach(rec => {
+      if (rec.min <= this.nowMin) this.applyComment(rec);
+    });
+  }
+
+  /* Full reset — the facilitator deliberately clearing the decks. */
+  reset(){
+    this._setNow(0);
+    this.live = { posts: [], comments: [] };
+    this._rebuildScripted();
+  }
+
   _tick(){
     if (!this.running) return;
-    const now = Date.now();
-    const dt = Math.min(5, (now - this._lastTick) / 1000);   // cap catch-up after a long sleep
-    this._lastTick = now;
+    this._lastTick = Date.now();
     this._fireDue(false);
-    this._grow(dt);
+    this._updateCounts();
     this._refreshAges();
     if (this.onTick) this.onTick(this.nowMin, this.phase());
   }
@@ -148,20 +174,23 @@ export class Engine {
     });
   }
 
-  /* Engagement climbs while a post sits on screen — nothing stays frozen. */
-  _grow(dtSeconds){
-    const mins = (dtSeconds * this.speed) / 60;
+  /* Engagement is a pure function of how old a post is, not an accumulating
+     random walk. Two devices looking at the same post therefore show the same
+     numbers, and pausing or seeking the clock cannot cause drift. */
+  _updateCounts(){
     this.feed.all().forEach(p => {
       if (!p.counts) return;
-      const age = this.nowMin - p.min;
-      if (age < 0 || age > 45) return;
-      const decay = Math.max(0.15, 1 - age / 45);
-      // Likes and shares are not enumerable on screen, so they may drift.
-      // The comment count is enumerable and must never drift — it is derived
-      // from the thread itself, not grown here.
-      p.counts.likes  += p.counts.rate * mins * 9 * decay * (0.6 + Math.random() * 0.8);
-      p.counts.shares += p.counts.rate * mins * 3 * decay * (0.6 + Math.random() * 0.8);
-      if (Math.random() < 0.25) p.refresh && p.refresh();
+      const age = Math.max(0, this.nowMin - p.min);
+      const a = Math.min(age, 45);
+      const curve = a - (a * a) / 90 + (age > 45 ? (age - 45) * 0.06 : 0);
+      const k = p.counts.wobble * p.counts.rate * curve;
+      const likes  = Math.round(p.counts.baseLikes  + k * 9);
+      const shares = Math.round(p.counts.baseShares + k * 3);
+      if (likes !== p.counts.likes || shares !== p.counts.shares){
+        p.counts.likes = likes;
+        p.counts.shares = shares;
+        p.refresh && p.refresh();
+      }
     });
   }
 
@@ -189,74 +218,165 @@ export class Engine {
     return n ? { in: Math.max(0, n.fireAt - this.nowMin), item: n } : null;
   }
 
-  /* ── The comms team posts ───────────────────────────────────────── */
-  participantPost(plat, text){
-    const post = {
-      id: 'P' + Date.now(),
-      plat,
-      text,
-      persona: ORG,
-      min: this.nowMin,
-      participant: true,
-    };
-    this.feed.add(post, { own: true });
-    this.orgPostCount += 1;
-    const isFirst = this.firstOrgPostMin === null;
-    if (isFirst) this.firstOrgPostMin = this.nowMin;
-    this.log.push({ min: this.nowMin, kind: 'comms', who: 'The Kirkwood', plat, text });
-    this._react(post, isFirst, text);
-    if (this.onCommsPost) this.onCommsPost(post, isFirst);
-    return post;
+  /* ── Live actions ────────────────────────────────────────────────
+     Anything a person does is published to the transport and rendered when it
+     comes back, so a single device and eight devices take the same code path. */
+
+  attach(transport){
+    this.transport = transport;
+    transport.on('post',    rec => this.applyPost(rec));
+    transport.on('comment', rec => this.applyComment(rec));
   }
 
-  /* ── The comms team replies to someone ──────────────────────────── */
+  findPost(id){ return this.feed.all().find(p => p.id === id); }
+
+  findComment(id){
+    for (const p of this.feed.all()){
+      for (const c of (p.thread || [])){
+        if (c.id === id){ c.parentPost = p; c.plat = p.plat; c.isComment = true; return c; }
+      }
+    }
+    return null;
+  }
+
+  personaKey(p){
+    return Object.keys(PERSONA_KEYS).find(k => PERSONA_KEYS[k] === p) || null;
+  }
+
+  /* The comms team writes a new post. */
+  participantPost(plat, text){
+    const rec = { kind: 'post', plat, text, who: 'kirkwood', min: this.nowMin };
+    const id = this._publishPost(rec);
+    // Reactions are generated by the device that posted, then shared from
+    // there, so everyone sees the same replies rather than inventing their own.
+    this._scheduleReactions(id, plat, text);
+    return id;
+  }
+
+  /* The comms team replies to a post, or to one comment inside a thread. */
   participantReply(parent, text){
-    const reply = {
-      id: 'PR' + Date.now(),
-      plat: parent.plat,
+    const postId = parent.isComment ? (parent.parentPost && parent.parentPost.id) : parent.id;
+    this._publishComment({
+      kind: 'comment',
+      post: postId,
+      parent: parent.isComment ? parent.id : null,
+      who: 'kirkwood',
       text,
-      persona: ORG,
       min: this.nowMin,
-      participant: true,
-      isReply: true,
-      replyTo: parent.persona.handle,
-      parentId: parent.id,
-    };
+    });
 
-    // A reply lands in the thread of whatever is being answered — a post, or
-    // one specific comment within a post's thread.
-    if (parent.isComment) this.feed.commentReply(parent, ORG, text, this.nowMin);
-    else this.feed.comment(parent, ORG, text, this.nowMin);
-
-    if (parent.parentPost) parent.parentPost.answered = true;
-    parent.answered = true;
-    parent.answeredAt = this.nowMin;
-    parent.answeredIn = this.nowMin - parent.min;
+    const target = parent.isComment ? parent.parentPost : parent;
+    if (target){
+      target.answered = true;
+      target.answeredAt = this.nowMin;
+      target.answeredIn = this.nowMin - target.min;
+      const q = this.queue.find(i => i.id === target.id);
+      if (q){ q.answered = true; q.answeredIn = target.answeredIn; }
+    }
 
     this.log.push({
       min: this.nowMin, kind: 'comms-reply', who: 'The Kirkwood', plat: parent.plat, text,
-      inReplyTo: parent.persona.name, waitedMin: Number(parent.answeredIn.toFixed(1)),
+      inReplyTo: parent.persona.name,
+      waitedMin: target ? Number((target.answeredIn || 0).toFixed(1)) : null,
     });
 
-    this._reactToReply(parent, reply);
-    if (this.onCommsReply) this.onCommsReply(parent, reply);
-    return reply;
+    this._scheduleReplyBack(parent);
+    if (this.onCommsReply) this.onCommsReply(parent);
   }
 
-  /* A direct reply gets a direct answer back — one, not a pile-on. */
-  _reactToReply(parent, reply){
+  /* ── Applying whatever comes back ───────────────────────────────── */
+
+  applyPost(rec){
+    if (!this.live.posts.some(r => r.id === rec.id)) this.live.posts.push(rec);
+    if (this.findPost(rec.id)) return;
+    const own = rec.who === 'kirkwood';
+    const post = {
+      id: rec.id, plat: rec.plat, text: rec.text, persona: persona(rec.who),
+      min: rec.min, participant: own, thread: [],
+    };
+    this.feed.add(post, { own });
+    if (own){
+      const isFirst = this.firstOrgPostMin === null;
+      if (isFirst) this.firstOrgPostMin = rec.min;
+      this.orgPostCount += 1;
+      this.log.push({ min: rec.min, kind: 'comms', who: 'The Kirkwood', plat: rec.plat, text: rec.text });
+      if (this.onCommsPost) this.onCommsPost(post, isFirst);
+    }
+  }
+
+  applyComment(rec){
+    if (!this.live.comments.some(r => r.id === rec.id)) this.live.comments.push(rec);
+    const post = this.findPost(rec.post);
+    if (!post) return;
+    const who = persona(rec.who);
+    const target = rec.parent ? this.findComment(rec.parent) : null;
+    if (target) this.feed.commentReply(target, who, rec.text, rec.min, rec.id);
+    else this.feed.comment(post, who, rec.text, rec.min, rec.id);
+  }
+
+  /* ── Publishing ─────────────────────────────────────────────────── */
+
+  _publishPost(rec){
+    if (this.transport) return this.transport.publishPost(rec);
+    const id = 'P' + (++this._localSeq);
+    this.applyPost({ ...rec, id });
+    return id;
+  }
+
+  _publishComment(rec){
+    if (this.transport){ this.transport.publishComment(rec); return; }
+    this.applyComment({ ...rec, id: 'PC' + (++this._localSeq) });
+  }
+
+  /* ── Reaction generation (author device only) ───────────────────── */
+
+  _scheduleReactions(postId, plat, text){
+    const t = (text || '').toLowerCase();
+    const mentionsPatients = /\b(patient|patients|everyone|all 12|inpatient|residents|people in our care)\b/.test(t);
+    const saysSafe = /\b(safe|safely|accounted for|no injuries|unharmed|all out|evacuated safely)\b/.test(t);
+    const isCorrection = /\b(not true|untrue|incorrect|inaccurate|no deaths|nobody has died|no one has died|speculation|unverified|rumour|rumor|please do not share)\b/.test(t);
+    const isFirst = this.orgPostCount <= 1;
+
+    const pools = [];
+    if (isFirst) pools.push(this.nowMin <= 30 ? REACTIONS.first_fast : REACTIONS.first_slow);
+    if (saysSafe) pools.push(REACTIONS.safe);
+    if (isCorrection) pools.push(REACTIONS.correction);
+    if (!mentionsPatients) pools.push(REACTIONS.no_patients);
+    if (this.nowMin > 45 && Math.random() < 0.55) pools.push(REACTIONS.hostile);
+
+    const chosen = [];
+    pools.forEach(pool => chosen.push(...sample(pool, rnd(1, 2))));
+    chosen.push(...sample(REACTIONS.ambient, rnd(1, 3)));
+
+    const uniq = [];
+    chosen.forEach(c => { if (!uniq.some(u => u.who === c.who)) uniq.push(c); });
+
+    uniq.forEach((r, i) => {
+      this.pending.push({
+        at: this.nowMin + (0.08 + i * 0.22 + Math.random() * 0.5),
+        run: () => {
+          this._publishComment({ kind: 'comment', post: postId, parent: null, who: r.who, text: r.text, min: this.nowMin });
+          this.log.push({ min: this.nowMin, kind: 'reaction', who: persona(r.who).name, plat, text: r.text });
+        }
+      });
+    });
+  }
+
+  /* Whoever was answered answers back — one reply, in character. */
+  _scheduleReplyBack(parent){
     const kind = parent.persona.type === 'media'    ? 'media'
                : parent.persona.type === 'family'   ? 'family'
                : parent.persona.type === 'rumour'   ? 'rumour'
                : parent.persona.type === 'official' ? 'official'
                : 'public';
-    const pool = REPLY_REACTIONS[kind] || REPLY_REACTIONS.public;
-    const line = pick(pool);
+    const line = pick(REPLY_REACTIONS[kind] || REPLY_REACTIONS.public);
+    const postId = parent.isComment ? (parent.parentPost && parent.parentPost.id) : parent.id;
+    const parentId = parent.isComment ? parent.id : null;
+    const whoKey = this.personaKey(parent.persona);
     this.pending.push({
       at: this.nowMin + 0.2 + Math.random() * 0.8,
       run: () => {
-        if (parent.isComment) this.feed.commentReply(parent, parent.persona, line.text, this.nowMin);
-        else this.feed.comment(parent, parent.persona, line.text, this.nowMin);
+        this._publishComment({ kind: 'comment', post: postId, parent: parentId, who: whoKey, text: line.text, min: this.nowMin });
         this.log.push({ min: this.nowMin, kind: 'reaction', who: parent.persona.name, plat: parent.plat, text: line.text });
       }
     });
@@ -275,44 +395,5 @@ export class Engine {
       .map(i => ({ min: i.min, who: i.persona.name, waitedMin: Number((i.answeredIn || 0).toFixed(1)) }));
   }
 
-  _react(post, isFirst, text){
-    const t = (text || '').toLowerCase();
-    const mentionsPatients = /\b(patient|patients|everyone|all 12|inpatient|residents|people in our care)\b/.test(t);
-    const saysSafe = /\b(safe|safely|accounted for|no injuries|unharmed|all out|evacuated safely)\b/.test(t);
-    const isCorrection = /\b(not true|untrue|incorrect|inaccurate|no deaths|nobody has died|no one has died|speculation|unverified|rumour|rumor|please do not share)\b/.test(t);
-
-    const pools = [];
-    if (isFirst) pools.push(this.nowMin <= 30 ? REACTIONS.first_fast : REACTIONS.first_slow);
-    if (saysSafe) pools.push(REACTIONS.safe);
-    if (isCorrection) pools.push(REACTIONS.correction);
-    if (!mentionsPatients) pools.push(REACTIONS.no_patients);
-    pools.push(REACTIONS.ambient);
-    if (this.nowMin > 45 && Math.random() < 0.55) pools.push(REACTIONS.hostile);
-
-    // Two or three from the pointed pools, then ambient filler.
-    const chosen = [];
-    pools.slice(0, -1).forEach(pool => chosen.push(...sample(pool, rnd(1, 2))));
-    chosen.push(...sample(REACTIONS.ambient, rnd(1, 3)));
-
-    // One reply per account per statement — the same outlet answering twice in a
-    // row reads as a bug to anyone who works in comms.
-    const uniq = [];
-    chosen.forEach(c => { if (!uniq.some(u => u.who === c.who)) uniq.push(c); });
-
-    uniq.forEach((r, i) => {
-      // Replies land fast, the way they really do — 5s to ~2.5 exercise minutes.
-      const at = this.nowMin + (0.08 + i * 0.22 + Math.random() * 0.5);
-      this.pending.push({
-        at,
-        run: () => {
-          const who = persona(r.who);
-          this.feed.comment(post, who, r.text, this.nowMin);
-          this.log.push({ min: at, kind: 'reaction', who: who.name, plat: post.plat, text: r.text });
-        }
-      });
-    });
-  }
-
-  /* Minutes from T+0 to the first organisational statement, or null. */
   timeToFirstStatement(){ return this.firstOrgPostMin; }
 }

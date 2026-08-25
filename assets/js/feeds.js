@@ -2,9 +2,10 @@
    Each returns a DOM node for one post and keeps a reference to its own
    engagement counters so the numbers can climb while it sits on screen. */
 
-import { makeAvatar, richText, escapeHtml, fmtCount, avColour, initials, agoLabel, VERIFIED_SVG } from './util.js?v=7';
-import { buildThread, fireReply, setReplyHandler, countComments } from './thread.js?v=7';
-export { setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './thread.js?v=7';
+import { makeAvatar, richText, escapeHtml, fmtCount, avColour, initials, agoLabel, VERIFIED_SVG } from './util.js?v=10';
+import { stream } from './rng.js?v=10';
+import { buildThread, fireReply, setReplyHandler, countComments } from './thread.js?v=10';
+export { setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './thread.js?v=10';
 
 const ICON = {
   reply: '<svg viewBox="0 0 24 24"><path d="M1.75 10c0-4.42 3.58-8 8-8h4.37c4.49 0 7.88 3.77 7.88 8.28 0 4.42-3.46 8.1-7.88 8.1h-2.35c-1.38 0-2.45 1-2.45 2.2v2.07c0 .38-.3.65-.68.65-.15 0-.28-.04-.4-.11l-4.76-2.96A9.01 9.01 0 0 1 1.75 10z"/></svg>',
@@ -17,10 +18,16 @@ function seedCounts(post){
   const p = post.persona;
   const big = p.type === 'org' || p.type === 'media' || p.type === 'official';
   const viral = p.type === 'rumour';
+  // Per-post variation is seeded from the post id, so every device arrives at
+  // the same numbers rather than each drifting on its own random walk.
+  const wobble = stream('eng:' + (post.id || post.text.slice(0, 24))).range(0.72, 1.3);
+  const baseLikes  = viral ? 180 : big ? 90 : 6;
+  const baseShares = viral ? 240 : big ? 70 : 2;
   return {
-    likes:   viral ? 180 : big ? 90 : 6,
-    shares:  viral ? 240 : big ? 70 : 2,
-    rate:    viral ? 5.2 : big ? 2.6 : 0.5,   // growth per exercise minute
+    baseLikes, baseShares, wobble,
+    likes:  baseLikes,
+    shares: baseShares,
+    rate:   viral ? 5.2 : big ? 2.6 : 0.5,   // growth per exercise minute
   };
 }
 

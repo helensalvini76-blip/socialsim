@@ -4,11 +4,12 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=7';
-import { Engine } from './engine.js?v=7';
-import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=7';
-import { ORG, persona } from './personas.js?v=7';
-import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=7';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=10';
+import { connect } from './sync.js?v=10';
+import { Engine } from './engine.js?v=10';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=10';
+import { ORG, persona } from './personas.js?v=10';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=10';
 
 const PLATFORMS = ['x', 'fb', 'ig'];
 const screen  = document.getElementById('screen');
@@ -63,11 +64,11 @@ const feed = {
     if (post.plat !== current && !opts.silent) markUnread(post.plat);
     if (opts.own) setTimeout(() => screen.scrollTo({ top: 0, behavior: 'smooth' }), 60);
   },
-  comment(post, persona, text, min){
-    pushComment(post, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG });
+  comment(post, persona, text, min, id){
+    pushComment(post, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG, id });
   },
-  commentReply(comment, persona, text, min){
-    pushCommentReply(comment, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG });
+  commentReply(comment, persona, text, min, id){
+    pushCommentReply(comment, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG, id });
   },
   all(){ return posts; },
   clear(){ posts.length = 0; PLATFORMS.forEach(p => stream(p).innerHTML = ''); },
@@ -209,10 +210,8 @@ function initComposer(){
 }
 
 /* ── Facilitator preview bar ─────────────────────────────────────── */
-function initPreview(){
+function initFacilitator(){
   const bar = document.getElementById('prev');
-  const params = new URLSearchParams(location.search);
-  if (params.get('facilitator') !== '1' && params.get('f') !== '1') return;
   bar.classList.add('on');
 
   const clk  = bar.querySelector('.clk');
@@ -224,21 +223,29 @@ function initPreview(){
     b.addEventListener('click', () => {
       engine.setSpeed(Number(b.dataset.speed));
       bar.querySelectorAll('[data-speed]').forEach(o => o.classList.toggle('on', o === b));
+      engine.onClockChange && engine.onClockChange();
     });
   });
   play.addEventListener('click', () => {
     if (engine.running){ engine.pause(); play.textContent = '▶'; }
     else { engine.start(); play.textContent = '❚❚'; }
+    engine.onClockChange && engine.onClockChange();
   });
   bar.querySelector('[data-jump]').addEventListener('change', e => {
     const v = Number(e.target.value);
     engine.seek(v);
+    engine.onClockChange && engine.onClockChange();
   });
   bar.querySelector('[data-wm]').addEventListener('click', function(){
     document.body.classList.toggle('wm');
     this.classList.toggle('on', document.body.classList.contains('wm'));
   });
-  bar.querySelector('[data-reset]').addEventListener('click', () => engine.reset());
+  bar.querySelector('[data-reset]').addEventListener('click', () => {
+    if (!confirm('Reset the exercise for everyone? This clears all posts and replies.')) return;
+    if (transport && transport.clearAll) transport.clearAll();
+    engine.reset();
+    engine.onClockChange && engine.onClockChange();
+  });
 
   engine.onTick = (min, phase) => {
     clk.textContent = 'T+' + String(Math.max(0, Math.floor(min))).padStart(3,'0') + '  ' + clockLabel(min);
@@ -256,22 +263,87 @@ function initPreview(){
   };
 }
 
-/* ── Boot ────────────────────────────────────────────────────────── */
+/* ── Roles and boot ──────────────────────────────────────────────────
+   ?f=1          facilitator — owns the clock, everyone else follows
+   (plain URL)   participant — reads the clock, can post and reply
+   ?offline=1    single device, no network. Used for previewing.
+   ?session=x    run a separate exercise; defaults to "jupiter".          */
+
+const params  = new URLSearchParams(location.search);
+const IS_FACILITATOR = params.get('f') === '1' || params.get('facilitator') === '1';
+const SESSION = params.get('session') || 'jupiter';
+const OFFLINE = params.get('offline') === '1';
+
 let engine;
+let transport;
+
 buildPanes();
 buildNav();
 initComposer();
-engine = new Engine(feed);
+engine = new Engine(feed, { seed: 'jupiter-' + SESSION });
 setThreadClock(() => engine.nowMin);
 engine.seedBaseline();
 show('fb');
 buildRail();
 setInterval(refreshTrending, 3000);
-initPreview();
-engine.start();
-window.__jupiter = engine;   // facilitator/debug handle; stage-2 dashboard hooks this
 
-// Populate Instagram stories from whoever is in the feed.
+connect(SESSION, { offline: OFFLINE }).then(t => {
+  transport = t;
+  engine.attach(t);
+  window.__transport = t;
+
+  if (IS_FACILITATOR){
+    initFacilitator();
+    // The facilitator owns the clock and publishes it.
+    engine.onClockChange = () => publishClock();
+    engine.start();
+    publishClock();
+  } else {
+    // Participants follow whatever the facilitator publishes.
+    t.on('clock', applyClock);
+    // Until a clock arrives, sit at T+0 rather than running off on our own.
+    engine.pause();
+  }
+
+  t.on('connection', up => {
+    document.body.classList.toggle('offline', !up);
+    const dot = document.getElementById('conn');
+    if (dot) dot.textContent = up ? '' : 'reconnecting…';
+  });
+
+  if (t.mode === 'local' && !OFFLINE){
+    console.warn('Jupiter: running local-only — this device will not sync.');
+  }
+});
+
+function publishClock(){
+  if (!transport || !IS_FACILITATOR) return;
+  transport.setClock({
+    anchorMin: engine.nowMin,
+    speed: engine.speed,
+    running: engine.running,
+  });
+}
+
+/* Firebase stamps the clock with server time, so devices with wrong local
+   clocks still land in the right place. */
+function applyClock(v){
+  if (!v || typeof v.anchorMin !== 'number') return;
+  const serverNow = transport.serverNow ? transport.serverNow() : Date.now();
+  const elapsedMin = v.running ? Math.max(0, (serverNow - (v.at || serverNow)) / 60000) * (v.speed || 1) : 0;
+  const target = v.anchorMin + elapsedMin;
+
+  engine.speed = v.speed || 1;
+  if (Math.abs(target - engine.nowMin) > 0.35 || v.running !== engine.running){
+    engine.seek(target);
+  }
+  if (v.running && !engine.running) engine.start();
+  if (!v.running && engine.running) engine.pause();
+}
+
+window.__jupiter = engine;
+
+// Instagram stories, drawn from whoever is in the feed.
 setTimeout(() => {
   const box = panes.ig.querySelector('.ig-stories');
   const seen = new Set();
@@ -282,7 +354,7 @@ setTimeout(() => {
     const ring = el('div', 'ig-ring', '');
     ring.appendChild(makeAvatar(p.persona));
     s.appendChild(ring);
-    s.appendChild(el('div', 'ig-sname', escapeHtml((p.persona.handle || '').replace('@',''))));
+    s.appendChild(el('div', 'ig-sname', escapeHtml((p.persona.handle || '').replace('@', ''))));
     box.appendChild(s);
   });
 }, 300);
@@ -291,8 +363,9 @@ setTimeout(() => {
 const sbTime = document.getElementById('sb-time');
 setInterval(() => { sbTime.textContent = clockLabel(engine.nowMin); }, 1000);
 
-const BUILD = document.querySelector('meta[name="build"]')?.content || '?';
+const BUILD = document.querySelector('meta[name="build"]') ? document.querySelector('meta[name="build"]').content : '?';
 window.__build = BUILD;
 const buildTag = document.querySelector('#prev .bld');
 if (buildTag) buildTag.textContent = 'build ' + BUILD;
-console.info('Exercise Jupiter — build', BUILD, '— fire location:', FIRE_LOCATION);
+console.info('Exercise Jupiter — build', BUILD, '— session', SESSION,
+             IS_FACILITATOR ? '— FACILITATOR' : '— participant');
