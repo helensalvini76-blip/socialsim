@@ -5,7 +5,7 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, PHASES } from './scenario-jupiter.js';
+import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES } from './scenario-jupiter.js';
 import { persona, ORG } from './personas.js';
 import { rnd, pick, sample, agoLabel } from './util.js';
 
@@ -178,6 +178,81 @@ export class Engine {
     this._react(post, isFirst, text);
     if (this.onCommsPost) this.onCommsPost(post, isFirst);
     return post;
+  }
+
+  /* ── The comms team replies to someone ──────────────────────────── */
+  participantReply(parent, text){
+    const reply = {
+      id: 'PR' + Date.now(),
+      plat: parent.plat,
+      text,
+      persona: ORG,
+      min: this.nowMin,
+      participant: true,
+      isReply: true,
+      replyTo: parent.persona.handle,
+      parentId: parent.id,
+    };
+
+    // On Facebook and Instagram a reply is a comment on the post itself.
+    // On X it is a new tweet in the timeline, which is how X actually works.
+    if (parent.plat === 'fb' || parent.plat === 'ig') this.feed.comment(parent, ORG, text);
+    else this.feed.add(reply, { own: true });
+
+    parent.answered = true;
+    parent.answeredAt = this.nowMin;
+    parent.answeredIn = this.nowMin - parent.min;
+
+    this.log.push({
+      min: this.nowMin, kind: 'comms-reply', who: 'The Kirkwood', plat: parent.plat, text,
+      inReplyTo: parent.persona.name, waitedMin: Number(parent.answeredIn.toFixed(1)),
+    });
+
+    this._reactToReply(parent, reply);
+    if (this.onCommsReply) this.onCommsReply(parent, reply);
+    return reply;
+  }
+
+  /* A direct reply gets a direct answer back — one, not a pile-on. */
+  _reactToReply(parent, reply){
+    const kind = parent.persona.type === 'media'    ? 'media'
+               : parent.persona.type === 'family'   ? 'family'
+               : parent.persona.type === 'rumour'   ? 'rumour'
+               : parent.persona.type === 'official' ? 'official'
+               : 'public';
+    const pool = REPLY_REACTIONS[kind] || REPLY_REACTIONS.public;
+    const line = pick(pool);
+    this.pending.push({
+      at: this.nowMin + 0.2 + Math.random() * 0.8,
+      run: () => {
+        if (parent.plat === 'fb' || parent.plat === 'ig'){
+          this.feed.comment(parent, parent.persona, line.text);
+        } else {
+          this.feed.add({
+            id: 'RR' + Date.now(),
+            plat: parent.plat,
+            text: line.text,
+            persona: parent.persona,
+            min: this.nowMin,
+            replyTo: ORG.handle,
+          });
+        }
+        this.log.push({ min: this.nowMin, kind: 'reaction', who: parent.persona.name, plat: parent.plat, text: line.text });
+      }
+    });
+  }
+
+  /* Enquiries that asked a direct question and never got an answer. */
+  unansweredEnquiries(){
+    return this.queue
+      .filter(i => i.fired && i.enquiry && !i.answered)
+      .map(i => ({ min: i.min, who: i.persona.name, plat: i.plat, text: i.text, packRef: i.packRef || '' }));
+  }
+
+  answeredEnquiries(){
+    return this.queue
+      .filter(i => i.fired && i.enquiry && i.answered)
+      .map(i => ({ min: i.min, who: i.persona.name, waitedMin: Number((i.answeredIn || 0).toFixed(1)) }));
   }
 
   _react(post, isFirst, text){

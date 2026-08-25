@@ -4,11 +4,11 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, addFbComment } from './feeds.js';
+import { renderPost, refreshCounts, addFbComment, setReplyHandler } from './feeds.js';
 import { Engine } from './engine.js';
-import { PHASES, FIRE_LOCATION } from './scenario-jupiter.js';
-import { ORG } from './personas.js';
-import { makeAvatar, escapeHtml, richText, clockLabel } from './util.js';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js';
+import { ORG, persona } from './personas.js';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js';
 
 const PLATFORMS = ['x', 'fb', 'ig'];
 const screen  = document.getElementById('screen');
@@ -16,6 +16,7 @@ const navEl   = document.getElementById('nav');
 const sheet   = document.getElementById('sheet');
 const shText  = document.getElementById('sh-text');
 const shPost  = document.getElementById('sh-post');
+const rail    = document.getElementById('rail');
 
 let current = 'fb';           // Facebook first — the hospice's real audience lives there
 const posts = [];
@@ -85,12 +86,67 @@ const NAV = [
 ];
 
 function buildNav(){
+  // Desktop-only heading; hidden by CSS on phones.
+  const brand = el('div', '', 'Exercise Jupiter');
+  brand.id = 'nav-brand';
+  navEl.appendChild(brand);
+
   NAV.forEach(n => {
     const b = el('button', 'nb', `<span class="nb-ic">${n.icon}</span><span class="nb-lb">${n.label}</span><span class="nb-dot"></span>`);
     b.dataset.p = n.id;
     b.addEventListener('click', () => show(n.id));
     navEl.appendChild(b);
   });
+
+  const postBtn = el('button', '', 'Post');
+  postBtn.id = 'nav-post';
+  postBtn.addEventListener('click', () => openSheet(null));
+  navEl.appendChild(postBtn);
+}
+
+/* ── Right rail (desktop) ────────────────────────────────────────── */
+const RAIL_TITLE = { x:'Trending in Huddersfield', fb:'Trending now', ig:'Suggested for you' };
+
+function buildRail(){
+  const searchLabel = { x:'Search', fb:'Search Facebook', ig:'Search' }[current] || 'Search';
+  rail.innerHTML = `<div class="r-search">🔍 ${searchLabel}</div>`;
+
+  const trendCard = el('div', 'r-card', `<h3>${RAIL_TITLE[current]}</h3><div class="t-rows"></div>`);
+  rail.appendChild(trendCard);
+
+  const accts = el('div', 'r-card', `<h3>Who to follow</h3>`);
+  SUGGESTED.forEach(k => {
+    const p = persona(k);
+    const row = el('div', 'r-acct', '');
+    row.appendChild(makeAvatar(p));
+    row.insertAdjacentHTML('beforeend',
+      `<div><div class="r-acct-n">${escapeHtml(p.name)}${p.verified ? VERIFIED_SVG : ''}</div>` +
+      `<div class="r-acct-h">${escapeHtml(p.handle)}</div></div>` +
+      `<button class="r-follow">Follow</button>`);
+    accts.appendChild(row);
+  });
+  rail.appendChild(accts);
+
+  rail.insertAdjacentHTML('beforeend',
+    `<div class="r-note">⚠ Exercise Jupiter — simulated environment. All accounts, posts ` +
+    `and news outlets shown here are fictional and exist only for this exercise.</div>`);
+
+  refreshTrending();
+}
+
+/* Trending flips from ordinary town chatter to the incident, and climbs. */
+function refreshTrending(){
+  const rows = rail.querySelector('.t-rows');
+  if (!rows || !engine) return;
+  const live = engine.nowMin >= 12;
+  const list = live ? TRENDING_AFTER : TRENDING_BEFORE;
+  const since = Math.max(0, engine.nowMin - 12);
+  rows.innerHTML = list.map((t, i) => {
+    const n = Math.round(t.count + (t.rate || 0) * since);
+    return `<div class="r-row"><div class="r-meta">${i + 1} · ${t.meta}</div>` +
+           `<div class="r-tag">${escapeHtml(t.tag)}</div>` +
+           `<div class="r-count">${fmtCount(n)} posts</div></div>`;
+  }).join('');
 }
 
 function markUnread(p){
@@ -106,25 +162,55 @@ function show(p){
     if (b.dataset.p === p) b.classList.remove('has');
   });
   screen.scrollTop = 0;
+  if (engine) buildRail();
 }
 
 /* ── Composer ────────────────────────────────────────────────────── */
+let replyTarget = null;
+
+function openSheet(target){
+  replyTarget = target || null;
+  const ctx = document.getElementById('sh-ctx');
+  const plat = replyTarget ? replyTarget.plat : current;
+  document.getElementById('sh-plat').textContent = NAV.find(n => n.id === plat).label;
+  if (replyTarget){
+    const body = replyTarget.text.length > 180 ? replyTarget.text.slice(0, 180) + '…' : replyTarget.text;
+    ctx.innerHTML =
+      `<div class="sh-reply-to">Replying to <b>${escapeHtml(replyTarget.persona.name)}</b> ` +
+      `<span>${escapeHtml(replyTarget.persona.handle || '')}</span></div>` +
+      `<div class="sh-quote">${escapeHtml(body)}</div>`;
+    ctx.style.display = 'block';
+    shText.placeholder = 'Write a reply…';
+    shPost.textContent = 'Reply';
+  } else {
+    ctx.innerHTML = '';
+    ctx.style.display = 'none';
+    shText.placeholder = 'Write an update…';
+    shPost.textContent = 'Post';
+  }
+  sheet.classList.add('open');
+  shText.value = '';
+  shPost.disabled = true;
+  shText.focus();
+}
+
 function initComposer(){
-  document.getElementById('fab').addEventListener('click', () => {
-    document.getElementById('sh-plat').textContent = NAV.find(n => n.id === current).label;
-    sheet.classList.add('open');
-    shText.value = '';
-    shPost.disabled = true;
-    shText.focus();
+  document.getElementById('fab').addEventListener('click', () => openSheet(null));
+  document.getElementById('sh-cancel').addEventListener('click', () => {
+    sheet.classList.remove('open');
+    replyTarget = null;
   });
-  document.getElementById('sh-cancel').addEventListener('click', () => sheet.classList.remove('open'));
   shText.addEventListener('input', () => { shPost.disabled = !shText.value.trim(); });
   shPost.addEventListener('click', () => {
     const v = shText.value.trim();
     if (!v) return;
     sheet.classList.remove('open');
-    engine.participantPost(current, v);
+    if (replyTarget) engine.participantReply(replyTarget, v);
+    else engine.participantPost(current, v);
+    replyTarget = null;
   });
+  // Reply buttons on every post route back here.
+  setReplyHandler(post => openSheet(post));
 }
 
 /* ── Facilitator preview bar ─────────────────────────────────────── */
@@ -183,6 +269,8 @@ initComposer();
 engine = new Engine(feed);
 engine.seedBaseline();
 show('fb');
+buildRail();
+setInterval(refreshTrending, 3000);
 initPreview();
 engine.start();
 window.__jupiter = engine;   // facilitator/debug handle; stage-2 dashboard hooks this

@@ -23,6 +23,10 @@ function seedCounts(post){
   };
 }
 
+/* The participant view calls back into the app when someone wants to reply. */
+let replyHandler = () => {};
+export function setReplyHandler(fn){ replyHandler = fn; }
+
 function actionBar(post){
   const c = post.counts;
   const bar = document.createElement('div');
@@ -31,6 +35,7 @@ function actionBar(post){
     `<button class="tw-act" data-c="replies">${ICON.reply}<span>${fmtCount(c.replies)}</span></button>` +
     `<button class="tw-act" data-c="shares">${ICON.rt}<span>${fmtCount(c.shares)}</span></button>` +
     `<button class="tw-act" data-c="likes">${ICON.like}<span>${fmtCount(c.likes)}</span></button>`;
+  bar.querySelector('[data-c="replies"]').addEventListener('click', () => replyHandler(post));
   bar.querySelector('[data-c="likes"]').addEventListener('click', function(){
     this.classList.toggle('liked');
     post.counts.likes += this.classList.contains('liked') ? 1 : -1;
@@ -131,6 +136,7 @@ function buildFb(post, nowMin){
     post.counts.likes += this.classList.contains('on') ? 1 : -1;
     refreshCounts(post);
   });
+  acts.children[1].addEventListener('click', () => replyHandler(post));
   el.appendChild(acts);
   const cmts = document.createElement('div');
   cmts.className = 'fb-cmts';
@@ -148,7 +154,8 @@ export function addFbComment(post, persona, text){
   row.appendChild(makeAvatar(persona));
   const bub = document.createElement('div');
   bub.className = 'fb-cbub';
-  bub.innerHTML = `<b>${escapeHtml(persona.name)}</b>${richText(text)}`;
+  const badge = persona.type === 'org' ? ' <span class="fb-official">OFFICIAL</span>' : '';
+  bub.innerHTML = `<b>${escapeHtml(persona.name)}${badge}</b>${richText(text)}`;
   row.appendChild(bub);
   box.appendChild(row);
   post.counts.replies += 1;
@@ -182,6 +189,7 @@ function buildIg(post, nowMin){
     `<div class="ig-likes">${fmtCount(post.counts.likes)} likes</div>` +
     `<div class="ig-cap"><b>${escapeHtml((p.handle||'').replace('@',''))}</b> ${richText(post.text)}</div>` +
     `<div class="ig-cap" style="color:var(--ig-dim);font-size:11px;padding-top:0;"><span class="ago">${agoLabel(post.min, nowMin).toUpperCase()} AGO</span></div>`);
+  el.querySelectorAll('.ig-acts span')[1].addEventListener('click', () => replyHandler(post));
   const heart = el.querySelector('[data-like]');
   heart.addEventListener('click', () => {
     const on = heart.textContent === '🤍';

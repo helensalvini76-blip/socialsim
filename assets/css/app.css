@@ -170,3 +170,94 @@ body.wm .post::after{content:"EXERCISE";position:absolute;top:50%;left:50%;
 #prev button.on{background:var(--x-blue);border-color:var(--x-blue);color:#fff;}
 #prev .clk{font-weight:700;font-size:13px;color:#ffd76e;}
 #prev .ph{color:#9fb3c8;}
+
+/* Reply context inside the composer */
+#sh-ctx{display:none;padding:10px 14px;border-bottom:1px solid var(--x-line);background:#fafbfc;}
+.sh-reply-to{font-size:12.5px;color:var(--x-dim);margin-bottom:5px;}
+.sh-reply-to b{color:var(--x-text);}
+.sh-quote{font-size:13.5px;line-height:1.35;color:var(--x-dim);border-left:3px solid var(--x-line);
+  padding-left:10px;max-height:78px;overflow:hidden;}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DESKTOP — a genuine three-column layout, not a stretched phone.
+   Left rail navigates, centre carries the feed, right rail carries
+   trending and suggestions the way the real web clients do.
+   ═══════════════════════════════════════════════════════════════════ */
+#rail{display:none;}
+#nav-post{display:none;}
+
+@media(min-width:1000px){
+  body{background:#fff;}
+  #ex-banner{height:32px;font-size:12px;}
+
+  #device{position:fixed;top:32px;left:0;right:0;bottom:0;transform:none;
+    max-width:none;width:100%;height:auto;border:0;border-radius:0;box-shadow:none;
+    background:#fff;display:grid;grid-template-columns:258px minmax(0,620px) 348px;
+    justify-content:center;align-items:stretch;}
+  .statusbar{display:none;}
+
+  /* Left rail */
+  #nav{grid-column:1;grid-row:1;flex-direction:column;align-items:stretch;
+    border-top:0;border-right:1px solid var(--x-line);padding:16px 10px;gap:2px;
+    height:100%;overflow-y:auto;}
+  .nb{flex:0 0 auto;flex-direction:row;justify-content:flex-start;align-items:center;
+    gap:16px;padding:11px 15px;border-radius:28px;}
+  .nb:hover{background:rgba(15,20,25,.07);}
+  .nb-ic{font-size:22px;}
+  .nb-lb{font-size:16px;font-weight:500;}
+  .nb.on .nb-lb{font-weight:800;}
+  .nb-dot{top:9px;left:30px;margin-left:0;}
+  #nav-post{display:block;margin:14px 8px 0;padding:14px;border:none;border-radius:28px;
+    background:var(--x-blue);color:#fff;font-size:16px;font-weight:800;cursor:pointer;
+    font-family:inherit;width:calc(100% - 16px);}
+  #nav-post:hover{filter:brightness(1.07);}
+  #nav-brand{padding:8px 15px 14px;font-size:13px;color:var(--x-dim);font-weight:700;
+    letter-spacing:.04em;text-transform:uppercase;}
+
+  /* Centre column */
+  #screen{grid-column:2;grid-row:1;border-right:1px solid var(--x-line);height:100%;}
+  #fab{display:none;}
+  .fb-wrap{background:#fff;}
+  .fb-post{margin-bottom:0;border-bottom:8px solid var(--fb-bg);}
+  .tweet{padding:14px 17px 4px;}
+  .tw-body,.fb-body{font-size:15.5px;}
+
+  /* Right rail */
+  #rail{display:block;grid-column:3;grid-row:1;padding:14px 18px;height:100%;
+    overflow-y:auto;}
+  #rail::-webkit-scrollbar{width:0;}
+  .r-search{background:var(--x-line);border-radius:22px;padding:11px 17px;font-size:14px;
+    color:var(--x-dim);margin-bottom:14px;}
+  .r-card{background:#f7f9f9;border-radius:16px;padding:13px 0;margin-bottom:15px;}
+  .r-card h3{margin:0;padding:0 16px 9px;font-size:19px;font-weight:800;letter-spacing:-.2px;}
+  .r-row{padding:9px 16px;cursor:pointer;}
+  .r-row:hover{background:rgba(15,20,25,.04);}
+  .r-meta{font-size:12.5px;color:var(--x-dim);}
+  .r-tag{font-size:14.5px;font-weight:700;margin:1px 0;}
+  .r-count{font-size:12.5px;color:var(--x-dim);}
+  .r-acct{display:flex;align-items:center;gap:10px;padding:9px 16px;}
+  .r-acct .av{width:40px;height:40px;font-size:14px;}
+  .r-acct-n{font-size:14.5px;font-weight:700;line-height:1.15;display:flex;align-items:center;gap:3px;}
+  .r-acct-h{font-size:13.5px;color:var(--x-dim);}
+  .r-follow{margin-left:auto;background:#0f1419;color:#fff;border:none;border-radius:18px;
+    padding:7px 16px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .r-note{font-size:11.5px;color:var(--x-dim);line-height:1.45;padding:0 6px;}
+
+  /* Composer becomes a centred modal rather than a full-screen sheet */
+  #sheet{position:fixed;inset:0;background:none;display:none;align-items:flex-start;
+    justify-content:center;padding-top:9vh;z-index:800;}
+  #sheet.open{display:flex;}
+  #sheet::before{content:"";position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:-1;}
+  #sheet > *{position:relative;}
+  #sheet{--card:620px;}
+  #sheet .sh-head,#sheet .sh-as,#sheet #sh-ctx,#sheet #sh-text{width:var(--card);
+    max-width:92vw;background:#fff;margin:0 auto;}
+  #sheet .sh-head{border-radius:16px 16px 0 0;padding:14px 18px;}
+  #sheet #sh-text{min-height:190px;border-radius:0 0 16px 16px;padding:16px 18px;}
+  #sheet #sh-ctx{border-radius:0;}
+}
+
+/* Very wide screens: let the feed breathe rather than stretch */
+@media(min-width:1400px){
+  #device{grid-template-columns:288px minmax(0,660px) 380px;}
+}
