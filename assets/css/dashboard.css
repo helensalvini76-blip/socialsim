@@ -146,3 +146,8 @@ button{font-family:inherit;cursor:pointer;}
   color:#04121f;font-weight:700;font-size:12.5px;padding:9px 18px;border-radius:8px;
   opacity:0;transition:opacity .25s;pointer-events:none;z-index:100;}
 #toast.on{opacity:1;}
+
+/* Start button — deliberately prominent until the exercise is under way */
+.ctl.play.start{background:var(--good);border-color:var(--good);color:#04210d;
+  font-weight:800;font-size:13px;padding:8px 16px;letter-spacing:.02em;}
+.ctl.play.start:hover{filter:brightness(1.08);}

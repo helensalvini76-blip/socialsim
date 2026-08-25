@@ -4,12 +4,12 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=15';
-import { connect } from './sync.js?v=15';
-import { Engine } from './engine.js?v=15';
-import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=15';
-import { ORG, persona } from './personas.js?v=15';
-import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=15';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=17';
+import { connect } from './sync.js?v=17';
+import { Engine } from './engine.js?v=17';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=17';
+import { ORG, persona } from './personas.js?v=17';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=17';
 
 const PLATFORMS = ['x', 'fb', 'ig'];
 const screen  = document.getElementById('screen');

@@ -8,12 +8,12 @@
    inject always visible, an inject one click away, and the comms team's own
    activity on screen while doing something else. */
 
-import { Engine } from './engine.js?v=15';
-import { connect } from './sync.js?v=15';
-import { PHASES } from './scenario-jupiter.js?v=15';
-import { PERSONAS, persona } from './personas.js?v=15';
-import { QUICKFIRE, GROUPS } from './quickfire.js?v=15';
-import { clockLabel } from './util.js?v=15';
+import { Engine } from './engine.js?v=17';
+import { connect } from './sync.js?v=17';
+import { PHASES } from './scenario-jupiter.js?v=17';
+import { PERSONAS, persona } from './personas.js?v=17';
+import { QUICKFIRE, GROUPS } from './quickfire.js?v=17';
+import { clockLabel } from './util.js?v=17';
 
 const params  = new URLSearchParams(location.search);
 const SESSION = params.get('session') || 'jupiter';
@@ -305,11 +305,39 @@ function exportDebrief(){
   toast('Debrief exported');
 }
 
+/* ── Starting and resuming ───────────────────────────────────────
+   The exercise does NOT start when this page opens. It sits at T+0 until the
+   Exercise Director says so — otherwise setting up an hour early would burn
+   through a third of the script before anyone was in the room.
+
+   If a clock already exists on the server, this page adopts it instead, so
+   reloading the laptop mid-exercise resumes rather than resetting everyone. */
+let hasStarted = false;
+
+function setPlayUI(){
+  const b = $('play');
+  if (!hasStarted){ b.textContent = '▶ START EXERCISE'; b.classList.add('start'); return; }
+  b.classList.remove('start');
+  b.textContent = engine.running ? '❚❚' : '▶';
+}
+
+function startExercise(){
+  const msg = 'Start Exercise Jupiter?\n\nThe clock begins at T+0 (13:00) and injects will start firing on every device.';
+  if (!hasStarted && !confirm(msg)) return;
+  hasStarted = true;
+  engine.start();
+  setPlayUI();
+  publishClock();
+  toast('Exercise started — T+0');
+}
+
 /* ── Top bar wiring ──────────────────────────────────────────────── */
 function wireTop(){
   $('play').addEventListener('click', () => {
-    if (engine.running){ engine.pause(); $('play').textContent = '▶'; }
-    else { engine.start(); $('play').textContent = '❚❚'; }
+    if (!hasStarted){ startExercise(); return; }
+    if (engine.running) engine.pause();
+    else engine.start();
+    setPlayUI();
     publishClock();
   });
   document.querySelectorAll('[data-speed]').forEach(b => {
@@ -370,6 +398,7 @@ buildCustom();
 wireTop();
 paintClock();
 paintStatus();
+setPlayUI();
 
 connect(SESSION, { offline: OFFLINE }).then(t => {
   transport = t;
@@ -387,9 +416,30 @@ connect(SESSION, { offline: OFFLINE }).then(t => {
     $('conn').textContent = 'live · facilitator';
   }
 
-  engine.start();
-  publishClock();
-  setInterval(publishClock, 15000);       // keep late joiners in step
+  // Adopt an exercise already in progress (a reload mid-exercise), otherwise
+  // stay paused at T+0 and wait to be started.
+  let adopted = false;
+  t.on('clock', v => {
+    if (adopted || !v || typeof v.anchorMin !== 'number') return;
+    adopted = true;
+    const serverNow = t.serverNow ? t.serverNow() : Date.now();
+    const elapsed = v.running ? Math.max(0, (serverNow - (v.at || serverNow)) / 60000) * (v.speed || 1) : 0;
+    engine.speed = v.speed || 1;
+    engine.seek(v.anchorMin + elapsed);
+    document.querySelectorAll('[data-speed]').forEach(o =>
+      o.classList.toggle('on', Number(o.dataset.speed) === engine.speed));
+    if (v.anchorMin > 0 || v.running) hasStarted = true;
+    if (v.running) engine.start();
+    setPlayUI();
+    if (hasStarted) toast('Resumed exercise at T+' + Math.round(engine.nowMin));
+  });
+
+  // If nothing came back, there is no exercise running — take ownership.
+  setTimeout(() => {
+    adopted = true;
+    publishClock();
+    setInterval(publishClock, 15000);     // keep late joiners in step
+  }, 2000);
 });
 
 onChange = () => { paintMonitor(); paintStatus(); };
