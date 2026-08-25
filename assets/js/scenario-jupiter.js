@@ -23,7 +23,7 @@ export const PHASES = [
    start suspiciously empty — participants scroll back into an ordinary day. */
 export const BASELINE = [
   {min:-180, plat:'fb', who:'kirkwood', text:'Our Sunflower Appeal is now live! Every sunflower dedicated helps us care for patients and families across Kirklees. Dedicate yours through the link in our bio. 🌻'},
-  {min:-165, plat:'ig', who:'kirkwood', text:'Thank you to everyone who walked, baked and donated last weekend. You are the reason we can be here. 💛 #TheKirkwood #Huddersfield'},
+  {min:-165, plat:'ig', who:'kirkwood', img:'images/jupiter/site-sq.jpg', text:'Thank you to everyone who walked, baked and donated last weekend. You are the reason we can be here. 💛 #TheKirkwood #Huddersfield'},
   {min:-140, plat:'fb', who:'norris',   text:'Just want to say a huge thank you to all the staff at The Kirkwood for the care they gave my mum. Nothing was ever too much trouble. Wonderful people.'},
   {min:-120, plat:'x',  who:'examiner', text:'Kirklees council confirms roadworks on Wakefield Road will continue until the end of the month. Full story on our site.'},
   {min:-95,  plat:'fb', who:'business', text:'Fresh in this morning — local strawberries, while they last! 🍓'},
@@ -50,13 +50,13 @@ export const SCRIPT = [
   {min:6,  plat:'x',  who:'darren',    text:'2 fire engines just gone past the Co-op with blues on. heading towards Dalton', burst:true},
   {min:7,  plat:'x',  who:'ryan',      text:'make that 3. somethings going on', burst:true},
   {min:9,  plat:'fb', who:'tracy',     text:'my sister in laws just rang, shes says theres smoke coming from the hospice building. praying its nothing 🙏'},
-  {min:11, plat:'ig', who:'kevin',     text:'Fire crews on Dalton. Hope everyone is ok', note:'IG image post — cordon at distance'},
+  {min:11, plat:'ig', who:'kevin',     img:'images/jupiter/cordon-sq.jpg', text:'Fire crews on Dalton. Hope everyone is ok', note:'IG image post — cordon at distance'},
   {min:13, plat:'x',  who:'watch',     text:'INCIDENT: Multiple fire appliances in attendance at The Kirkwood Hospice, Dalton. Reports of smoke from the main building. Patients understood to be inside. More to follow.', note:'First rumour account. Unsourced, states patients inside as fact.'},
   {min:15, plat:'x',  who:'examiner',  enquiry:true, text:'We are getting reports of a fire at The Kirkwood Hospice in Dalton. Emergency services are on scene. @TheKirkwoodHD are you able to confirm what is happening?', note:'First direct media approach. Clock starts on their response.'},
   {min:17, plat:'fb', who:'karen',     enquiry:true, text:'my dad is in the inpatient unit at the kirkwood. can anyone tell me whats happening please. ive rang twice and cant get through', note:'HIGH IMPACT — family member, publicly identifiable relative, asking on an open page.'},
   {min:19, plat:'x',  who:'owen',      text:'been diverted off the road by police. whole area taped off. never seen anything like it here', burst:true},
   {min:20, plat:'x',  who:'nikki',     text:'that poor place. those are the most vulnerable people you could imagine 😢', burst:true},
-  {min:22, plat:'fb', who:'sandra',    text:'They are bringing beds out into the car park. I can see them from the top road. Actual hospital beds outside.'},
+  {min:22, plat:'fb', who:'sandra',    img:'images/jupiter/front-wide.jpg', text:'They are bringing beds out into the car park. I can see them from the top road. Actual hospital beds outside.'},
   {min:24, plat:'x',  who:'fire',      text:'We are currently in attendance at an incident at a premises in Dalton, Huddersfield. Please avoid the area to allow emergency vehicles access. #WYFRS', note:'Partner posts before the hospice does. If the comms team has still said nothing, point this out at debrief.'},
 
   // ── PHASE 2 — Live movement (T+20 to T+65) ────────────────────────
@@ -69,9 +69,9 @@ export const SCRIPT = [
   {min:35, plat:'x',  who:'becky',     text:'someone on the local group is saying two patients didnt make it out 😢 absolutely heartbreaking if true', note:'HIGH IMPACT — false death rumour enters. Must be corrected without disclosing patient information.'},
   {min:37, plat:'fb', who:'angry',     text:'Two dead apparently. Disgusting. How do you let that happen in a HOSPICE of all places', note:'Rumour hardening into accusation. Wholly untrue.'},
   {min:39, plat:'x',  who:'councillor',text:'I am aware of a serious incident at The Kirkwood in my ward. My thoughts are with patients, families and staff. I am seeking an urgent update. @TheKirkwoodHD'},
-  {min:41, plat:'ig', who:'ryan',      text:'Bad scenes on Dalton this afternoon. Thoughts with everyone at the hospice ❤️'},
+  {min:41, plat:'ig', who:'ryan',      img:'images/jupiter/site-sq.jpg', text:'Bad scenes on Dalton this afternoon. Thoughts with everyone at the hospice ❤️'},
   {min:43, plat:'x',  who:'examiner',  enquiry:true, text:'@TheKirkwoodHD We have now approached The Kirkwood three times for comment. Can you confirm whether all patients are safe?', note:'Public escalation of an unanswered enquiry.'},
-  {min:45, plat:'fb', who:'watch',     text:'Photos from the scene at The Kirkwood. You can see patients in beds out in the open in the car park. Families are saying they still have not been contacted. Casualties not confirmed either way.', packRef:'T+45', note:'PACK T+45 — photo of emergency vehicles plus casualty claim. Patients visible in shot: raises dignity and confidentiality.'},
+  {min:45, plat:'fb', who:'watch',     img:'images/jupiter/cordon-wide.jpg', text:'Photos from the scene at The Kirkwood. You can see patients in beds out in the open in the car park. Families are saying they still have not been contacted. Casualties not confirmed either way.', packRef:'T+45', note:'PACK T+45 — photo of emergency vehicles plus casualty claim. Patients visible in shot: raises dignity and confidentiality.'},
 
   // ── PHASE 3 — Clearing station and families (T+45 to T+85) ────────
   {min:47, plat:'x',  who:'exstaff',   text:'not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.', note:'HIGHEST IMPACT ITEM. Plausible, unfalsifiable in the moment, no clean answer. Flagged as the sharpest inject in the script — pull it if the room is already overloaded.'},
@@ -84,7 +84,7 @@ export const SCRIPT = [
   {min:59, plat:'ig', who:'fatima',    text:'Praying for everyone at The Kirkwood this afternoon 🤲'},
   {min:61, plat:'x',  who:'dave',      text:'ambulance just left with blue lights. thats the second one', note:'Ambiguous — participants may read this as a casualty. It is a routine transfer.'},
   {min:63, plat:'fb', who:'sarahm',    enquiry:true, text:'Has anyone been contacted by the hospice? Genuine question. My aunt is a patient and we have heard nothing at all.'},
-  {min:65, plat:'x',  who:'police',    text:'Officers are supporting the emergency response at a premises in Dalton. There is no wider risk to the public. Please do not attend the area.'},
+  {min:65, plat:'x',  who:'police',    img:'images/jupiter/cordon-wide.jpg', text:'Officers are supporting the emergency response at a premises in Dalton. There is no wider risk to the public. Please do not attend the area.'},
 
   // ── PHASE 4 — Dispersal and media peak (T+65 to T+115) ────────────
   {min:68, plat:'fb', who:'fiona',     enquiry:true, text:'Message going round the staff group asking if evening shift should still come in. Nobody seems to know. Has anyone heard officially?', packRef:'T+70', note:'PACK T+70 — workforce instruction gap, surfacing publicly instead of internally.'},
@@ -95,7 +95,7 @@ export const SCRIPT = [
   {min:77, plat:'fb', who:'karen',     text:'UPDATE from me — I have finally spoken to someone and my dad is safe. Thank you to everyone who messaged. Still dont know where he is going tonight.', note:'Softening moment. Good practice being publicly recognised.'},
   {min:79, plat:'fb', who:'worried',   enquiry:true, text:'A local business has offered a whole floor of their building and we can get vans and volunteers there within the hour to help move patients. Who do I speak to? Come on Huddersfield! 💛', packRef:'T+80', note:'PACK T+80 — well-meant unsolicited offer. Must be acknowledged but routed through governance, not accepted ad hoc.'},
   {min:81, plat:'x',  who:'examiner',  text:'The Kirkwood has issued no public statement more than 80 minutes after the first 999 call. Families have told the Examiner they learned of the fire through social media.', note:'If they HAVE posted by now, treat this as a stale-story correction opportunity rather than a fair hit.'},
-  {min:83, plat:'ig', who:'tom',       text:'Rain coming down now and theyre still out there. Heartbreaking.'},
+  {min:83, plat:'ig', who:'tom',       img:'images/jupiter/cordon-sq.jpg', text:'Rain coming down now and theyre still out there. Heartbreaking.'},
   {min:85, plat:'x',  who:'exstaff',   text:'ask them about the fire door report. ask them.', burst:true},
   {min:86, plat:'x',  who:'angry',     text:'@ExaminerHD worth looking into who signed off the fire risk assessment', burst:true},
   {min:88, plat:'fb', who:'diane',     enquiry:true, text:'Two relatives have just turned up at the gate and been turned away. That cant be right can it? They just want to know their family are alive.', packRef:'T+95', note:'PACK T+95 — families arriving on site despite the message not to attend.'},
@@ -115,7 +115,7 @@ export const SCRIPT = [
   {min:124,plat:'fb', who:'tracy',     enquiry:true, text:'Is the hospice open tomorrow? My mum has day therapy on Thursdays and nobody has said anything.', note:'Business continuity comms — the services nobody has thought about yet.'},
   {min:128,plat:'x',  who:'regional',  text:'The Kirkwood confirmed no patients were injured in this afternoon’s fire. The hospice says its inpatient unit will remain closed while the building is assessed.'},
   {min:132,plat:'fb', who:'gary',      enquiry:true, text:'Genuine question — where do people go now if they need hospice care this week? Asking as a family who might need them.'},
-  {min:136,plat:'ig', who:'kevin',     text:'Dalton tonight. Everyone got out. 💛'},
+  {min:136,plat:'ig', who:'kevin',     img:'images/jupiter/site-sq.jpg', text:'Dalton tonight. Everyone got out. 💛'},
   {min:140,plat:'fb', who:'sandra',    text:'The staff who ran into that building today deserve every bit of praise going. Absolute heroes.'},
   {min:145,plat:'x',  who:'examiner',  text:'ANALYSIS: The Kirkwood fire — what happens to hospice patients when the building goes? Our reporter looks at the pressures on the wider system. Read now.', note:'Story moving from incident to scrutiny. Sets up the recovery comms conversation.'},
 ];

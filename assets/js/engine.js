@@ -5,9 +5,9 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js?v=6';
-import { persona, ORG } from './personas.js?v=6';
-import { rnd, pick, sample, agoLabel } from './util.js?v=6';
+import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js?v=7';
+import { persona, ORG } from './personas.js?v=7';
+import { rnd, pick, sample, agoLabel } from './util.js?v=7';
 
 export class Engine {
   constructor(feed){
