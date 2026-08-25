@@ -8,13 +8,13 @@
    inject always visible, an inject one click away, and the comms team's own
    activity on screen while doing something else. */
 
-import { Engine } from './engine.js?v=27';
-import { connect } from './sync.js?v=27';
-import { PHASES } from './scenario-jupiter.js?v=27';
-import { PERSONAS, persona } from './personas.js?v=27';
-import { QUICKFIRE, GROUPS } from './quickfire.js?v=27';
-import { clockLabel } from './util.js?v=27';
-import { requireFacilitator, showLock } from './gate.js?v=27';
+import { Engine } from './engine.js?v=28';
+import { connect } from './sync.js?v=28';
+import { PHASES } from './scenario-jupiter.js?v=28';
+import { PERSONAS, persona } from './personas.js?v=28';
+import { QUICKFIRE, GROUPS } from './quickfire.js?v=28';
+import { clockLabel } from './util.js?v=28';
+import { requireFacilitator, showLock } from './gate.js?v=28';
 
 const params  = new URLSearchParams(location.search);
 const SESSION = params.get('session') || 'jupiter';

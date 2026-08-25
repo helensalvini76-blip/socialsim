@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 """Pull the Jupiter content script out of the JavaScript into JSON.
 
-Used to build the review document. Keeping this as a script rather than a
-one-off means the review pack can be regenerated after any content change.
+Feeds the review document. Keeping it as a script rather than a one-off means
+the review pack can be regenerated after any content change.
 
     python tools/extract_content.py [out.json]
+
+Exits non-zero if any entry fails to parse or references an unknown persona, so
+a content change that quietly drops posts from the review document is noticed.
 """
 
 import io, re, json, os, sys
@@ -16,29 +19,43 @@ def unq(s):
     return s.replace("\\'", "'").replace('\\"', '"').replace('\\\\', '\\')
 
 
-def field(line, name):
-    m = re.search(r"\b" + name + r":\s*'((?:[^'\\]|\\.)*)'", line)
+def field(text, name):
+    m = re.search(r"\b" + name + r":\s*'((?:[^'\\]|\\.)*)'", text)
     return unq(m.group(1)) if m else None
 
 
 def parse_posts(block):
+    """Entries may be written on one line or spread across several, so gather
+    each {min: ...} object into one string before reading its fields."""
+    entries, cur = [], None
+    for raw in block.split('\n'):
+        line = raw.strip()
+        if cur is None:
+            if not line.startswith('{min:'):
+                continue
+            cur = line
+        else:
+            cur += ' ' + line
+        if cur.count('{') <= cur.count('}'):      # braces balanced: entry complete
+            entries.append(cur)
+            cur = None
+
     out = []
-    for line in block.split('\n'):
-        line = line.strip()
-        if not line.startswith('{min:'):
-            continue
-        m = re.match(r"\{min:(-?\d+)", line)
+    for e in entries:
+        m = re.match(r"\{min:(-?\d+)", e)
         if not m:
             continue
         out.append({
             'min': int(m.group(1)),
-            'plat': field(line, 'plat'),
-            'who': field(line, 'who'),
-            'text': field(line, 'text'),
-            'note': field(line, 'note'),
-            'packRef': field(line, 'packRef'),
-            'img': field(line, 'img'),
-            'enquiry': 'enquiry:true' in line,
+            'plat': field(e, 'plat'),
+            'who': field(e, 'who'),
+            'text': field(e, 'text'),
+            'note': field(e, 'note'),
+            'packRef': field(e, 'packRef'),
+            'img': field(e, 'img'),
+            'via': field(e, 'via'),
+            'subject': field(e, 'subject'),
+            'enquiry': 'enquiry:true' in e,
         })
     return out
 
@@ -53,6 +70,8 @@ def main():
 
     baseline = parse_posts(between('export const BASELINE', 'export const SCRIPT'))
     script = parse_posts(between('export const SCRIPT', 'export const REACTIONS'))
+    # Staff group and enquiry inbox live in their own block
+    script += parse_posts(between('export const CHANNEL_SCRIPT', 'export const REPLY_REACTIONS'))
 
     threads, cur = {}, None
     for line in src[src.find('export const THREADS'):].split('\n'):
@@ -82,16 +101,23 @@ def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'tools', 'jupiter-content.json')
     io.open(out, 'w', encoding='utf-8').write(json.dumps(data, ensure_ascii=False, indent=1))
 
-    unknown = sorted({t['who'] for t in baseline + script if t['who'] not in people} |
+    allp = baseline + script
+    notext = [p for p in allp if not p.get('text')]
+    unknown = sorted({t['who'] for t in allp if t['who'] and t['who'] not in people} |
                      {c['who'] for v in threads.values() for c in v if c['who'] not in people})
+
     print('baseline posts :', len(baseline))
     print('script posts   :', len(script))
-    print('total posts    :', len(baseline) + len(script))
+    print('total posts    :', len(allp))
     print('threads        :', len(threads))
     print('comments       :', sum(len(v) for v in threads.values()))
     print('personas       :', len(people))
     print('unknown keys   :', unknown or 'none')
+    print('failed to parse:', [(p['min'], p['plat']) for p in notext] or 'none')
     print('written        :', out)
+
+    if notext or unknown:
+        sys.exit(1)
 
 
 if __name__ == '__main__':

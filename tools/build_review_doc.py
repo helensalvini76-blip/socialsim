@@ -19,7 +19,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BODY_FONT = 'Aptos'
 HEAD_FONT = 'Aptos Display'
 
-PLATFORM = {'x': 'X', 'fb': 'Facebook', 'ig': 'Instagram'}
+PLATFORM = {'x': 'X', 'fb': 'Facebook', 'ig': 'Instagram',
+            'staff': 'STAFF GROUP', 'inbox': 'ENQUIRY'}
 
 PHASES = [
     (-999, -1,  'Before the alarm',
@@ -29,11 +30,11 @@ PHASES = [
     (25, 46,    'Phase 2 - Live movement',
      'T+20 to T+65. The false death rumour enters at T+35.'),
     (47, 67,    'Phase 3 - Clearing station and families',
-     'T+45 to T+85. The fire doors allegation lands at T+47.'),
+     'T+45 to T+85. Rumour peaks, the reporter goes direct to families and staff, and the rain arrives.'),
     (68, 100,   'Phase 4 - Dispersal and media peak',
      'T+65 to T+115. Pressure on the comms team is highest here.'),
     (101, 999,  'Phase 5 - Recovery',
-     'T+100 to T+150. The story turns from incident to scrutiny.'),
+     'T+100 to T+150. The story turns from incident to scrutiny. The ex-staff fire door allegation lands at T+118.'),
 ]
 
 
@@ -188,7 +189,11 @@ def main():
 
             c = r.cells[1]
             meta = tight(c.paragraphs[0], after=1)
-            run(meta, PLATFORM.get(post['plat'], post['plat']), size=8.5, bold=True, colour='1F4E79')
+            plat = post['plat']
+            colour = '0F7B3F' if plat == 'staff' else ('6B21A8' if plat == 'inbox' else '1F4E79')
+            run(meta, PLATFORM.get(plat, plat), size=8.5, bold=True, colour=colour)
+            if post.get('via'):
+                run(meta, '   •   ' + post['via'], size=8.5, colour='6B7280')
             if post.get('packRef'):
                 run(meta, '   •   PACK ' + post['packRef'], size=8.5, bold=True, colour='B45309')
             if post.get('enquiry'):
@@ -196,6 +201,8 @@ def main():
             if post.get('img'):
                 run(meta, '   •   photo', size=8.5, colour='6B7280')
             run(tight(c.add_paragraph(), after=2), who(post['who']), size=10, bold=True)
+            if post.get('subject'):
+                run(tight(c.add_paragraph(), after=2), post['subject'], size=10.5, bold=True)
             run(tight(c.add_paragraph(), after=3), post['text'], size=10.5)
 
             for cm in thread:

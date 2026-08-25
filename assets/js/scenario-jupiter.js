@@ -74,7 +74,6 @@ export const SCRIPT = [
   {min:45, plat:'fb', who:'watch',     img:'images/jupiter/cordon-wide.jpg', text:'Photos from the scene at The Kirkwood. You can see patients in beds out in the open in the car park. Families are saying they still have not been contacted. Casualties not confirmed either way.', packRef:'T+45', note:'PACK T+45 — photo of emergency vehicles plus casualty claim. Patients visible in shot: raises dignity and confidentiality.'},
 
   // ── PHASE 3 — Clearing station and families (T+45 to T+85) ────────
-  {min:47, plat:'x',  who:'exstaff',   text:'not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.', note:'HIGHEST IMPACT ITEM. Plausible, unfalsifiable in the moment, no clean answer. Flagged as the sharpest inject in the script — pull it if the room is already overloaded.'},
   {min:49, plat:'x',  who:'angry',     text:'@TheKirkwoodHD silence speaks volumes doesnt it', burst:true},
   {min:50, plat:'x',  who:'john',      text:'give them a chance, theyre a bit busy saving peoples lives arent they', burst:true},
   {min:52, plat:'fb', who:'amelia',    text:'Please can everyone stop speculating. There are families reading this who are terrified. Wait for the hospice to tell us.'},
@@ -111,6 +110,7 @@ export const SCRIPT = [
   {min:110,plat:'x',  who:'national',  text:'Huddersfield hospice fire: all patients safe, building closed for at least 48 hours. Questions now turning to where inpatients will be cared for.'},
   {min:113,plat:'x',  who:'examiner',  enquiry:true, text:'@TheKirkwoodHD Following up — can you confirm how many inpatients have been transferred and where families should direct enquiries this evening?', packRef:'T+110'},
   {min:116,plat:'fb', who:'mohammed',  enquiry:true, text:'I would like to say that once someone did ring me they were very kind and very clear. It was the two hours before that were unbearable.', note:'Fair, measured criticism. Harder to dismiss than anger.'},
+  {min:118,plat:'x',  who:'exstaff',   text:'not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.', note:'HIGHEST IMPACT ITEM. Unfalsifiable in the moment, no clean answer: do not deny, do not attack her, do not speculate on cause. Placed in recovery rather than during the evacuation — an ex-staff allegation realistically surfaces once an investigation is announced, not while crews are still on scene. A version is also in quick-fire if you want it earlier.'},
   {min:120,plat:'x',  who:'exstaff',   text:'glad everyones safe. still think theres questions to answer about that corridor.'},
   {min:124,plat:'fb', who:'tracy',     enquiry:true, text:'Is the hospice open tomorrow? My mum has day therapy on Thursdays and nobody has said anything.', note:'Business continuity comms — the services nobody has thought about yet.'},
   {min:128,plat:'x',  who:'regional',  text:'The Kirkwood confirmed no patients were injured in this afternoon’s fire. The hospice says its inpatient unit will remain closed while the building is assessed.'},
@@ -464,7 +464,7 @@ export const THREADS = {
   ],
 
   // ── Phase 3 — clearing station and families ─────────────────────
-  47: [
+  118: [
     {who:'angry',     text:'Knew it. There is always something.'},
     {who:'tom',       text:'Michelle if you genuinely raised that, it needs to go to the fire service, not a post.'},
     {who:'amelia',    text:'This is an ex employee making a serious allegation in the middle of an incident.'},

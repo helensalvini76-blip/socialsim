@@ -8,6 +8,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -18,6 +20,8 @@
    "note": null,
    "packRef": null,
    "img": "images/jupiter/site-sq.jpg",
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -28,6 +32,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -38,6 +44,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -48,6 +56,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -58,6 +68,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -68,6 +80,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -78,6 +92,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   }
  ],
@@ -90,6 +106,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -100,6 +118,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -110,6 +130,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -120,6 +142,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -130,6 +154,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -140,6 +166,8 @@
    "note": "IG image post — cordon at distance",
    "packRef": null,
    "img": "images/jupiter/cordon-sq.jpg",
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -150,6 +178,8 @@
    "note": "First rumour account. Unsourced, states patients inside as fact.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -160,6 +190,8 @@
    "note": "First direct media approach. Clock starts on their response.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -170,6 +202,8 @@
    "note": "HIGH IMPACT — family member, publicly identifiable relative, asking on an open page.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -180,6 +214,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -190,6 +226,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -200,6 +238,8 @@
    "note": null,
    "packRef": null,
    "img": "images/jupiter/front-wide.jpg",
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -210,6 +250,8 @@
    "note": "Partner posts before the hospice does. If the comms team has still said nothing, point this out at debrief.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -220,6 +262,8 @@
    "note": "PACK T+25 — the staff-originated speculation inject. Tests correcting misinformation without a punitive tone.",
    "packRef": "T+25",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -230,6 +274,8 @@
    "note": "Amplifier account. \"Unconfirmed reports of casualties\" is the first hard untruth.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -240,6 +286,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -250,6 +298,8 @@
    "note": "HIGH IMPACT — the \"I found out online\" complaint. This is the one that stings.",
    "packRef": "T+35",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -260,6 +310,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -270,6 +322,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -280,6 +334,8 @@
    "note": "HIGH IMPACT — false death rumour enters. Must be corrected without disclosing patient information.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -290,6 +346,8 @@
    "note": "Rumour hardening into accusation. Wholly untrue.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -300,6 +358,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -310,6 +370,8 @@
    "note": null,
    "packRef": null,
    "img": "images/jupiter/site-sq.jpg",
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -320,6 +382,8 @@
    "note": "Public escalation of an unanswered enquiry.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -330,16 +394,8 @@
    "note": "PACK T+45 — photo of emergency vehicles plus casualty claim. Patients visible in shot: raises dignity and confidentiality.",
    "packRef": "T+45",
    "img": "images/jupiter/cordon-wide.jpg",
-   "enquiry": false
-  },
-  {
-   "min": 47,
-   "plat": "x",
-   "who": "exstaff",
-   "text": "not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.",
-   "note": "HIGHEST IMPACT ITEM. Plausible, unfalsifiable in the moment, no clean answer. Flagged as the sharpest inject in the script — pull it if the room is already overloaded.",
-   "packRef": null,
-   "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -350,6 +406,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -360,6 +418,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -370,6 +430,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -380,6 +442,8 @@
    "note": "Journalist going directly to staff and families around the comms team.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -390,6 +454,8 @@
    "note": "PACK T+55 — interview request with a hard broadcast deadline.",
    "packRef": "T+55",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -400,6 +466,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -410,6 +478,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -420,6 +490,8 @@
    "note": "Ambiguous — participants may read this as a casualty. It is a routine transfer.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -430,6 +502,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -440,6 +514,8 @@
    "note": null,
    "packRef": null,
    "img": "images/jupiter/cordon-wide.jpg",
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -450,6 +526,8 @@
    "note": "PACK T+70 — workforce instruction gap, surfacing publicly instead of internally.",
    "packRef": "T+70",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -460,6 +538,8 @@
    "note": "\"Approached for comment\" — the phrase that signals silence to every other newsroom.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -470,6 +550,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -480,6 +562,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -490,6 +574,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -500,6 +586,8 @@
    "note": "Softening moment. Good practice being publicly recognised.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -510,6 +598,8 @@
    "note": "PACK T+80 — well-meant unsolicited offer. Must be acknowledged but routed through governance, not accepted ad hoc.",
    "packRef": "T+80",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -520,6 +610,8 @@
    "note": "If they HAVE posted by now, treat this as a stale-story correction opportunity rather than a fair hit.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -530,6 +622,8 @@
    "note": null,
    "packRef": null,
    "img": "images/jupiter/cordon-sq.jpg",
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -540,6 +634,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -550,6 +646,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -560,6 +658,8 @@
    "note": "PACK T+95 — families arriving on site despite the message not to attend.",
    "packRef": "T+95",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -570,6 +670,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -580,6 +682,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -590,6 +694,8 @@
    "note": "Rumour account gets it broadly right this time — muddies whether to trust it.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -600,6 +706,8 @@
    "note": "A third party breaks the good news first. Discuss at debrief.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -610,6 +718,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -620,6 +730,8 @@
    "note": null,
    "packRef": "T+100",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -630,6 +742,8 @@
    "note": "Fraud risk — fake appeals follow real incidents within hours.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -640,6 +754,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -650,6 +766,8 @@
    "note": null,
    "packRef": "T+110",
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -660,7 +778,21 @@
    "note": "Fair, measured criticism. Harder to dismiss than anger.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
+  },
+  {
+   "min": 118,
+   "plat": "x",
+   "who": "exstaff",
+   "text": "not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.",
+   "note": "HIGHEST IMPACT ITEM. Unfalsifiable in the moment, no clean answer: do not deny, do not attack her, do not speculate on cause. Placed in recovery rather than during the evacuation — an ex-staff allegation realistically surfaces once an investigation is announced, not while crews are still on scene. A version is also in quick-fire if you want it earlier.",
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
   },
   {
    "min": 120,
@@ -670,6 +802,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -680,6 +814,8 @@
    "note": "Business continuity comms — the services nobody has thought about yet.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -690,6 +826,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -700,6 +838,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": true
   },
   {
@@ -710,6 +850,8 @@
    "note": null,
    "packRef": null,
    "img": "images/jupiter/site-sq.jpg",
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -720,6 +862,8 @@
    "note": null,
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
   },
   {
@@ -730,7 +874,237 @@
    "note": "Story moving from incident to scrutiny. Sets up the recovery comms conversation.",
    "packRef": null,
    "img": null,
+   "via": null,
+   "subject": null,
    "enquiry": false
+  },
+  {
+   "min": 1,
+   "plat": "staff",
+   "who": "sister",
+   "text": "Fire alarm sounding in the main building. This is NOT a drill. Follow your evacuation procedure and report to your assembly point.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
+  },
+  {
+   "min": 4,
+   "plat": "staff",
+   "who": "facilities",
+   "text": "Confirmed activation. Attending now. Please keep the front access road clear for appliances.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
+  },
+  {
+   "min": 12,
+   "plat": "staff",
+   "who": "hcaJoy",
+   "text": "we are moving people out of the IPU now. can someone bring blankets to the car park side please",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
+  },
+  {
+   "min": 19,
+   "plat": "staff",
+   "who": "nurseSam",
+   "text": "Does anyone know if we are meant to be ringing families? Nobody has told us and people are asking.",
+   "note": "Staff seeking direction on family contact. If comms do not answer here, they will improvise.",
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": true
+  },
+  {
+   "min": 25,
+   "plat": "staff",
+   "who": "daytherapy",
+   "text": "Looks serious – whole hospice being evacuated. My friend on shift says they are moving everyone out and nobody knows where they are going.",
+   "note": "PACK T+25 — staff speculation, and the version that ends up on Facebook at T+25. Correcting this without a punitive tone is the test.",
+   "packRef": "T+25",
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
+  },
+  {
+   "min": 33,
+   "plat": "staff",
+   "who": "exec",
+   "text": "All staff: please do not post anything about this incident on personal social media. Direct any enquiries to the communications lead.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
+  },
+  {
+   "min": 44,
+   "plat": "staff",
+   "who": "hcaJoy",
+   "text": "its raining and we have got people out here in beds. is there a plan for cover",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
+  },
+  {
+   "min": 58,
+   "plat": "staff",
+   "who": "reception",
+   "text": "I have had eleven calls from families in the last twenty minutes and I do not have anything to tell them. Please can someone send me a line I am allowed to use.",
+   "note": "HIGH IMPACT — the front line asking for an approved holding line. Tests whether comms is supporting the people actually taking the calls.",
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": true
+  },
+  {
+   "min": 70,
+   "plat": "staff",
+   "who": "nurseSam",
+   "text": "Late shift here. Are we still coming in at 6 or not? There are about a dozen of us waiting to hear.",
+   "note": "PACK T+70 — workforce instruction. Unanswered, this surfaces publicly on Facebook at T+68.",
+   "packRef": "T+70",
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": true
+  },
+  {
+   "min": 86,
+   "plat": "staff",
+   "who": "fundraise",
+   "text": "Getting a lot of offers of help coming into the fundraising inbox — vans, buildings, volunteers. Who is coordinating that? I do not want to say no to people.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": true
+  },
+  {
+   "min": 104,
+   "plat": "staff",
+   "who": "daytherapy",
+   "text": "What do I tell Thursday day therapy? Twelve people are booked and several will already be arranging transport.",
+   "note": "Business continuity comms — the service nobody has thought about yet.",
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": true
+  },
+  {
+   "min": 126,
+   "plat": "staff",
+   "who": "exec",
+   "text": "Everyone who was on shift today: thank you. Please make sure you check out before you leave and speak to your manager about cover tomorrow.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "via": null,
+   "subject": null,
+   "enquiry": false
+  },
+  {
+   "min": 20,
+   "plat": "inbox",
+   "who": "examiner",
+   "text": "We are preparing to publish on the incident at your Dalton site. Can you confirm whether all patients are safe, how many were in the building, and whether the site has been evacuated? Deadline is 30 minutes. Happy to include a statement in full.",
+   "note": "First formal media approach. The clock on the 30-minute holding message indicator is already running.",
+   "packRef": null,
+   "img": null,
+   "via": "Email",
+   "subject": "Request for comment — incident at The Kirkwood",
+   "enquiry": true
+  },
+  {
+   "min": 35,
+   "plat": "inbox",
+   "who": "mohammed",
+   "text": "Caller says he has been trying to reach the ward for forty minutes and has now seen the fire on Facebook. He wants to know whether his mother is safe and where she is being taken. He asked for a call back on the number held on file. He was upset but not aggressive.",
+   "note": "PACK T+35 — verify the caller, use the holding information, log it, promise a callback and meet it.",
+   "packRef": "T+35",
+   "img": null,
+   "via": "Phone message",
+   "subject": "Caller: son of a patient on the IPU",
+   "enquiry": true
+  },
+  {
+   "min": 55,
+   "plat": "inbox",
+   "who": "tvProducer",
+   "text": "We are leading on this tonight. Can you make your Chief Executive or a senior clinician available for a short interview before 17:30? We can come to you. If nobody is available we will report that the hospice declined to comment.",
+   "note": "PACK T+55 — hard broadcast deadline. Route to spokesperson, issue the approved line, do not speculate.",
+   "packRef": "T+55",
+   "img": null,
+   "via": "Email",
+   "subject": "Interview request — 18:00 bulletin",
+   "enquiry": true
+  },
+  {
+   "min": 80,
+   "plat": "inbox",
+   "who": "worried",
+   "text": "I own the old mill units on Colne Road and I am offering a whole floor, free, for as long as you need it. I can have twenty volunteers and four vans there within the hour to help move patients. Just say yes and we will start.",
+   "note": "PACK T+80 — well meant, entirely unsuitable clinically. Must be acknowledged warmly and routed through governance, not accepted.",
+   "packRef": "T+80",
+   "img": null,
+   "via": "Email",
+   "subject": "Offer of help — building and volunteers",
+   "enquiry": true
+  },
+  {
+   "min": 95,
+   "plat": "inbox",
+   "who": "reception",
+   "text": "Two family members are at the front asking to see their relatives. I have asked them to wait in the visitors car park. They are calm but upset and say nobody has called them. What would you like me to do?",
+   "note": "PACK T+95 — families on site despite the message not to attend. Compassionate liaison without compromising the clinical area.",
+   "packRef": "T+95",
+   "img": null,
+   "via": "Reception",
+   "subject": "Two relatives have arrived at the gate",
+   "enquiry": true
+  },
+  {
+   "min": 110,
+   "plat": "inbox",
+   "who": "boardMember",
+   "text": "I have had three calls from people in the town asking what has happened. Could I please have an authorised summary I can use, and an idea of how long the disruption is expected to last? I do not want to say the wrong thing.",
+   "note": "PACK T+110 — governance route. Tests whether trustees are being briefed or left to improvise.",
+   "packRef": "T+110",
+   "img": null,
+   "via": "Email",
+   "subject": "Trustee — request for update",
+   "enquiry": true
+  },
+  {
+   "min": 130,
+   "plat": "inbox",
+   "who": "icb",
+   "text": "Please provide a situation report: patient numbers by destination need, immediate risks, mutual aid requirements and expected duration of disruption. We can help broker system capacity but need a clear, prioritised ask.",
+   "note": "Mirrors master event M15. Tests whether the comms cell and the IMT are working from the same picture.",
+   "packRef": null,
+   "img": null,
+   "via": "Email",
+   "subject": "SitRep requested — hospice incident",
+   "enquiry": true
   }
  ],
  "threads": {
@@ -986,7 +1360,7 @@
     "text": "its a public road, allowed to film"
    }
   ],
-  "47": [
+  "118": [
    {
     "who": "angry",
     "text": "Knew it. There is always something."

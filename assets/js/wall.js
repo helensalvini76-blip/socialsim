@@ -7,10 +7,10 @@
    long it has been since the organisation said anything in public, while the
    feed beside it keeps moving. */
 
-import { Engine } from './engine.js?v=27';
-import { connect } from './sync.js?v=27';
-import { TRENDING_BEFORE, TRENDING_AFTER } from './scenario-jupiter.js?v=27';
-import { clockLabel, fmtCount } from './util.js?v=27';
+import { Engine } from './engine.js?v=28';
+import { connect } from './sync.js?v=28';
+import { TRENDING_BEFORE, TRENDING_AFTER } from './scenario-jupiter.js?v=28';
+import { clockLabel, fmtCount } from './util.js?v=28';
 
 const params  = new URLSearchParams(location.search);
 const SESSION = params.get('session') || 'jupiter';
