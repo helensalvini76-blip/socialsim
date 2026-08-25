@@ -245,3 +245,69 @@ export const TRENDING_AFTER = [
 
 /* Accounts offered in the sidebar. */
 export const SUGGESTED = ['examiner', 'regional', 'fire', 'police', 'councillor'];
+
+/* ── Comment threads ───────────────────────────────────────────────
+   Every scripted post carries a thread underneath it. This is where a real
+   incident actually gets nasty — not in the post, but in the replies to it,
+   where the organisation is being discussed rather than addressed. The comms
+   team can open any thread and reply into it. */
+
+export const COMMENT_POOL = {
+  alarm: [
+    {who:'owen',    text:'whats happened? ive just seen 4 engines go past'},
+    {who:'nikki',   text:'oh no not the hospice 😢'},
+    {who:'kevin',   text:'my wife works nearby, she says the whole car park is full of staff'},
+    {who:'tracy',   text:'anyone know if the patients are ok??'},
+    {who:'dave',    text:'road is shut both ways at the top'},
+    {who:'gary',    text:'that explains the traffic earlier'},
+  ],
+  rumour: [
+    {who:'angry',   text:'my mate said theres been fatalities. not confirmed obviously'},
+    {who:'becky',   text:'someone in the dalton group is saying the same 😢'},
+    {who:'viral',   text:'We are hearing the same from multiple sources.'},
+    {who:'watch',   text:'Still unconfirmed. We will update when we know more.'},
+    {who:'darren',  text:'where are people getting this from though'},
+  ],
+  correction: [
+    {who:'amelia',  text:'Please stop sharing this. You have no idea who is reading it.'},
+    {who:'john',    text:'this is exactly how misinformation spreads. wait for the hospice'},
+    {who:'tom',     text:'Nothing official has said that. At all.'},
+    {who:'norris',  text:'There are families on here. Have a think before you post.'},
+    {who:'priya',   text:'Reported this comment. Its not helpful.'},
+  ],
+  sympathy: [
+    {who:'fatima',  text:'Thinking of all the staff and patients 🤲'},
+    {who:'sandra',  text:'That place looked after my dad. Lovely people. 💛'},
+    {who:'norris',  text:'Sending love to everyone there tonight x'},
+    {who:'tracy',   text:'💛💛'},
+    {who:'neighbour',text:'If anyone needs a hot drink or the loo we are two doors down.'},
+  ],
+  angry: [
+    {who:'angry',   text:'and still not a word from them. says it all'},
+    {who:'exstaff', text:'ask them about the fire doors'},
+    {who:'viral',   text:'Complete silence from the hospice. Over an hour now.'},
+    {who:'paul',    text:'to be fair theyll be a bit busy right now'},
+  ],
+  question: [
+    {who:'karen',   text:'does anyone know where theyre taking them?'},
+    {who:'mohammed',text:'Has anyone actually been contacted by the hospice? Genuine question.'},
+    {who:'sarahm',  text:'is day therapy still on tomorrow does anyone know'},
+    {who:'fiona',   text:'are staff meant to be going in for the late shift or not'},
+    {who:'gary',    text:'whats the number to ring? the main one is engaged'},
+  ],
+  practical: [
+    {who:'business',text:'We have opened up if anyone needs shelter, no charge.'},
+    {who:'worried', text:'I have a van and I can be there in 20 minutes if they need anything moving'},
+    {who:'owen',    text:'top road is clear if you need to get round'},
+  ],
+};
+
+/* Which pools a post attracts, by the kind of account that posted it. */
+export const THREAD_MIX = {
+  rumour:   ['rumour', 'correction', 'angry'],
+  media:    ['question', 'angry', 'correction'],
+  official: ['question', 'sympathy', 'practical'],
+  family:   ['sympathy', 'question', 'correction'],
+  public:   ['alarm', 'sympathy', 'question'],
+  org:      ['question', 'sympathy', 'angry'],
+};

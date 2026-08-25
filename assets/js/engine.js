@@ -5,7 +5,7 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES } from './scenario-jupiter.js';
+import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js';
 import { persona, ORG } from './personas.js';
 import { rnd, pick, sample, agoLabel } from './util.js';
 
@@ -28,6 +28,29 @@ export class Engine {
     this._build();
   }
 
+  /* Give a post a plausible comment thread, weighted by who posted it.
+     Rumour and media posts attract the biggest, nastiest threads. */
+  _makeThread(item, p){
+    const mix = THREAD_MIX[p.type] || THREAD_MIX.public;
+    const n = (p.type === 'rumour' || p.type === 'media') ? rnd(3, 6) : rnd(1, 4);
+    const out = [];
+    const used = new Set();
+    for (let i = 0; i < n; i++){
+      const c = pick(COMMENT_POOL[pick(mix)] || []);
+      if (!c || used.has(c.who)) continue;
+      used.add(c.who);
+      out.push({
+        persona: persona(c.who),
+        text: c.text,
+        min: item.min + 0.4 + i * 0.8,
+        nowMin: item.min + 0.4 + i * 0.8,
+        likes: rnd(0, 22),
+        replies: [],
+      });
+    }
+    return out;
+  }
+
   _build(){
     this.queue = SCRIPT.map((s, i) => {
       const jitter = s.burst ? (Math.random() * 0.35) : (Math.random() * 1.6 - 0.5);
@@ -36,6 +59,7 @@ export class Engine {
         id: 'S' + i,
         fireAt: s.min + jitter,
         persona: persona(s.who),
+        thread: this._makeThread(s, persona(s.who)),
         scripted: true,
         fired: false,
       };
@@ -45,7 +69,9 @@ export class Engine {
   /* Seed the ordinary day before T+0 so the feed is not empty at the start. */
   seedBaseline(){
     BASELINE.forEach((b, i) => {
-      const post = { ...b, id: 'B' + i, persona: persona(b.who), min: b.min, scripted: true };
+      const pp = persona(b.who);
+      const post = { ...b, id: 'B' + i, persona: pp, min: b.min, scripted: true,
+                     thread: this._makeThread(b, pp) };
       this.feed.add(post, { silent: true });
     });
   }
@@ -194,11 +220,12 @@ export class Engine {
       parentId: parent.id,
     };
 
-    // On Facebook and Instagram a reply is a comment on the post itself.
-    // On X it is a new tweet in the timeline, which is how X actually works.
-    if (parent.plat === 'fb' || parent.plat === 'ig') this.feed.comment(parent, ORG, text);
-    else this.feed.add(reply, { own: true });
+    // A reply lands in the thread of whatever is being answered — a post, or
+    // one specific comment within a post's thread.
+    if (parent.isComment) this.feed.commentReply(parent, ORG, text, this.nowMin);
+    else this.feed.comment(parent, ORG, text, this.nowMin);
 
+    if (parent.parentPost) parent.parentPost.answered = true;
     parent.answered = true;
     parent.answeredAt = this.nowMin;
     parent.answeredIn = this.nowMin - parent.min;
@@ -225,18 +252,8 @@ export class Engine {
     this.pending.push({
       at: this.nowMin + 0.2 + Math.random() * 0.8,
       run: () => {
-        if (parent.plat === 'fb' || parent.plat === 'ig'){
-          this.feed.comment(parent, parent.persona, line.text);
-        } else {
-          this.feed.add({
-            id: 'RR' + Date.now(),
-            plat: parent.plat,
-            text: line.text,
-            persona: parent.persona,
-            min: this.nowMin,
-            replyTo: ORG.handle,
-          });
-        }
+        if (parent.isComment) this.feed.commentReply(parent, parent.persona, line.text, this.nowMin);
+        else this.feed.comment(parent, parent.persona, line.text, this.nowMin);
         this.log.push({ min: this.nowMin, kind: 'reaction', who: parent.persona.name, plat: parent.plat, text: line.text });
       }
     });
@@ -286,19 +303,7 @@ export class Engine {
         at,
         run: () => {
           const who = persona(r.who);
-          if (post.plat === 'fb' || post.plat === 'ig'){
-            this.feed.comment(post, who, r.text);
-          } else {
-            this.feed.add({
-              id: 'R' + Date.now() + i,
-              plat: 'x',
-              text: r.text,
-              persona: who,
-              min: this.nowMin,
-              replyTo: ORG.handle,
-            });
-          }
-          post.counts && (post.counts.replies += 1);
+          this.feed.comment(post, who, r.text, this.nowMin);
           this.log.push({ min: at, kind: 'reaction', who: who.name, plat: post.plat, text: r.text });
         }
       });

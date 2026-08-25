@@ -4,7 +4,7 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, addFbComment, setReplyHandler } from './feeds.js';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply } from './feeds.js';
 import { Engine } from './engine.js';
 import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js';
 import { ORG, persona } from './personas.js';
@@ -63,16 +63,11 @@ const feed = {
     if (post.plat !== current && !opts.silent) markUnread(post.plat);
     if (opts.own) setTimeout(() => screen.scrollTo({ top: 0, behavior: 'smooth' }), 60);
   },
-  comment(post, persona, text){
-    if (post.plat === 'fb'){ addFbComment(post, persona, text); return; }
-    if (post.plat === 'ig' && post.el){
-      const row = el('div', 'ig-cap newflash',
-        `<b>${escapeHtml((persona.handle || '').replace('@',''))}</b> ${richText(text)}`);
-      const caps = post.el.querySelectorAll('.ig-cap');
-      post.el.insertBefore(row, caps[caps.length - 1]);
-      post.counts.replies += 1;
-      refreshCounts(post);
-    }
+  comment(post, persona, text, min){
+    pushComment(post, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG });
+  },
+  commentReply(comment, persona, text, min){
+    pushCommentReply(comment, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG });
   },
   all(){ return posts; },
   clear(){ posts.length = 0; PLATFORMS.forEach(p => stream(p).innerHTML = ''); },

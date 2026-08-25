@@ -261,3 +261,36 @@ body.wm .post::after{content:"EXERCISE";position:absolute;top:50%;left:50%;
 @media(min-width:1400px){
   #device{grid-template-columns:288px minmax(0,660px) 380px;}
 }
+
+/* ── Comment threads ─────────────────────────────────────────────── */
+.thread{padding:0 12px 10px;}
+.th-x{padding:2px 0 8px;}
+.cmore{font-size:13.5px;color:var(--x-dim);font-weight:600;cursor:pointer;padding:6px 0;}
+.cmore:hover{text-decoration:underline;}
+.th-x .cmore{color:var(--x-blue);font-weight:400;}
+
+.cmt{display:flex;gap:8px;margin-top:9px;}
+.cmt .av{width:30px;height:30px;font-size:11px;}
+.cmt-r{flex:1;min-width:0;}
+.cmt-bub{background:var(--fb-bg);border-radius:16px;padding:7px 12px;font-size:13.5px;line-height:1.34;}
+.cmt-bub b{font-size:12.5px;display:block;margin-bottom:1px;font-weight:600;}
+.cmt-txt{word-wrap:break-word;}
+.cmt-own .cmt-bub{background:#e7f3ff;}
+.cmt-meta{display:flex;align-items:center;gap:13px;padding:3px 12px 0;font-size:11.5px;color:var(--fb-dim);}
+.cmt-act{background:none;border:none;padding:0;font-size:11.5px;font-weight:700;color:var(--fb-dim);
+  cursor:pointer;font-family:inherit;}
+.cmt-act:hover{text-decoration:underline;}
+.cmt-act.on{color:var(--fb-blue);}
+.cmt-likes{margin-left:auto;font-size:11px;color:var(--fb-dim);}
+.cmt-kids{margin-left:6px;padding-left:12px;border-left:2px solid var(--fb-bg);}
+
+/* X threads read as nested replies rather than chat bubbles */
+.th-x .cmt-bub{background:none;padding:0;}
+.th-x .cmt-bub b{display:inline;margin-right:5px;}
+.th-x .cmt-meta{padding-left:0;}
+.th-x .cmt-kids{border-left-color:var(--x-line);}
+
+/* Instagram threads are plain lines under the caption */
+.th-ig .cmt-bub{background:none;padding:0;font-size:13px;}
+.th-ig .cmt-bub b{display:inline;margin-right:5px;}
+.th-ig .cmt-meta{padding-left:0;}

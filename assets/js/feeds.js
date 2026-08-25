@@ -3,6 +3,8 @@
    engagement counters so the numbers can climb while it sits on screen. */
 
 import { makeAvatar, richText, escapeHtml, fmtCount, avColour, initials, agoLabel, VERIFIED_SVG } from './util.js';
+import { buildThread, fireReply, setReplyHandler } from './thread.js';
+export { setReplyHandler, pushComment, pushCommentReply } from './thread.js';
 
 const ICON = {
   reply: '<svg viewBox="0 0 24 24"><path d="M1.75 10c0-4.42 3.58-8 8-8h4.37c4.49 0 7.88 3.77 7.88 8.28 0 4.42-3.46 8.1-7.88 8.1h-2.35c-1.38 0-2.45 1-2.45 2.2v2.07c0 .38-.3.65-.68.65-.15 0-.28-.04-.4-.11l-4.76-2.96A9.01 9.01 0 0 1 1.75 10z"/></svg>',
@@ -23,10 +25,6 @@ function seedCounts(post){
   };
 }
 
-/* The participant view calls back into the app when someone wants to reply. */
-let replyHandler = () => {};
-export function setReplyHandler(fn){ replyHandler = fn; }
-
 function actionBar(post){
   const c = post.counts;
   const bar = document.createElement('div');
@@ -35,7 +33,7 @@ function actionBar(post){
     `<button class="tw-act" data-c="replies">${ICON.reply}<span>${fmtCount(c.replies)}</span></button>` +
     `<button class="tw-act" data-c="shares">${ICON.rt}<span>${fmtCount(c.shares)}</span></button>` +
     `<button class="tw-act" data-c="likes">${ICON.like}<span>${fmtCount(c.likes)}</span></button>`;
-  bar.querySelector('[data-c="replies"]').addEventListener('click', () => replyHandler(post));
+  bar.querySelector('[data-c="replies"]').addEventListener('click', () => fireReply(post));
   bar.querySelector('[data-c="likes"]').addEventListener('click', function(){
     this.classList.toggle('liked');
     post.counts.likes += this.classList.contains('liked') ? 1 : -1;
@@ -89,6 +87,7 @@ function buildX(post, nowMin){
     r.appendChild(img);
   }
   r.appendChild(actionBar(post));
+  r.appendChild(buildThread(post));
   el.appendChild(r);
   return el;
 }
@@ -136,30 +135,10 @@ function buildFb(post, nowMin){
     post.counts.likes += this.classList.contains('on') ? 1 : -1;
     refreshCounts(post);
   });
-  acts.children[1].addEventListener('click', () => replyHandler(post));
+  acts.children[1].addEventListener('click', () => fireReply(post));
   el.appendChild(acts);
-  const cmts = document.createElement('div');
-  cmts.className = 'fb-cmts';
-  el.appendChild(cmts);
+  el.appendChild(buildThread(post));
   return el;
-}
-
-/* Append a comment to a Facebook post already on screen. */
-export function addFbComment(post, persona, text){
-  if (!post.el) return;
-  const box = post.el.querySelector('.fb-cmts');
-  if (!box) return;
-  const row = document.createElement('div');
-  row.className = 'fb-cmt newflash';
-  row.appendChild(makeAvatar(persona));
-  const bub = document.createElement('div');
-  bub.className = 'fb-cbub';
-  const badge = persona.type === 'org' ? ' <span class="fb-official">OFFICIAL</span>' : '';
-  bub.innerHTML = `<b>${escapeHtml(persona.name)}${badge}</b>${richText(text)}`;
-  row.appendChild(bub);
-  box.appendChild(row);
-  post.counts.replies += 1;
-  refreshCounts(post);
 }
 
 /* ── Instagram ───────────────────────────────────────────────────── */
@@ -189,7 +168,8 @@ function buildIg(post, nowMin){
     `<div class="ig-likes">${fmtCount(post.counts.likes)} likes</div>` +
     `<div class="ig-cap"><b>${escapeHtml((p.handle||'').replace('@',''))}</b> ${richText(post.text)}</div>` +
     `<div class="ig-cap" style="color:var(--ig-dim);font-size:11px;padding-top:0;"><span class="ago">${agoLabel(post.min, nowMin).toUpperCase()} AGO</span></div>`);
-  el.querySelectorAll('.ig-acts span')[1].addEventListener('click', () => replyHandler(post));
+  el.appendChild(buildThread(post));
+  el.querySelectorAll('.ig-acts span')[1].addEventListener('click', () => fireReply(post));
   const heart = el.querySelector('[data-like]');
   heart.addEventListener('click', () => {
     const on = heart.textContent === '🤍';
