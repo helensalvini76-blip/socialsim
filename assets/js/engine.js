@@ -5,10 +5,10 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, THREADS } from './scenario-jupiter.js?v=22';
-import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=22';
-import { rnd, pick, sample, agoLabel } from './util.js?v=22';
-import { stream } from './rng.js?v=22';
+import { SCRIPT, CHANNEL_SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, THREADS } from './scenario-jupiter.js?v=26';
+import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=26';
+import { rnd, pick, sample, agoLabel } from './util.js?v=26';
+import { stream } from './rng.js?v=26';
 
 export class Engine {
   constructor(feed, opts = {}){
@@ -49,7 +49,7 @@ export class Engine {
   }
 
   _build(){
-    this.queue = SCRIPT.map((s, i) => {
+    this.queue = SCRIPT.concat(CHANNEL_SCRIPT).map((s, i) => {
       // Seeded per item, so every device fires this inject at the same moment.
       const r = stream('jitter:' + this.seed + ':' + i);
       const jitter = s.burst ? r.range(0, 0.35) : r.range(-0.5, 1.1);
@@ -270,6 +270,8 @@ export class Engine {
     const post = {
       id: rec.id, plat: rec.plat, text: rec.text, persona: persona(rec.who),
       min: rec.min, participant: own, thread: [],
+      via: rec.via, subject: rec.subject,
+      enquiry: rec.plat === 'inbox' && !own,
     };
     this.feed.add(post, { own });
     if (own){
@@ -303,6 +305,9 @@ export class Engine {
     post.answeredIn = Math.max(0, rec.min - post.min);
     const q = this.queue.find(i => i.id === post.id);
     if (q){ q.answered = true; q.answeredIn = post.answeredIn; }
+
+    // Repaint after the timing is known, so the inbox can show how long it took.
+    if (this.feed.refreshInbox) this.feed.refreshInbox();
 
     this.log.push({
       min: rec.min,
@@ -384,17 +389,26 @@ export class Engine {
     });
   }
 
-  /* Enquiries that asked a direct question and never got an answer. */
+  /* Every enquiry in play — scripted, and any the facilitator fired by hand.
+     Counting only the scripted ones made the dashboard under-report. */
+  _allEnquiries(){
+    const scripted = this.queue.filter(i => i.fired && i.enquiry);
+    const live = this.feed.all().filter(p => p.enquiry && !this.queue.some(q => q.id === p.id));
+    return scripted.concat(live);
+  }
+
   unansweredEnquiries(){
-    return this.queue
-      .filter(i => i.fired && i.enquiry && !i.answered)
-      .map(i => ({ min: i.min, who: i.persona.name, plat: i.plat, text: i.text, packRef: i.packRef || '' }));
+    return this._allEnquiries()
+      .filter(i => !i.answered)
+      .map(i => ({ min: Math.round(i.min), who: i.persona.name, plat: i.plat, text: i.text, packRef: i.packRef || '' }))
+      .sort((a, b) => a.min - b.min);
   }
 
   answeredEnquiries(){
-    return this.queue
-      .filter(i => i.fired && i.enquiry && i.answered)
-      .map(i => ({ min: i.min, who: i.persona.name, waitedMin: Number((i.answeredIn || 0).toFixed(1)) }));
+    return this._allEnquiries()
+      .filter(i => i.answered)
+      .map(i => ({ min: Math.round(i.min), who: i.persona.name, waitedMin: Number((i.answeredIn || 0).toFixed(1)) }))
+      .sort((a, b) => a.min - b.min);
   }
 
   timeToFirstStatement(){ return this.firstOrgPostMin; }

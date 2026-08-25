@@ -90,6 +90,36 @@ export const QUICKFIRE = [
 
   { group:'Positive', label:'Community offers help', who:'business', plat:'fb',
     text:'Anything the hospice needs over the next few days, this town will provide it. Just tell us where to bring things.' },
+
+  // ── Staff group (internal channel) ────────────────────────────────
+  { group:'Internal', label:'Staff asking about families', who:'nurseSam', plat:'staff',
+    text:'Families are ringing the ward directly and we do not know what we are allowed to say. Can someone send us the agreed line please.' },
+
+  { group:'Internal', label:'Staff posting a photo', who:'hcaJoy', plat:'staff',
+    text:'someone has put a photo of the car park on the local facebook group. you can see the beds. is that allowed?' },
+
+  { group:'Internal', label:'Contradicting the public line', who:'facilities', plat:'staff',
+    text:'That is not what we were told down here. We were told it started in the plant room, not the corridor. Which is going out publicly?' },
+
+  { group:'Internal', label:'Exec asks for a statement', who:'exec', plat:'staff',
+    text:'Comms — I need an agreed staff message and an agreed family message in the next ten minutes please. People are filling the gap themselves.' },
+
+  // ── Enquiry inbox ─────────────────────────────────────────────────
+  { group:'Enquiries', label:'Journalist chasing', who:'examiner', plat:'inbox',
+    via:'Email', subject:'Chasing — still no statement',
+    text:'Following up. We have now approached you four times. We will publish within the hour with or without a comment from the hospice. Is there anything you want to add?' },
+
+  { group:'Enquiries', label:'Distressed relative', who:'karen', plat:'inbox',
+    via:'Phone message', subject:'Caller: daughter of an IPU patient',
+    text:'Caller is very distressed. She has been ringing for over an hour. She wants to know if her father is alive and where he has been taken. She asked to be called back urgently.' },
+
+  { group:'Enquiries', label:'Complaint about handling', who:'mohammed', plat:'inbox',
+    via:'Email', subject:'Complaint — lack of contact',
+    text:'I want to record a formal complaint that I learned about this incident on social media rather than from the hospice, despite my mother being an inpatient. I would like to know what your process is supposed to be.' },
+
+  { group:'Enquiries', label:'ICB wants a SitRep', who:'icb', plat:'inbox',
+    via:'Email', subject:'Urgent — situation report required',
+    text:'We need your current position: patients moved, destinations secured, outstanding gaps and what you need from the system tonight. Please respond as soon as you are able.' },
 ];
 
-export const GROUPS = ['Media', 'Families', 'Rumour', 'Staff', 'Partners', 'Positive'];
+export const GROUPS = ['Media', 'Families', 'Rumour', 'Staff', 'Partners', 'Positive', 'Internal', 'Enquiries'];

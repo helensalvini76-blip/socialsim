@@ -1396,6 +1396,50 @@
    "name": "Michelle Dyson",
    "handle": "@micheeed77"
   },
+  "sister": {
+   "name": "Nina Whitaker",
+   "handle": "Sister, IPU"
+  },
+  "facilities": {
+   "name": "Rob Attwell",
+   "handle": "Facilities"
+  },
+  "hcaJoy": {
+   "name": "Joy Mensah",
+   "handle": "HCA, IPU"
+  },
+  "nurseSam": {
+   "name": "Sam Okoro",
+   "handle": "Staff Nurse"
+  },
+  "fundraise": {
+   "name": "Bex Hartley",
+   "handle": "Fundraising"
+  },
+  "daytherapy": {
+   "name": "Lorna Beckett",
+   "handle": "Day Therapy"
+  },
+  "reception": {
+   "name": "Pauline Grant",
+   "handle": "Reception"
+  },
+  "exec": {
+   "name": "Alison Frame",
+   "handle": "Director of Care"
+  },
+  "boardMember": {
+   "name": "Geoffrey Hale",
+   "handle": "Trustee"
+  },
+  "icb": {
+   "name": "Kirklees ICB",
+   "handle": "System Coordination"
+  },
+  "tvProducer": {
+   "name": "Rhian Doyle",
+   "handle": "Calder Valley News"
+  },
   "kirkwood": {
    "name": "The Kirkwood",
    "handle": "@TheKirkwoodHD"

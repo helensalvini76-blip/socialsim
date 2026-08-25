@@ -305,3 +305,56 @@ body.wm .post::after{content:"EXERCISE";position:absolute;top:50%;left:50%;
   animation:pulse 1.4s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
 body.offline #screen{filter:saturate(.82);}
+
+/* ═══════════════════════════════════════════════════════════════════
+   STAFF GROUP CHAT
+   ═══════════════════════════════════════════════════════════════════ */
+.st-wrap{background:#e6dfd6;min-height:100%;}
+.st-head{position:sticky;top:0;z-index:20;background:#075e54;color:#fff;
+  padding:9px 13px;display:flex;align-items:center;gap:10px;}
+.st-head .av{width:36px;height:36px;font-size:13px;background:#128c7e;}
+.st-name{font-size:15px;font-weight:600;line-height:1.2;}
+.st-sub{font-size:11.5px;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.st-msg{max-width:82%;margin:7px 11px;padding:7px 10px 5px;border-radius:8px;
+  background:#fff;box-shadow:0 1px 1px rgba(0,0,0,.13);position:relative;}
+.st-msg.own{margin-left:auto;background:#dcf8c6;}
+.st-from{font-size:12.5px;font-weight:700;color:#0b7d6e;margin-bottom:2px;}
+.st-msg.own .st-from{color:#1f7a44;}
+.st-role{font-weight:400;color:var(--x-dim);font-size:11px;margin-left:5px;}
+.st-body{font-size:14.5px;line-height:1.4;white-space:pre-wrap;word-wrap:break-word;}
+.st-time{font-size:10.5px;color:#8a9199;text-align:right;margin-top:2px;}
+.st-day{text-align:center;margin:12px 0;}
+.st-day span{background:#d3e0e5;color:#4a5a63;font-size:11px;padding:3px 11px;border-radius:9px;}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ENQUIRY INBOX
+   ═══════════════════════════════════════════════════════════════════ */
+.in-wrap{background:#f6f7f9;min-height:100%;}
+.in-head{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--x-line);
+  padding:11px 14px;display:flex;align-items:center;justify-content:space-between;}
+.in-title{font-size:17px;font-weight:700;}
+.in-open{font-size:11.5px;font-weight:700;background:#fdecea;color:#a4262c;
+  padding:3px 9px;border-radius:11px;}
+.in-open.clear{background:#e7f6ec;color:#0f7b3f;}
+.in-item{background:#fff;border-bottom:1px solid var(--x-line);padding:12px 14px;}
+.in-item.answered{background:#fbfdfb;}
+.in-top{display:flex;align-items:baseline;gap:8px;margin-bottom:3px;flex-wrap:wrap;}
+.in-via{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:2px 7px;border-radius:4px;background:#eef1f5;color:#5a6675;}
+.in-via.email{background:#e8f0fe;color:#1a56c4;}
+.in-via.phone{background:#fff4e5;color:#a35b00;}
+.in-via.reception{background:#f3e8ff;color:#6b21a8;}
+.in-from{font-size:13.5px;font-weight:700;}
+.in-when{font-size:11px;color:var(--x-dim);margin-left:auto;}
+.in-subj{font-size:14px;font-weight:600;margin-bottom:4px;}
+.in-body{font-size:13.5px;line-height:1.45;color:#333a42;white-space:pre-wrap;}
+.in-actions{margin-top:9px;display:flex;gap:8px;align-items:center;}
+.in-reply{background:var(--x-blue);color:#fff;border:none;border-radius:16px;
+  padding:6px 15px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.in-flag{font-size:11px;color:#a4262c;font-weight:600;}
+.in-flag.done{color:#0f7b3f;}
+.in-sent{margin-top:9px;padding:9px 11px;background:#eef7ff;border-left:3px solid var(--x-blue);
+  border-radius:0 6px 6px 0;}
+.in-sent-h{font-size:11px;font-weight:700;color:var(--x-blue);margin-bottom:3px;}
+.in-sent-b{font-size:13px;line-height:1.4;white-space:pre-wrap;}
+.in-empty{padding:36px 22px;text-align:center;color:var(--x-dim);font-size:13px;line-height:1.6;}

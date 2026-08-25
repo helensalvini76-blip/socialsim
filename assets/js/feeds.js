@@ -2,10 +2,10 @@
    Each returns a DOM node for one post and keeps a reference to its own
    engagement counters so the numbers can climb while it sits on screen. */
 
-import { makeAvatar, richText, escapeHtml, fmtCount, avColour, initials, agoLabel, VERIFIED_SVG } from './util.js?v=22';
-import { stream } from './rng.js?v=22';
-import { buildThread, fireReply, setReplyHandler, countComments } from './thread.js?v=22';
-export { setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './thread.js?v=22';
+import { makeAvatar, richText, escapeHtml, fmtCount, avColour, initials, agoLabel, VERIFIED_SVG, clockLabel } from './util.js?v=26';
+import { stream } from './rng.js?v=26';
+import { buildThread, fireReply, setReplyHandler, countComments } from './thread.js?v=26';
+export { setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './thread.js?v=26';
 
 const ICON = {
   reply: '<svg viewBox="0 0 24 24"><path d="M1.75 10c0-4.42 3.58-8 8-8h4.37c4.49 0 7.88 3.77 7.88 8.28 0 4.42-3.46 8.1-7.88 8.1h-2.35c-1.38 0-2.45 1-2.45 2.2v2.07c0 .38-.3.65-.68.65-.15 0-.28-.04-.4-.11l-4.76-2.96A9.01 9.01 0 0 1 1.75 10z"/></svg>',
@@ -200,8 +200,76 @@ function gradTile(post){
   return d;
 }
 
+/* ── Staff group chat ────────────────────────────────────────────── */
+function buildStaff(post, nowMin){
+  const p = post.persona;
+  const own = p.type === 'org';
+  const el = document.createElement('div');
+  el.className = 'st-msg post' + (own ? ' own' : '');
+  el.innerHTML =
+    `<div class="st-from">${escapeHtml(own ? 'The Kirkwood — Communications' : p.name)}` +
+    (own ? '' : `<span class="st-role">${escapeHtml(p.handle || '')}</span>`) + `</div>` +
+    `<div class="st-body">${richText(post.text)}</div>` +
+    `<div class="st-time"><span class="ago">${clockLabel(post.min)}</span>` +
+    (own ? ' ✓✓' : '') + `</div>`;
+  return el;
+}
+
+/* ── Enquiry inbox ───────────────────────────────────────────────── */
+const VIA_CLASS = { 'Email': 'email', 'Phone message': 'phone', 'Reception': 'reception' };
+
+function buildInbox(post, nowMin){
+  const p = post.persona;
+  const el = document.createElement('div');
+  el.className = 'in-item post';
+  const via = post.via || 'Enquiry';
+  el.innerHTML =
+    `<div class="in-top">` +
+      `<span class="in-via ${VIA_CLASS[via] || ''}">${escapeHtml(via)}</span>` +
+      `<span class="in-from">${escapeHtml(p.name)}</span>` +
+      `<span class="in-when">${clockLabel(post.min)}</span>` +
+    `</div>` +
+    (post.subject ? `<div class="in-subj">${escapeHtml(post.subject)}</div>` : '') +
+    `<div class="in-body">${escapeHtml(post.text)}</div>` +
+    `<div class="in-actions">` +
+      `<button class="in-reply">Reply</button>` +
+      `<span class="in-flag">Awaiting response</span>` +
+    `</div>`;
+  el.querySelector('.in-reply').addEventListener('click', () => fireReply(post));
+  const box = document.createElement('div');
+  box.className = 'in-sent-wrap';
+  el.appendChild(box);
+  post.threadEl = box;
+  post.renderSent = () => renderSent(post);
+  renderSent(post);
+  return el;
+}
+
+/* Responses show inline beneath the enquiry, and mark it as dealt with. */
+function renderSent(post){
+  const box = post.threadEl;
+  if (!box) return;
+  const sent = (post.thread || []).filter(c => c.persona && c.persona.type === 'org');
+  box.innerHTML = sent.map(c =>
+    `<div class="in-sent"><div class="in-sent-h">Sent ${clockLabel(c.min)}</div>` +
+    `<div class="in-sent-b">${escapeHtml(c.text)}</div></div>`).join('');
+  if (!post.el) return;
+  post.el.classList.toggle('answered', sent.length > 0);
+  const flag = post.el.querySelector('.in-flag');
+  if (flag){
+    flag.classList.toggle('done', sent.length > 0);
+    flag.textContent = sent.length
+      ? 'Responded' + (post.answeredIn != null ? ' after ' + Math.round(post.answeredIn) + ' min' : '')
+      : 'Awaiting response';
+  }
+}
+
 /* ── Entry point ─────────────────────────────────────────────────── */
 export function renderPost(post, nowMin){
+  // Staff messages and enquiries carry no public engagement figures.
+  if (post.plat === 'staff'){ post.el = buildStaff(post, nowMin); return post.el; }
+  if (post.plat === 'inbox'){ post.el = buildInbox(post, nowMin); renderSent(post); return post.el; }
+
   post.counts = post.counts || seedCounts(post);
   const el = post.plat === 'fb' ? buildFb(post, nowMin)
            : post.plat === 'ig' ? buildIg(post, nowMin)
@@ -209,3 +277,5 @@ export function renderPost(post, nowMin){
   post.el = el;
   return el;
 }
+
+export { renderSent };

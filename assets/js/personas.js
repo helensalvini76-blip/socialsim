@@ -54,6 +54,21 @@ export const PERSONAS = {
   angry:     {name:'Baz',                 handle:'@baz_hd1',         photo:IMG+'angry-local.jpg',     type:'rumour'},
   exstaff:   {name:'Michelle Dyson',      handle:'@micheeed77',      photo:IMG+'conspiracy-account.jpg',type:'rumour'},
 
+  // ── Hospice staff (staff channel only, never on public feeds) ─────
+  sister:    {name:'Nina Whitaker',       handle:'Sister, IPU',            photo:'', type:'staff'},
+  facilities:{name:'Rob Attwell',         handle:'Facilities',             photo:'', type:'staff'},
+  hcaJoy:    {name:'Joy Mensah',          handle:'HCA, IPU',               photo:'', type:'staff'},
+  nurseSam:  {name:'Sam Okoro',           handle:'Staff Nurse',            photo:'', type:'staff'},
+  fundraise: {name:'Bex Hartley',         handle:'Fundraising',            photo:'', type:'staff'},
+  daytherapy:{name:'Lorna Beckett',       handle:'Day Therapy',            photo:'', type:'staff'},
+  reception: {name:'Pauline Grant',       handle:'Reception',              photo:'', type:'staff'},
+  exec:      {name:'Alison Frame',        handle:'Director of Care',       photo:'', type:'staff'},
+
+  // ── Enquiry senders (inbox only) ──────────────────────────────────
+  boardMember:{name:'Geoffrey Hale',      handle:'Trustee',                photo:'', type:'official'},
+  icb:       {name:'Kirklees ICB',        handle:'System Coordination',    photo:'', type:'official'},
+  tvProducer:{name:'Rhian Doyle',         handle:'Calder Valley News',     photo:IMG+'bbc-regional-news.jpg', type:'media'},
+
   // ── The organisation (the comms team posts as this) ───────────────
   kirkwood:  {name:'The Kirkwood',        handle:'@TheKirkwoodHD',   photo:'',     type:'org',verified:true},
 };

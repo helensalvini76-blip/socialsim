@@ -4,14 +4,14 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=22';
-import { connect } from './sync.js?v=22';
-import { Engine } from './engine.js?v=22';
-import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=22';
-import { ORG, persona } from './personas.js?v=22';
-import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=22';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=26';
+import { connect } from './sync.js?v=26';
+import { Engine } from './engine.js?v=26';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=26';
+import { ORG, persona } from './personas.js?v=26';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=26';
 
-const PLATFORMS = ['x', 'fb', 'ig'];
+const PLATFORMS = ['x', 'fb', 'ig', 'staff', 'inbox'];
 const screen  = document.getElementById('screen');
 const navEl   = document.getElementById('nav');
 const sheet   = document.getElementById('sheet');
@@ -38,6 +38,20 @@ function buildPanes(){
   panes.ig = el('div', 'pane', `
     <div class="ig-head"><div class="ig-brand">Instagram</div><div style="font-size:19px">♡ ✈</div></div>
     <div class="ig-stories"></div><div class="stream"></div>`);
+  panes.staff = el('div', 'pane st-wrap', `
+    <div class="st-head">
+      <div class="av" style="background:#128c7e">TK</div>
+      <div><div class="st-name">The Kirkwood — All Staff</div>
+      <div class="st-sub">Nina, Rob, Joy, Sam, Bex, Lorna, Pauline, Alison…</div></div>
+    </div>
+    <div class="st-day"><span>Today</span></div>
+    <div class="stream"></div>`);
+  panes.inbox = el('div', 'pane in-wrap', `
+    <div class="in-head">
+      <div class="in-title">Enquiries</div>
+      <div class="in-open clear" id="in-open">none outstanding</div>
+    </div>
+    <div class="stream"></div>`);
   const boot = document.getElementById('boot');
   if (boot) boot.remove();
   PLATFORMS.forEach(p => { panes[p].style.display = 'none'; screen.appendChild(panes[p]); });
@@ -60,25 +74,40 @@ const feed = {
     post.refresh = () => refreshCounts(post);
     if (!opts.silent) node.classList.add('newflash');
     const s = stream(post.plat);
-    s.insertBefore(node, s.firstChild);
+    if (post.plat === 'staff' || post.plat === 'inbox') s.appendChild(node);
+    else s.insertBefore(node, s.firstChild);
     if (post.plat !== current && !opts.silent) markUnread(post.plat);
+    if (post.plat === 'inbox') feed.refreshInbox();
     if (opts.own) setTimeout(() => screen.scrollTo({ top: 0, behavior: 'smooth' }), 60);
   },
   comment(post, persona, text, min, id){
     pushComment(post, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG, id });
+    if (post.plat === 'inbox') feed.refreshInbox();
   },
   commentReply(comment, persona, text, min, id){
     pushCommentReply(comment, persona, text, { min: min ?? (engine ? engine.nowMin : 0), own: persona === ORG, id });
   },
   all(){ return posts; },
+  refreshInbox(){
+    const items = posts.filter(p => p.plat === 'inbox');
+    items.forEach(p => p.renderSent && p.renderSent());
+    const open = items.filter(p => !(p.thread || []).some(c => c.persona && c.persona.type === 'org'));
+    const badge = document.getElementById('in-open');
+    if (badge){
+      badge.textContent = open.length ? open.length + ' awaiting response' : 'none outstanding';
+      badge.classList.toggle('clear', open.length === 0);
+    }
+  },
   clear(){ posts.length = 0; PLATFORMS.forEach(p => stream(p).innerHTML = ''); },
 };
 
 /* ── Navigation ──────────────────────────────────────────────────── */
 const NAV = [
-  { id:'fb', icon:'📘', label:'Facebook' },
-  { id:'x',  icon:'✖',  label:'X' },
-  { id:'ig', icon:'📷', label:'Instagram' },
+  { id:'fb',    icon:'📘', label:'Facebook' },
+  { id:'x',     icon:'✖',  label:'X' },
+  { id:'ig',    icon:'📷', label:'Instagram' },
+  { id:'staff', icon:'💬', label:'Staff' },
+  { id:'inbox', icon:'📩', label:'Enquiries' },
 ];
 
 function buildNav(){
@@ -176,8 +205,10 @@ function openSheet(target){
       `<span>${escapeHtml(replyTarget.persona.handle || '')}</span></div>` +
       `<div class="sh-quote">${escapeHtml(body)}</div>`;
     ctx.style.display = 'block';
-    shText.placeholder = 'Write a reply…';
-    shPost.textContent = 'Reply';
+    shText.placeholder = replyTarget.plat === 'inbox' ? 'Write your response…'
+                       : replyTarget.plat === 'staff' ? 'Message the staff group…'
+                       : 'Write a reply…';
+    shPost.textContent = replyTarget.plat === 'inbox' ? 'Send' : 'Reply';
   } else {
     ctx.innerHTML = '';
     ctx.style.display = 'none';

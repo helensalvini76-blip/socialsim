@@ -184,6 +184,110 @@ export const REACTIONS = {
   ],
 };
 
+/* ── Staff group and enquiry inbox ─────────────────────────────────
+   Most of the comms injects in section 11 of the pack are not social media at
+   all — a staff WhatsApp screenshot, family phone calls, a journalist asking
+   for an interview, a board member wanting a SitRep. These two channels carry
+   them, so the whole comms cell runs in one place and every response is logged
+   and timed for the debrief.
+
+   plat 'staff' renders as a group chat. plat 'inbox' renders as an enquiry
+   requiring a reply, with `via` describing how it arrived.                  */
+
+export const CHANNEL_SCRIPT = [
+
+  // ── Staff group: "The Kirkwood — All Staff" ─────────────────────
+  {min:1,  plat:'staff', who:'sister',
+   text:'Fire alarm sounding in the main building. This is NOT a drill. Follow your evacuation procedure and report to your assembly point.'},
+
+  {min:4,  plat:'staff', who:'facilities',
+   text:'Confirmed activation. Attending now. Please keep the front access road clear for appliances.'},
+
+  {min:12, plat:'staff', who:'hcaJoy',
+   text:'we are moving people out of the IPU now. can someone bring blankets to the car park side please'},
+
+  {min:19, plat:'staff', who:'nurseSam',
+   text:'Does anyone know if we are meant to be ringing families? Nobody has told us and people are asking.',
+   enquiry:true,
+   note:'Staff seeking direction on family contact. If comms do not answer here, they will improvise.'},
+
+  {min:25, plat:'staff', who:'daytherapy',
+   text:'Looks serious – whole hospice being evacuated. My friend on shift says they are moving everyone out and nobody knows where they are going.',
+   packRef:'T+25',
+   note:'PACK T+25 — staff speculation, and the version that ends up on Facebook at T+25. Correcting this without a punitive tone is the test.'},
+
+  {min:33, plat:'staff', who:'exec',
+   text:'All staff: please do not post anything about this incident on personal social media. Direct any enquiries to the communications lead.'},
+
+  {min:44, plat:'staff', who:'hcaJoy',
+   text:'its raining and we have got people out here in beds. is there a plan for cover'},
+
+  {min:58, plat:'staff', who:'reception',
+   text:'I have had eleven calls from families in the last twenty minutes and I do not have anything to tell them. Please can someone send me a line I am allowed to use.',
+   enquiry:true,
+   note:'HIGH IMPACT — the front line asking for an approved holding line. Tests whether comms is supporting the people actually taking the calls.'},
+
+  {min:70, plat:'staff', who:'nurseSam',
+   text:'Late shift here. Are we still coming in at 6 or not? There are about a dozen of us waiting to hear.',
+   packRef:'T+70', enquiry:true,
+   note:'PACK T+70 — workforce instruction. Unanswered, this surfaces publicly on Facebook at T+68.'},
+
+  {min:86, plat:'staff', who:'fundraise',
+   text:'Getting a lot of offers of help coming into the fundraising inbox — vans, buildings, volunteers. Who is coordinating that? I do not want to say no to people.',
+   enquiry:true},
+
+  {min:104,plat:'staff', who:'daytherapy',
+   text:'What do I tell Thursday day therapy? Twelve people are booked and several will already be arranging transport.',
+   enquiry:true,
+   note:'Business continuity comms — the service nobody has thought about yet.'},
+
+  {min:126,plat:'staff', who:'exec',
+   text:'Everyone who was on shift today: thank you. Please make sure you check out before you leave and speak to your manager about cover tomorrow.'},
+
+  // ── Enquiry inbox ────────────────────────────────────────────────
+  {min:20, plat:'inbox', who:'examiner', via:'Email',
+   subject:'Request for comment — incident at The Kirkwood',
+   text:'We are preparing to publish on the incident at your Dalton site. Can you confirm whether all patients are safe, how many were in the building, and whether the site has been evacuated? Deadline is 30 minutes. Happy to include a statement in full.',
+   enquiry:true,
+   note:'First formal media approach. The clock on the 30-minute holding message indicator is already running.'},
+
+  {min:35, plat:'inbox', who:'mohammed', via:'Phone message',
+   subject:'Caller: son of a patient on the IPU',
+   text:'Caller says he has been trying to reach the ward for forty minutes and has now seen the fire on Facebook. He wants to know whether his mother is safe and where she is being taken. He asked for a call back on the number held on file. He was upset but not aggressive.',
+   packRef:'T+35', enquiry:true,
+   note:'PACK T+35 — verify the caller, use the holding information, log it, promise a callback and meet it.'},
+
+  {min:55, plat:'inbox', who:'tvProducer', via:'Email',
+   subject:'Interview request — 18:00 bulletin',
+   text:'We are leading on this tonight. Can you make your Chief Executive or a senior clinician available for a short interview before 17:30? We can come to you. If nobody is available we will report that the hospice declined to comment.',
+   packRef:'T+55', enquiry:true,
+   note:'PACK T+55 — hard broadcast deadline. Route to spokesperson, issue the approved line, do not speculate.'},
+
+  {min:80, plat:'inbox', who:'worried', via:'Email',
+   subject:'Offer of help — building and volunteers',
+   text:'I own the old mill units on Colne Road and I am offering a whole floor, free, for as long as you need it. I can have twenty volunteers and four vans there within the hour to help move patients. Just say yes and we will start.',
+   packRef:'T+80', enquiry:true,
+   note:'PACK T+80 — well meant, entirely unsuitable clinically. Must be acknowledged warmly and routed through governance, not accepted.'},
+
+  {min:95, plat:'inbox', who:'reception', via:'Reception',
+   subject:'Two relatives have arrived at the gate',
+   text:'Two family members are at the front asking to see their relatives. I have asked them to wait in the visitors car park. They are calm but upset and say nobody has called them. What would you like me to do?',
+   packRef:'T+95', enquiry:true,
+   note:'PACK T+95 — families on site despite the message not to attend. Compassionate liaison without compromising the clinical area.'},
+
+  {min:110,plat:'inbox', who:'boardMember', via:'Email',
+   subject:'Trustee — request for update',
+   text:'I have had three calls from people in the town asking what has happened. Could I please have an authorised summary I can use, and an idea of how long the disruption is expected to last? I do not want to say the wrong thing.',
+   packRef:'T+110', enquiry:true,
+   note:'PACK T+110 — governance route. Tests whether trustees are being briefed or left to improvise.'},
+
+  {min:130,plat:'inbox', who:'icb', via:'Email',
+   subject:'SitRep requested — hospice incident',
+   text:'Please provide a situation report: patient numbers by destination need, immediate risks, mutual aid requirements and expected duration of disruption. We can help broker system capacity but need a clear, prioritised ask.',
+   enquiry:true,
+   note:'Mirrors master event M15. Tests whether the comms cell and the IMT are working from the same picture.'},
+];
+
 /* ── Replies to a reply ────────────────────────────────────────────
    When the comms team answers someone directly, that person answers back.
    Chosen by who they replied to, so a journalist pushes and a relative

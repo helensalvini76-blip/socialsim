@@ -8,13 +8,13 @@
    inject always visible, an inject one click away, and the comms team's own
    activity on screen while doing something else. */
 
-import { Engine } from './engine.js?v=22';
-import { connect } from './sync.js?v=22';
-import { PHASES } from './scenario-jupiter.js?v=22';
-import { PERSONAS, persona } from './personas.js?v=22';
-import { QUICKFIRE, GROUPS } from './quickfire.js?v=22';
-import { clockLabel } from './util.js?v=22';
-import { requireFacilitator, showLock } from './gate.js?v=22';
+import { Engine } from './engine.js?v=26';
+import { connect } from './sync.js?v=26';
+import { PHASES } from './scenario-jupiter.js?v=26';
+import { PERSONAS, persona } from './personas.js?v=26';
+import { QUICKFIRE, GROUPS } from './quickfire.js?v=26';
+import { clockLabel } from './util.js?v=26';
+import { requireFacilitator, showLock } from './gate.js?v=26';
 
 const params  = new URLSearchParams(location.search);
 const SESSION = params.get('session') || 'jupiter';
@@ -228,14 +228,17 @@ function buildQuickfire(){
       `<div class="qf-l">${esc(q.label)}</div>` +
       `<div class="qf-w">${esc(persona(q.who).name)} · ${q.plat.toUpperCase()}</div>` +
       `<div class="qf-x">${esc(q.text)}</div>`;
-    b.addEventListener('click', () => sendInject(q.who, q.plat, q.text, q.label));
+    b.addEventListener('click', () => sendInject(q.who, q.plat, q.text, q.label, q));
     $('qf-list').appendChild(b);
   });
 }
 
-function sendInject(who, plat, text, label){
+function sendInject(who, plat, text, label, extra){
   if (!transport){ toast('Not connected'); return; }
-  transport.publishPost({ kind: 'post', plat, text, who, min: engine.nowMin });
+  const rec = { kind: 'post', plat, text, who, min: engine.nowMin };
+  if (extra && extra.via) rec.via = extra.via;
+  if (extra && extra.subject) rec.subject = extra.subject;
+  transport.publishPost(rec);
   engine.log.push({ min: engine.nowMin, kind: 'manual', who: persona(who).name, plat, text });
   toast('Sent: ' + (label || persona(who).name));
 }
