@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0b0f14">
+<title>Exercise Jupiter — MediaSim</title>
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<div id="ex-banner">⚠ Exercise Only — Exercise Jupiter — Simulated content, not real ⚠</div>
+
+<div id="device">
+  <div class="statusbar">
+    <span id="sb-time">13:00</span>
+    <span class="sb-r">▮▮▮ &nbsp;WiFi&nbsp; 🔋</span>
+  </div>
+
+  <div id="screen"></div>
+
+  <button id="fab" title="Post as The Kirkwood">✎</button>
+
+  <div id="sheet">
+    <div class="sh-head">
+      <button id="sh-cancel">Cancel</button>
+      <button id="sh-post" class="sh-post" disabled>Post</button>
+    </div>
+    <div class="sh-as">Posting as <b>The Kirkwood</b> · <span id="sh-plat">Facebook</span></div>
+    <textarea id="sh-text" placeholder="Write an update…"></textarea>
+  </div>
+
+  <div id="nav"></div>
+</div>
+
+<!-- Facilitator preview bar. Hidden unless the URL carries ?f=1 -->
+<div id="prev">
+  <span class="clk">T+000 13:00</span>
+  <span class="ph"></span>
+  <button data-play>❚❚</button>
+  <button data-speed="1" class="on">1×</button>
+  <button data-speed="10">10×</button>
+  <button data-speed="30">30×</button>
+  <button data-speed="90">90×</button>
+  <select data-jump style="background:#1f2933;color:#e6edf3;border:1px solid #313d49;border-radius:5px;padding:3px 6px;font-size:11px;">
+    <option value="">jump to…</option>
+    <option value="0">P1 Alarm (T+0)</option>
+    <option value="20">P2 Movement (T+20)</option>
+    <option value="45">P3 Clearing station (T+45)</option>
+    <option value="65">P4 Media peak (T+65)</option>
+    <option value="100">P5 Recovery (T+100)</option>
+  </select>
+  <span class="nxt"></span>
+  <span class="ind"></span>
+  <button data-wm title="Toggle EXERCISE watermark on every post">WM</button>
+  <button data-reset>reset</button>
+</div>
+
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
