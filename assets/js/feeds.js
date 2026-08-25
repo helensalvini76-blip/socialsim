@@ -2,9 +2,9 @@
    Each returns a DOM node for one post and keeps a reference to its own
    engagement counters so the numbers can climb while it sits on screen. */
 
-import { makeAvatar, richText, escapeHtml, fmtCount, avColour, initials, agoLabel, VERIFIED_SVG } from './util.js?v=4';
-import { buildThread, fireReply, setReplyHandler } from './thread.js?v=4';
-export { setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './thread.js?v=4';
+import { makeAvatar, richText, escapeHtml, fmtCount, avColour, initials, agoLabel, VERIFIED_SVG } from './util.js?v=6';
+import { buildThread, fireReply, setReplyHandler, countComments } from './thread.js?v=6';
+export { setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './thread.js?v=6';
 
 const ICON = {
   reply: '<svg viewBox="0 0 24 24"><path d="M1.75 10c0-4.42 3.58-8 8-8h4.37c4.49 0 7.88 3.77 7.88 8.28 0 4.42-3.46 8.1-7.88 8.1h-2.35c-1.38 0-2.45 1-2.45 2.2v2.07c0 .38-.3.65-.68.65-.15 0-.28-.04-.4-.11l-4.76-2.96A9.01 9.01 0 0 1 1.75 10z"/></svg>',
@@ -20,7 +20,6 @@ function seedCounts(post){
   return {
     likes:   viral ? 180 : big ? 90 : 6,
     shares:  viral ? 240 : big ? 70 : 2,
-    replies: viral ? 60  : big ? 30 : 1,
     rate:    viral ? 5.2 : big ? 2.6 : 0.5,   // growth per exercise minute
   };
 }
@@ -30,7 +29,7 @@ function actionBar(post){
   const bar = document.createElement('div');
   bar.className = 'tw-acts';
   bar.innerHTML =
-    `<button class="tw-act" data-c="replies">${ICON.reply}<span>${fmtCount(c.replies)}</span></button>` +
+    `<button class="tw-act" data-c="replies">${ICON.reply}<span>${fmtCount(countComments(post))}</span></button>` +
     `<button class="tw-act" data-c="shares">${ICON.rt}<span>${fmtCount(c.shares)}</span></button>` +
     `<button class="tw-act" data-c="likes">${ICON.like}<span>${fmtCount(c.likes)}</span></button>`;
   bar.querySelector('[data-c="replies"]').addEventListener('click', () => fireReply(post));
@@ -53,12 +52,16 @@ export function refreshCounts(post){
   post.el.querySelectorAll('.tw-act').forEach(b => {
     const k = b.dataset.c;
     const span = b.querySelector('span');
-    if (span) span.textContent = fmtCount(Math.max(0, Math.round(c[k])));
+    if (!span) return;
+    span.textContent = k === 'replies'
+      ? fmtCount(countComments(post))
+      : fmtCount(Math.max(0, Math.round(c[k])));
   });
   const st = post.el.querySelector('.fb-stats');
   if (st){
     st.querySelector('.fb-n').textContent = fmtCount(Math.max(0, Math.round(c.likes)));
-    st.querySelector('.fb-c').textContent = Math.max(0, Math.round(c.replies)) + ' comments';
+    const n = countComments(post);
+    st.querySelector('.fb-c').textContent = n + (n === 1 ? ' comment' : ' comments');
     st.querySelector('.fb-s').textContent = Math.max(0, Math.round(c.shares)) + ' shares';
   }
   const ig = post.el.querySelector('.ig-likes');
@@ -125,7 +128,8 @@ function buildFb(post, nowMin){
     `<span class="fb-emo" style="background:#f33e58">❤️</span>` +
     `<span class="fb-emo" style="background:#f7b125">😢</span>` +
     `&nbsp;&nbsp;<span class="fb-n">${fmtCount(c.likes)}</span></div>` +
-    `<div><span class="fb-c">${c.replies} comments</span> &nbsp; <span class="fb-s">${c.shares} shares</span></div>`;
+    `<div><span class="fb-c">${countComments(post)} ${countComments(post) === 1 ? 'comment' : 'comments'}</span>` +
+    ` &nbsp; <span class="fb-s">${c.shares} shares</span></div>`;
   el.appendChild(stats);
   const acts = document.createElement('div');
   acts.className = 'fb-acts';

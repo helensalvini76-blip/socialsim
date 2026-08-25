@@ -5,9 +5,9 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js?v=4';
-import { persona, ORG } from './personas.js?v=4';
-import { rnd, pick, sample, agoLabel } from './util.js?v=4';
+import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, COMMENT_POOL, THREAD_MIX } from './scenario-jupiter.js?v=6';
+import { persona, ORG } from './personas.js?v=6';
+import { rnd, pick, sample, agoLabel } from './util.js?v=6';
 
 export class Engine {
   constructor(feed){
@@ -34,7 +34,8 @@ export class Engine {
     const mix = THREAD_MIX[p.type] || THREAD_MIX.public;
     const n = (p.type === 'rumour' || p.type === 'media') ? rnd(3, 6) : rnd(1, 4);
     const out = [];
-    const used = new Set();
+    // Seed with the author so nobody turns up commenting under their own post.
+    const used = new Set([item.who]);
     for (let i = 0; i < n; i++){
       const c = pick(COMMENT_POOL[pick(mix)] || []);
       if (!c || used.has(c.who)) continue;
@@ -155,9 +156,11 @@ export class Engine {
       const age = this.nowMin - p.min;
       if (age < 0 || age > 45) return;
       const decay = Math.max(0.15, 1 - age / 45);
-      p.counts.likes   += p.counts.rate * mins * 9  * decay * (0.6 + Math.random() * 0.8);
-      p.counts.shares  += p.counts.rate * mins * 3  * decay * (0.6 + Math.random() * 0.8);
-      p.counts.replies += p.counts.rate * mins * 1.4* decay * (0.6 + Math.random() * 0.8);
+      // Likes and shares are not enumerable on screen, so they may drift.
+      // The comment count is enumerable and must never drift — it is derived
+      // from the thread itself, not grown here.
+      p.counts.likes  += p.counts.rate * mins * 9 * decay * (0.6 + Math.random() * 0.8);
+      p.counts.shares += p.counts.rate * mins * 3 * decay * (0.6 + Math.random() * 0.8);
       if (Math.random() < 0.25) p.refresh && p.refresh();
     });
   }

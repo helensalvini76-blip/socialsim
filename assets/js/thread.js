@@ -5,7 +5,7 @@
    is rarely in the post itself, it is forty comments deep where the
    organisation is being talked about rather than talked to. */
 
-import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js?v=4';
+import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js?v=6';
 
 /* One shared reply target handler, used by posts and by individual comments. */
 let replyHandler = () => {};
@@ -18,6 +18,14 @@ const VISIBLE = 2;          // comments shown before "view all"
    comment reads "now" forever, which is the first thing that looks fake. */
 let nowFn = () => 0;
 export function setThreadClock(fn){ nowFn = fn; }
+
+/* The only place a comment count is calculated. Anything that displays a
+   number of comments must call this, or the figure on the post will drift away
+   from the comments actually underneath it. */
+export function countComments(post){
+  const top = post.thread || [];
+  return top.reduce((n, c) => n + 1 + ((c.replies || []).length), 0);
+}
 
 export function buildThread(post){
   const wrap = document.createElement('div');
@@ -41,9 +49,10 @@ export function renderThread(post){
   if (!expanded){
     const more = document.createElement('div');
     more.className = 'cmore';
+    const total = countComments(post);
     more.textContent = post.plat === 'x'
-      ? `Show ${items.length - VISIBLE} more replies`
-      : `View all ${items.length} comments`;
+      ? `Show ${total - VISIBLE} more replies`
+      : `View all ${total} comments`;
     more.addEventListener('click', () => { post.threadExpanded = true; renderThread(post); });
     wrap.appendChild(more);
   }
@@ -67,8 +76,9 @@ function commentRow(post, c){
     `<button class="cmt-act">Like</button><button class="cmt-act cmt-reply">Reply</button>` +
     `<span class="cmt-likes"></span></div>`;
 
-  const likes = c.likes == null ? Math.floor(Math.random() * 14) : c.likes;
-  if (likes > 0) right.querySelector('.cmt-likes').textContent = '👍 ' + likes;
+  // Assign once and keep it. Re-rolling on each render made counts jump.
+  if (c.likes == null) c.likes = 0;
+  if (c.likes > 0) right.querySelector('.cmt-likes').textContent = '👍 ' + c.likes;
 
   right.querySelector('.cmt-reply').addEventListener('click', () => {
     // Give the comment enough of a post's shape for the composer to handle it.
@@ -79,7 +89,7 @@ function commentRow(post, c){
   });
   right.querySelector('.cmt-act').addEventListener('click', function(){
     this.classList.toggle('on');
-    c.likes = (c.likes == null ? likes : c.likes) + (this.classList.contains('on') ? 1 : -1);
+    c.likes += this.classList.contains('on') ? 1 : -1;
     right.querySelector('.cmt-likes').textContent = c.likes > 0 ? '👍 ' + c.likes : '';
   });
 
@@ -98,27 +108,21 @@ function commentRow(post, c){
 /* Add a new top-level comment to a post. */
 export function pushComment(post, persona, text, opts = {}){
   post.thread = post.thread || [];
-  post.thread.push({ persona, text, min: opts.min ?? 0, nowMin: opts.min ?? 0, own: !!opts.own, isNew: true, replies: [] });
+  post.thread.push({ persona, text, min: opts.min ?? 0, likes: 0, own: !!opts.own, isNew: true, replies: [] });
   post.threadExpanded = true;         // once it is live, keep it open
   renderThread(post);
-  if (post.counts){
-    post.counts.replies += 1;
-    post.refresh && post.refresh();
-  }
+  post.refresh && post.refresh();
 }
 
 /* Add a reply underneath one specific comment. */
 export function pushCommentReply(comment, persona, text, opts = {}){
   comment.replies = comment.replies || [];
-  const kid = { persona, text, min: opts.min ?? 0, nowMin: opts.min ?? 0, own: !!opts.own, isNew: true, replies: [] };
+  const kid = { persona, text, min: opts.min ?? 0, likes: 0, own: !!opts.own, isNew: true, replies: [] };
   comment.replies.push(kid);
   const post = comment.parentPost;
   if (post){
     post.threadExpanded = true;
     renderThread(post);
-    if (post.counts){
-      post.counts.replies += 1;
-      post.refresh && post.refresh();
-    }
+    post.refresh && post.refresh();
   }
 }
