@@ -4,11 +4,11 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply } from './feeds.js';
-import { Engine } from './engine.js';
-import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js';
-import { ORG, persona } from './personas.js';
-import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=4';
+import { Engine } from './engine.js?v=4';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=4';
+import { ORG, persona } from './personas.js?v=4';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=4';
 
 const PLATFORMS = ['x', 'fb', 'ig'];
 const screen  = document.getElementById('screen');
@@ -262,6 +262,7 @@ buildPanes();
 buildNav();
 initComposer();
 engine = new Engine(feed);
+setThreadClock(() => engine.nowMin);
 engine.seedBaseline();
 show('fb');
 buildRail();
@@ -290,4 +291,8 @@ setTimeout(() => {
 const sbTime = document.getElementById('sb-time');
 setInterval(() => { sbTime.textContent = clockLabel(engine.nowMin); }, 1000);
 
-console.info('Exercise Jupiter — fire location token:', FIRE_LOCATION);
+const BUILD = document.querySelector('meta[name="build"]')?.content || '?';
+window.__build = BUILD;
+const buildTag = document.querySelector('#prev .bld');
+if (buildTag) buildTag.textContent = 'build ' + BUILD;
+console.info('Exercise Jupiter — build', BUILD, '— fire location:', FIRE_LOCATION);

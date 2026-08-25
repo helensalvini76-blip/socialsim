@@ -5,7 +5,7 @@
    is rarely in the post itself, it is forty comments deep where the
    organisation is being talked about rather than talked to. */
 
-import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js';
+import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js?v=4';
 
 /* One shared reply target handler, used by posts and by individual comments. */
 let replyHandler = () => {};
@@ -13,6 +13,11 @@ export function setReplyHandler(fn){ replyHandler = fn; }
 export function fireReply(target){ replyHandler(target); }
 
 const VISIBLE = 2;          // comments shown before "view all"
+
+/* Threads need the exercise clock to age their timestamps; without it every
+   comment reads "now" forever, which is the first thing that looks fake. */
+let nowFn = () => 0;
+export function setThreadClock(fn){ nowFn = fn; }
 
 export function buildThread(post){
   const wrap = document.createElement('div');
@@ -58,7 +63,7 @@ function commentRow(post, c){
   right.innerHTML =
     `<div class="cmt-bub"><b>${escapeHtml(c.persona.name)} ${badge}</b>` +
     `<span class="cmt-txt">${richText(c.text)}</span></div>` +
-    `<div class="cmt-meta"><span>${agoLabel(c.min, c.nowMin || c.min)}</span>` +
+    `<div class="cmt-meta"><span>${agoLabel(c.min, Math.max(nowFn(), c.min))}</span>` +
     `<button class="cmt-act">Like</button><button class="cmt-act cmt-reply">Reply</button>` +
     `<span class="cmt-likes"></span></div>`;
 
