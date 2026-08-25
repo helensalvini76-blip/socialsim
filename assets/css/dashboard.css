@@ -151,3 +151,21 @@ button{font-family:inherit;cursor:pointer;}
 .ctl.play.start{background:var(--good);border-color:var(--good);color:#04210d;
   font-weight:800;font-size:13px;padding:8px 16px;letter-spacing:.02em;}
 .ctl.play.start:hover{filter:brightness(1.08);}
+
+/* Access gate */
+#lock{position:fixed;inset:0;z-index:500;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;}
+.lock-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:34px 38px;width:330px;text-align:center;}
+.lock-title{font-size:21px;font-weight:700;color:#ffd76e;margin-bottom:3px;}
+.lock-sub{font-size:12.5px;color:var(--dim);margin-bottom:22px;}
+#lock-input{width:100%;background:var(--panel-2);border:1px solid var(--line);
+  border-radius:8px;padding:11px 13px;color:var(--ink);font-family:inherit;font-size:14px;}
+#lock-go{width:100%;margin-top:11px;background:var(--accent);border:none;color:#04121f;
+  font-weight:700;border-radius:8px;padding:11px;font-size:14px;}
+.lock-err{color:var(--bad);font-size:12px;margin-top:11px;min-height:16px;}
+
+/* Another dashboard is driving this session */
+#conflict{display:none;background:var(--bad);color:#fff;font-size:12.5px;font-weight:600;
+  padding:7px 16px;text-align:center;}
+#conflict.show{display:block;}

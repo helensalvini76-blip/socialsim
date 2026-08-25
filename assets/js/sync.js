@@ -44,6 +44,9 @@ export function localTransport(){
     publishComment(rec){ const r = { ...rec, id: 'LC' + (++n) }; handlers.comment && handlers.comment(r); return r.id; },
     publishLog(){},
     setClock(){},
+    setSettings(){},
+    goOffline(){},
+    goOnline(){},
     clearAll(){},
     ready: Promise.resolve(),
   };
@@ -85,6 +88,9 @@ export async function firebaseTransport(session){
     const v = snap.val();
     if (v) handlers.clock && handlers.clock(v);
   });
+  onValue(ref(db, `${base}/settings`), snap => {
+    handlers.settings && handlers.settings(snap.val() || {});
+  });
 
   return {
     mode: 'firebase',
@@ -95,12 +101,16 @@ export async function firebaseTransport(session){
     publishComment(rec){ return push(ref(db, `${base}/comments`), rec).key; },
     publishLog(rec){ push(ref(db, `${base}/log`), rec); },
     setClock(state){ set(ref(db, `${base}/clock`), { ...state, at: serverTimestamp() }); },
+    setSettings(state){ set(ref(db, `${base}/settings`), state); },
+    goOffline(){ dbMod.goOffline(db); },      // used to test dropout handling
+    goOnline(){ dbMod.goOnline(db); },
     async clearAll(){
       await Promise.all([
         remove(ref(db, `${base}/posts`)),
         remove(ref(db, `${base}/comments`)),
         remove(ref(db, `${base}/log`)),
         remove(ref(db, `${base}/clock`)),
+        remove(ref(db, `${base}/settings`)),
       ]);
     },
     ready: Promise.resolve(),

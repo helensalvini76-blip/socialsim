@@ -4,12 +4,12 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=20';
-import { connect } from './sync.js?v=20';
-import { Engine } from './engine.js?v=20';
-import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=20';
-import { ORG, persona } from './personas.js?v=20';
-import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=20';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=22';
+import { connect } from './sync.js?v=22';
+import { Engine } from './engine.js?v=22';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=22';
+import { ORG, persona } from './personas.js?v=22';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=22';
 
 const PLATFORMS = ['x', 'fb', 'ig'];
 const screen  = document.getElementById('screen');
@@ -305,10 +305,22 @@ connect(SESSION, { offline: OFFLINE }).then(t => {
     engine.pause();
   }
 
+  /* Connection state. Firebase queues writes while offline and flushes them on
+     reconnect, so a post typed during a dropout is not lost — but the person
+     typing it needs to know it has not gone anywhere yet. */
+  let everConnected = false;
   t.on('connection', up => {
+    if (up) everConnected = true;
     document.body.classList.toggle('offline', !up);
-    const dot = document.getElementById('conn');
-    if (dot) dot.textContent = up ? '' : 'reconnecting…';
+    const pill = document.getElementById('conn');
+    if (!pill) return;
+    pill.classList.toggle('show', !up && everConnected);
+    pill.textContent = 'No signal — will resend when reconnected';
+  });
+
+  /* The facilitator can turn the EXERCISE watermark on for everyone mid-run. */
+  t.on('settings', cfg => {
+    document.body.classList.toggle('wm', !!(cfg && cfg.watermark));
   });
 
   if (t.mode === 'local' && !OFFLINE){

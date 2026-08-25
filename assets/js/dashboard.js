@@ -8,12 +8,13 @@
    inject always visible, an inject one click away, and the comms team's own
    activity on screen while doing something else. */
 
-import { Engine } from './engine.js?v=20';
-import { connect } from './sync.js?v=20';
-import { PHASES } from './scenario-jupiter.js?v=20';
-import { PERSONAS, persona } from './personas.js?v=20';
-import { QUICKFIRE, GROUPS } from './quickfire.js?v=20';
-import { clockLabel } from './util.js?v=20';
+import { Engine } from './engine.js?v=22';
+import { connect } from './sync.js?v=22';
+import { PHASES } from './scenario-jupiter.js?v=22';
+import { PERSONAS, persona } from './personas.js?v=22';
+import { QUICKFIRE, GROUPS } from './quickfire.js?v=22';
+import { clockLabel } from './util.js?v=22';
+import { requireFacilitator, showLock } from './gate.js?v=22';
 
 const params  = new URLSearchParams(location.search);
 const SESSION = params.get('session') || 'jupiter';
@@ -58,6 +59,7 @@ function paintClock(){
 }
 
 let generation = 1;
+const DRIVER_ID = 'd' + Math.random().toString(36).slice(2, 9);
 
 function publishClock(){
   if (!transport || !transport.setClock) return;
@@ -66,6 +68,7 @@ function publishClock(){
     speed: engine.speed,
     running: engine.running,
     gen: generation,
+    driver: DRIVER_ID,
   });
 }
 
@@ -363,9 +366,9 @@ function wireTop(){
   });
   $('wm').addEventListener('click', function(){
     this.classList.toggle('on');
-    toast(this.classList.contains('on')
-      ? 'Watermark on — participants must refresh'
-      : 'Watermark off — participants must refresh');
+    const on = this.classList.contains('on');
+    if (transport && transport.setSettings) transport.setSettings({ watermark: on });
+    toast(on ? 'Watermark ON for every device' : 'Watermark off');
   });
   $('export').addEventListener('click', exportDebrief);
   $('reset').addEventListener('click', async () => {
@@ -415,6 +418,7 @@ function toast(msg){
 const BUILD = document.querySelector('meta[name="build"]') ? document.querySelector('meta[name="build"]').content : '?';
 $('buildtag').textContent = 'build ' + BUILD + ' · ' + SESSION;
 
+function boot(){
 buildTimeline();
 buildQuickfire();
 buildCustom();
@@ -470,6 +474,17 @@ connect(SESSION, { offline: OFFLINE }).then(t => {
     if (hasStarted) toast('Resumed exercise at T+' + Math.round(engine.nowMin));
   });
 
+  // Two dashboards on one session will fight over the clock. Detect it rather
+  // than let them quietly undo each other mid-exercise.
+  t.on('clock', v => {
+    if (!v || !v.driver || v.driver === DRIVER_ID) { $('conflict').classList.remove('show'); return; }
+    const serverNow = t.serverNow ? t.serverNow() : Date.now();
+    const fresh = (serverNow - (v.at || 0)) < 45000;
+    $('conflict').classList.toggle('show', fresh);
+    if (fresh) $('conflict').textContent =
+      'Another facilitator dashboard is driving this session. Close one of them — two will fight over the clock.';
+  });
+
   // If nothing came back, there is no exercise running — take ownership.
   setTimeout(() => {
     adopted = true;
@@ -481,3 +496,7 @@ connect(SESSION, { offline: OFFLINE }).then(t => {
 onChange = () => { paintMonitor(); paintStatus(); };
 setInterval(() => { paintClock(); paintTimeline(); paintStatus(); }, 500);
 setInterval(paintMonitor, 1000);
+}
+
+if (requireFacilitator()) boot();
+else showLock(boot);

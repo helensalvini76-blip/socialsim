@@ -294,3 +294,14 @@ body.wm .post::after{content:"EXERCISE";position:absolute;top:50%;left:50%;
 .th-ig .cmt-bub{background:none;padding:0;font-size:13px;}
 .th-ig .cmt-bub b{display:inline;margin-right:5px;}
 .th-ig .cmt-meta{padding-left:0;}
+
+/* Connection state. A participant who has silently dropped off needs to know,
+   or they will keep typing statements nobody receives. */
+#ex-banner{gap:10px;}
+.conn{display:none;align-items:center;gap:6px;background:rgba(0,0,0,.32);
+  border-radius:11px;padding:2px 10px;font-size:10.5px;letter-spacing:.04em;}
+.conn.show{display:inline-flex;}
+.conn::before{content:"";width:7px;height:7px;border-radius:50%;background:#ff6b6b;
+  animation:pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+body.offline #screen{filter:saturate(.82);}
