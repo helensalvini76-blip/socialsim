@@ -36,6 +36,8 @@ function buildPanes(){
   panes.ig = el('div', 'pane', `
     <div class="ig-head"><div class="ig-brand">Instagram</div><div style="font-size:19px">♡ ✈</div></div>
     <div class="ig-stories"></div><div class="stream"></div>`);
+  const boot = document.getElementById('boot');
+  if (boot) boot.remove();
   PLATFORMS.forEach(p => { panes[p].style.display = 'none'; screen.appendChild(panes[p]); });
 }
 

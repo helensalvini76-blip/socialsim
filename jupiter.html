@@ -18,7 +18,21 @@
     <span class="sb-r">▮▮▮ &nbsp;WiFi&nbsp; 🔋</span>
   </div>
 
-  <div id="screen"></div>
+  <div id="screen">
+    <!-- Replaced once the app boots. If this is still visible, something failed. -->
+    <div id="boot" style="padding:40px 26px;text-align:center;color:#65676b;font-size:14px;line-height:1.5">
+      <div style="font-size:28px;margin-bottom:10px">📡</div>
+      <b style="color:#050505;display:block;margin-bottom:6px">Loading Exercise Jupiter…</b>
+      If this message stays on screen, pull down to refresh.
+      <div id="boot-err" style="display:none;margin-top:16px;padding:12px;background:#fdecea;
+        border-radius:8px;color:#8b1a1a;font-size:12px;text-align:left;word-break:break-word"></div>
+    </div>
+  </div>
+  <noscript>
+    <div style="padding:40px 26px;text-align:center;font-size:14px">
+      This exercise tool needs JavaScript enabled.
+    </div>
+  </noscript>
 
   <button id="fab" title="Post as The Kirkwood">✎</button>
 
@@ -57,6 +71,26 @@
   <button data-reset>reset</button>
 </div>
 
+<!-- Surface failures on screen. A participant on the day cannot open a console,
+     and a silent blank page is indistinguishable from a dead exercise. -->
+<script>
+(function(){
+  function show(msg){
+    var b = document.getElementById('boot-err');
+    if (!b) return;
+    b.style.display = 'block';
+    b.textContent = String(msg).slice(0, 400);
+  }
+  window.addEventListener('error', function(e){
+    show((e.message || 'Load error') + (e.filename ? ' — ' + e.filename.split('/').pop() : ''));
+  }, true);
+  window.addEventListener('unhandledrejection', function(e){ show(e.reason); });
+  // If nothing has rendered after 8 seconds, say so rather than sitting blank.
+  setTimeout(function(){
+    if (document.getElementById('boot')) show('The app did not start. Close this tab completely and reopen the link.');
+  }, 8000);
+})();
+</script>
 <script type="module" src="assets/js/app.js"></script>
 </body>
 </html>
