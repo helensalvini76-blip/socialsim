@@ -1,0 +1,1404 @@
+{
+ "baseline": [
+  {
+   "min": -180,
+   "plat": "fb",
+   "who": "kirkwood",
+   "text": "Our Sunflower Appeal is now live! Every sunflower dedicated helps us care for patients and families across Kirklees. Dedicate yours through the link in our bio. 🌻",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": -165,
+   "plat": "ig",
+   "who": "kirkwood",
+   "text": "Thank you to everyone who walked, baked and donated last weekend. You are the reason we can be here. 💛 #TheKirkwood #Huddersfield",
+   "note": null,
+   "packRef": null,
+   "img": "images/jupiter/site-sq.jpg",
+   "enquiry": false
+  },
+  {
+   "min": -140,
+   "plat": "fb",
+   "who": "norris",
+   "text": "Just want to say a huge thank you to all the staff at The Kirkwood for the care they gave my mum. Nothing was ever too much trouble. Wonderful people.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": -120,
+   "plat": "x",
+   "who": "examiner",
+   "text": "Kirklees council confirms roadworks on Wakefield Road will continue until the end of the month. Full story on our site.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": -95,
+   "plat": "fb",
+   "who": "business",
+   "text": "Fresh in this morning — local strawberries, while they last! 🍓",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": -70,
+   "plat": "x",
+   "who": "kirkwood",
+   "text": "Our Hospice at Home team made 214 visits last month. Thank you to everyone whose support makes that possible. 💛",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": -40,
+   "plat": "ig",
+   "who": "tracy",
+   "text": "coffee morning at work for the hospice ☕️ we have raised £86 already and its only half 11",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": -20,
+   "plat": "fb",
+   "who": "gary",
+   "text": "Anyone know why theres so much traffic on Wakefield Rd this dinnertime? Been sat here 15 mins",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  }
+ ],
+ "script": [
+  {
+   "min": 2,
+   "plat": "x",
+   "who": "liam",
+   "text": "fire alarm going off at the hospice on Dalton. can hear it from the road",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 4,
+   "plat": "fb",
+   "who": "neighbour",
+   "text": "Is everything alright at The Kirkwood? Alarms have been going a good few minutes now and there are people out on the grass.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 6,
+   "plat": "x",
+   "who": "darren",
+   "text": "2 fire engines just gone past the Co-op with blues on. heading towards Dalton",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 7,
+   "plat": "x",
+   "who": "ryan",
+   "text": "make that 3. somethings going on",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 9,
+   "plat": "fb",
+   "who": "tracy",
+   "text": "my sister in laws just rang, shes says theres smoke coming from the hospice building. praying its nothing 🙏",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 11,
+   "plat": "ig",
+   "who": "kevin",
+   "text": "Fire crews on Dalton. Hope everyone is ok",
+   "note": "IG image post — cordon at distance",
+   "packRef": null,
+   "img": "images/jupiter/cordon-sq.jpg",
+   "enquiry": false
+  },
+  {
+   "min": 13,
+   "plat": "x",
+   "who": "watch",
+   "text": "INCIDENT: Multiple fire appliances in attendance at The Kirkwood Hospice, Dalton. Reports of smoke from the main building. Patients understood to be inside. More to follow.",
+   "note": "First rumour account. Unsourced, states patients inside as fact.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 15,
+   "plat": "x",
+   "who": "examiner",
+   "text": "We are getting reports of a fire at The Kirkwood Hospice in Dalton. Emergency services are on scene. @TheKirkwoodHD are you able to confirm what is happening?",
+   "note": "First direct media approach. Clock starts on their response.",
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 17,
+   "plat": "fb",
+   "who": "karen",
+   "text": "my dad is in the inpatient unit at the kirkwood. can anyone tell me whats happening please. ive rang twice and cant get through",
+   "note": "HIGH IMPACT — family member, publicly identifiable relative, asking on an open page.",
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 19,
+   "plat": "x",
+   "who": "owen",
+   "text": "been diverted off the road by police. whole area taped off. never seen anything like it here",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 20,
+   "plat": "x",
+   "who": "nikki",
+   "text": "that poor place. those are the most vulnerable people you could imagine 😢",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 22,
+   "plat": "fb",
+   "who": "sandra",
+   "text": "They are bringing beds out into the car park. I can see them from the top road. Actual hospital beds outside.",
+   "note": null,
+   "packRef": null,
+   "img": "images/jupiter/front-wide.jpg",
+   "enquiry": false
+  },
+  {
+   "min": 24,
+   "plat": "x",
+   "who": "fire",
+   "text": "We are currently in attendance at an incident at a premises in Dalton, Huddersfield. Please avoid the area to allow emergency vehicles access. #WYFRS",
+   "note": "Partner posts before the hospice does. If the comms team has still said nothing, point this out at debrief.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 25,
+   "plat": "fb",
+   "who": "diane",
+   "text": "Looks serious – whole hospice being evacuated. My friend works there and says they are moving everyone out. Nobody knows where they are going yet.",
+   "note": "PACK T+25 — the staff-originated speculation inject. Tests correcting misinformation without a punitive tone.",
+   "packRef": "T+25",
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 27,
+   "plat": "x",
+   "who": "viral",
+   "text": "🚨 HUDDERSFIELD: Fire at The Kirkwood Hospice. Patients being evacuated into the car park. Unconfirmed reports of casualties. #Huddersfield",
+   "note": "Amplifier account. \"Unconfirmed reports of casualties\" is the first hard untruth.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 29,
+   "plat": "x",
+   "who": "paul",
+   "text": "why has nobody from the hospice said anything yet. its been half an hour",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 31,
+   "plat": "fb",
+   "who": "mohammed",
+   "text": "My mother is a patient there. I have had no phone call. I am finding this out from Facebook. Why is nobody telling the families anything??",
+   "note": "HIGH IMPACT — the \"I found out online\" complaint. This is the one that stings.",
+   "packRef": "T+35",
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 33,
+   "plat": "x",
+   "who": "regional",
+   "text": "BREAKING: Fire at a hospice in Huddersfield. Patients evacuated. We understand West Yorkshire Fire & Rescue have multiple crews on scene. More shortly.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 34,
+   "plat": "x",
+   "who": "national",
+   "text": "Fire at Huddersfield hospice — patients moved from building. Developing story.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 35,
+   "plat": "x",
+   "who": "becky",
+   "text": "someone on the local group is saying two patients didnt make it out 😢 absolutely heartbreaking if true",
+   "note": "HIGH IMPACT — false death rumour enters. Must be corrected without disclosing patient information.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 37,
+   "plat": "fb",
+   "who": "angry",
+   "text": "Two dead apparently. Disgusting. How do you let that happen in a HOSPICE of all places",
+   "note": "Rumour hardening into accusation. Wholly untrue.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 39,
+   "plat": "x",
+   "who": "councillor",
+   "text": "I am aware of a serious incident at The Kirkwood in my ward. My thoughts are with patients, families and staff. I am seeking an urgent update. @TheKirkwoodHD",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 41,
+   "plat": "ig",
+   "who": "ryan",
+   "text": "Bad scenes on Dalton this afternoon. Thoughts with everyone at the hospice ❤️",
+   "note": null,
+   "packRef": null,
+   "img": "images/jupiter/site-sq.jpg",
+   "enquiry": false
+  },
+  {
+   "min": 43,
+   "plat": "x",
+   "who": "examiner",
+   "text": "@TheKirkwoodHD We have now approached The Kirkwood three times for comment. Can you confirm whether all patients are safe?",
+   "note": "Public escalation of an unanswered enquiry.",
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 45,
+   "plat": "fb",
+   "who": "watch",
+   "text": "Photos from the scene at The Kirkwood. You can see patients in beds out in the open in the car park. Families are saying they still have not been contacted. Casualties not confirmed either way.",
+   "note": "PACK T+45 — photo of emergency vehicles plus casualty claim. Patients visible in shot: raises dignity and confidentiality.",
+   "packRef": "T+45",
+   "img": "images/jupiter/cordon-wide.jpg",
+   "enquiry": false
+  },
+  {
+   "min": 47,
+   "plat": "x",
+   "who": "exstaff",
+   "text": "not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.",
+   "note": "HIGHEST IMPACT ITEM. Plausible, unfalsifiable in the moment, no clean answer. Flagged as the sharpest inject in the script — pull it if the room is already overloaded.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 49,
+   "plat": "x",
+   "who": "angry",
+   "text": "@TheKirkwoodHD silence speaks volumes doesnt it",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 50,
+   "plat": "x",
+   "who": "john",
+   "text": "give them a chance, theyre a bit busy saving peoples lives arent they",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 52,
+   "plat": "fb",
+   "who": "amelia",
+   "text": "Please can everyone stop speculating. There are families reading this who are terrified. Wait for the hospice to tell us.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 54,
+   "plat": "x",
+   "who": "reporter",
+   "text": "Reporting on the fire at The Kirkwood in Huddersfield. If you are a family member or member of staff affected and willing to talk, my DMs are open.",
+   "note": "Journalist going directly to staff and families around the comms team.",
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 55,
+   "plat": "x",
+   "who": "regional",
+   "text": "We have requested an interview with The Kirkwood. Our reporter is at the scene for the 18:00 bulletin. @TheKirkwoodHD",
+   "note": "PACK T+55 — interview request with a hard broadcast deadline.",
+   "packRef": "T+55",
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 57,
+   "plat": "fb",
+   "who": "priya",
+   "text": "Its started raining. Those poor patients are outside in the rain. Someone needs to get them under cover.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 59,
+   "plat": "ig",
+   "who": "fatima",
+   "text": "Praying for everyone at The Kirkwood this afternoon 🤲",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 61,
+   "plat": "x",
+   "who": "dave",
+   "text": "ambulance just left with blue lights. thats the second one",
+   "note": "Ambiguous — participants may read this as a casualty. It is a routine transfer.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 63,
+   "plat": "fb",
+   "who": "sarahm",
+   "text": "Has anyone been contacted by the hospice? Genuine question. My aunt is a patient and we have heard nothing at all.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 65,
+   "plat": "x",
+   "who": "police",
+   "text": "Officers are supporting the emergency response at a premises in Dalton. There is no wider risk to the public. Please do not attend the area.",
+   "note": null,
+   "packRef": null,
+   "img": "images/jupiter/cordon-wide.jpg",
+   "enquiry": false
+  },
+  {
+   "min": 68,
+   "plat": "fb",
+   "who": "fiona",
+   "text": "Message going round the staff group asking if evening shift should still come in. Nobody seems to know. Has anyone heard officially?",
+   "note": "PACK T+70 — workforce instruction gap, surfacing publicly instead of internally.",
+   "packRef": "T+70",
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 70,
+   "plat": "x",
+   "who": "national",
+   "text": "Fire at Huddersfield hospice: patients evacuated to car park as crews tackle blaze. The hospice has been approached for comment.",
+   "note": "\"Approached for comment\" — the phrase that signals silence to every other newsroom.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 72,
+   "plat": "x",
+   "who": "viral",
+   "text": "Still no statement from @TheKirkwoodHD over two hours in. Families finding out from social media. Poor.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 73,
+   "plat": "x",
+   "who": "becky",
+   "text": "to be fair they will be dealing with the actual emergency first",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 75,
+   "plat": "fb",
+   "who": "business",
+   "text": "We are open and have hot drinks for anyone waiting near the hospice. Just come in, no charge. 💛",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 77,
+   "plat": "fb",
+   "who": "karen",
+   "text": "UPDATE from me — I have finally spoken to someone and my dad is safe. Thank you to everyone who messaged. Still dont know where he is going tonight.",
+   "note": "Softening moment. Good practice being publicly recognised.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 79,
+   "plat": "fb",
+   "who": "worried",
+   "text": "A local business has offered a whole floor of their building and we can get vans and volunteers there within the hour to help move patients. Who do I speak to? Come on Huddersfield! 💛",
+   "note": "PACK T+80 — well-meant unsolicited offer. Must be acknowledged but routed through governance, not accepted ad hoc.",
+   "packRef": "T+80",
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 81,
+   "plat": "x",
+   "who": "examiner",
+   "text": "The Kirkwood has issued no public statement more than 80 minutes after the first 999 call. Families have told the Examiner they learned of the fire through social media.",
+   "note": "If they HAVE posted by now, treat this as a stale-story correction opportunity rather than a fair hit.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 83,
+   "plat": "ig",
+   "who": "tom",
+   "text": "Rain coming down now and theyre still out there. Heartbreaking.",
+   "note": null,
+   "packRef": null,
+   "img": "images/jupiter/cordon-sq.jpg",
+   "enquiry": false
+  },
+  {
+   "min": 85,
+   "plat": "x",
+   "who": "exstaff",
+   "text": "ask them about the fire door report. ask them.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 86,
+   "plat": "x",
+   "who": "angry",
+   "text": "@ExaminerHD worth looking into who signed off the fire risk assessment",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 88,
+   "plat": "fb",
+   "who": "diane",
+   "text": "Two relatives have just turned up at the gate and been turned away. That cant be right can it? They just want to know their family are alive.",
+   "note": "PACK T+95 — families arriving on site despite the message not to attend.",
+   "packRef": "T+95",
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 90,
+   "plat": "x",
+   "who": "regional",
+   "text": "Our 18:00 bulletin will lead on the Huddersfield hospice fire. We would still welcome a statement or interview from @TheKirkwoodHD.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 93,
+   "plat": "fb",
+   "who": "nikki",
+   "text": "Whoever is running that hospices Facebook page — people just need to hear something. Anything. Even just \"we are here and everyone is safe\".",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 96,
+   "plat": "x",
+   "who": "watch",
+   "text": "Understand all patients are now accounted for and being transferred to other facilities. Still no official confirmation. #Huddersfield",
+   "note": "Rumour account gets it broadly right this time — muddies whether to trust it.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 99,
+   "plat": "x",
+   "who": "councillor",
+   "text": "I have now spoken to the hospice and can reassure residents that all patients are safe and accounted for. Please support them however you can in the days ahead.",
+   "note": "A third party breaks the good news first. Discuss at debrief.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 102,
+   "plat": "fb",
+   "who": "norris",
+   "text": "That hospice looked after my mum in her last days. Whatever they need, this town will give them. Tell us what to do and we will do it. 💛",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 105,
+   "plat": "x",
+   "who": "fire",
+   "text": "Crews remain at the scene in Dalton. The building will not be reoccupied today and a fire investigation will begin tomorrow. #WYFRS",
+   "note": null,
+   "packRef": "T+100",
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 108,
+   "plat": "fb",
+   "who": "amelia",
+   "text": "People are already asking how to donate. Is there an official appeal? Please dont send money anywhere that isnt the hospices own page.",
+   "note": "Fraud risk — fake appeals follow real incidents within hours.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 110,
+   "plat": "x",
+   "who": "national",
+   "text": "Huddersfield hospice fire: all patients safe, building closed for at least 48 hours. Questions now turning to where inpatients will be cared for.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 113,
+   "plat": "x",
+   "who": "examiner",
+   "text": "@TheKirkwoodHD Following up — can you confirm how many inpatients have been transferred and where families should direct enquiries this evening?",
+   "note": null,
+   "packRef": "T+110",
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 116,
+   "plat": "fb",
+   "who": "mohammed",
+   "text": "I would like to say that once someone did ring me they were very kind and very clear. It was the two hours before that were unbearable.",
+   "note": "Fair, measured criticism. Harder to dismiss than anger.",
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 120,
+   "plat": "x",
+   "who": "exstaff",
+   "text": "glad everyones safe. still think theres questions to answer about that corridor.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 124,
+   "plat": "fb",
+   "who": "tracy",
+   "text": "Is the hospice open tomorrow? My mum has day therapy on Thursdays and nobody has said anything.",
+   "note": "Business continuity comms — the services nobody has thought about yet.",
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 128,
+   "plat": "x",
+   "who": "regional",
+   "text": "The Kirkwood confirmed no patients were injured in this afternoon’s fire. The hospice says its inpatient unit will remain closed while the building is assessed.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 132,
+   "plat": "fb",
+   "who": "gary",
+   "text": "Genuine question — where do people go now if they need hospice care this week? Asking as a family who might need them.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": true
+  },
+  {
+   "min": 136,
+   "plat": "ig",
+   "who": "kevin",
+   "text": "Dalton tonight. Everyone got out. 💛",
+   "note": null,
+   "packRef": null,
+   "img": "images/jupiter/site-sq.jpg",
+   "enquiry": false
+  },
+  {
+   "min": 140,
+   "plat": "fb",
+   "who": "sandra",
+   "text": "The staff who ran into that building today deserve every bit of praise going. Absolute heroes.",
+   "note": null,
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  },
+  {
+   "min": 145,
+   "plat": "x",
+   "who": "examiner",
+   "text": "ANALYSIS: The Kirkwood fire — what happens to hospice patients when the building goes? Our reporter looks at the pressures on the wider system. Read now.",
+   "note": "Story moving from incident to scrutiny. Sets up the recovery comms conversation.",
+   "packRef": null,
+   "img": null,
+   "enquiry": false
+  }
+ ],
+ "threads": {
+  "-180": [
+   {
+    "who": "norris",
+    "text": "Dedicated one for my mum last year. Lovely thing to do."
+   },
+   {
+    "who": "tracy",
+    "text": "just done ours 🌻"
+   }
+  ],
+  "-140": [
+   {
+    "who": "amelia",
+    "text": "They were the same with my dad. Absolute angels, every one of them."
+   },
+   {
+    "who": "sandra",
+    "text": "Beautiful words Janet. They do such a lot for this town. 💛"
+   },
+   {
+    "who": "fatima",
+    "text": "❤️"
+   }
+  ],
+  "-120": [
+   {
+    "who": "gary",
+    "text": "Marvellous. Another month of sitting in that queue then"
+   },
+   {
+    "who": "owen",
+    "text": "Is that the stretch by the lights or further up?"
+   }
+  ],
+  "-95": [
+   {
+    "who": "tracy",
+    "text": "ooh are they the Yorkshire ones? 🍓"
+   },
+   {
+    "who": "neighbour",
+    "text": "Popping down at dinner, save me a punnet!"
+   }
+  ],
+  "-70": [
+   {
+    "who": "norris",
+    "text": "214! That is a lot of families having a better day because of you."
+   }
+  ],
+  "-40": [
+   {
+    "who": "nikki",
+    "text": "well done you 👏"
+   },
+   {
+    "who": "priya",
+    "text": "Is it too late to bring something in?"
+   }
+  ],
+  "-20": [
+   {
+    "who": "owen",
+    "text": "roadworks by the lights, been like it all week"
+   },
+   {
+    "who": "dave",
+    "text": "took me 20 mins to get through this morning"
+   }
+  ],
+  "2": [
+   {
+    "who": "neighbour",
+    "text": "I can hear it too. Been going a while now."
+   },
+   {
+    "who": "owen",
+    "text": "probably a drill? they do them sometimes"
+   }
+  ],
+  "4": [
+   {
+    "who": "tracy",
+    "text": "I have just seen people stood out on the grass by the car park"
+   },
+   {
+    "who": "nikki",
+    "text": "Hope it is nothing. Thinking of them."
+   }
+  ],
+  "9": [
+   {
+    "who": "darren",
+    "text": "can confirm, smoke visible from the top road"
+   },
+   {
+    "who": "sandra",
+    "text": "oh no. those poor patients."
+   }
+  ],
+  "13": [
+   {
+    "who": "owen",
+    "text": "Where are you getting that patients are still inside? Has anyone actually said that?"
+   },
+   {
+    "who": "becky",
+    "text": "😢😢"
+   },
+   {
+    "who": "john",
+    "text": "Careful. There will be families reading this."
+   }
+  ],
+  "15": [
+   {
+    "who": "nikki",
+    "text": "Please let everyone be ok"
+   },
+   {
+    "who": "paul",
+    "text": "The hospice have not said anything yet have they"
+   }
+  ],
+  "17": [
+   {
+    "who": "amelia",
+    "text": "Karen I am so sorry. Keep trying, they will be overwhelmed right now."
+   },
+   {
+    "who": "neighbour",
+    "text": "Sending love. I hope you hear something soon. 💛"
+   },
+   {
+    "who": "sandra",
+    "text": "Has anyone got a number for the hospice that actually gets answered?"
+   }
+  ],
+  "22": [
+   {
+    "who": "nikki",
+    "text": "Beds outside. That tells you how serious it is."
+   },
+   {
+    "who": "priya",
+    "text": "It is going to rain as well. Those poor people."
+   }
+  ],
+  "25": [
+   {
+    "who": "karen",
+    "text": "Diane does your friend know if the patients are ok?"
+   },
+   {
+    "who": "john",
+    "text": "Maybe let them get on with it rather than reporting live from your friends WhatsApp"
+   },
+   {
+    "who": "tracy",
+    "text": "my sister in law said the same thing"
+   }
+  ],
+  "27": [
+   {
+    "who": "amelia",
+    "text": "\"Unconfirmed reports of casualties\" — so no reports then. Take this down."
+   },
+   {
+    "who": "angry",
+    "text": "people have a right to know"
+   },
+   {
+    "who": "tom",
+    "text": "This account does this every single time. Wait for the actual services."
+   }
+  ],
+  "29": [
+   {
+    "who": "john",
+    "text": "they are dealing with an actual fire mate"
+   },
+   {
+    "who": "viral",
+    "text": "Half an hour is a long time in a crisis. Other organisations manage it."
+   }
+  ],
+  "31": [
+   {
+    "who": "amelia",
+    "text": "That is not right. You should have had a call before any of this was online."
+   },
+   {
+    "who": "karen",
+    "text": "Same here. Nobody has rung me either."
+   },
+   {
+    "who": "neighbour",
+    "text": "I am so sorry. I hope someone gets to you soon. 💛"
+   }
+  ],
+  "35": [
+   {
+    "who": "john",
+    "text": "Becky where has that come from? Genuinely asking."
+   },
+   {
+    "who": "becky",
+    "text": "someone on the dalton group, I dont know if its true"
+   },
+   {
+    "who": "amelia",
+    "text": "Then please do not repeat it. There are families on here."
+   }
+  ],
+  "37": [
+   {
+    "who": "tom",
+    "text": "Nobody official has said anyone has died. Nobody."
+   },
+   {
+    "who": "john",
+    "text": "You are repeating a rumour off Facebook as fact."
+   },
+   {
+    "who": "priya",
+    "text": "This is horrible to read if you have family in there."
+   }
+  ],
+  "43": [
+   {
+    "who": "paul",
+    "text": "Three times and nothing. Not great is it"
+   },
+   {
+    "who": "norris",
+    "text": "Give them a chance. They will be moving patients right now."
+   }
+  ],
+  "45": [
+   {
+    "who": "amelia",
+    "text": "You can see patients in that photo. Take it down."
+   },
+   {
+    "who": "sandra",
+    "text": "That is somebody’s mum in that bed. Have a word with yourself."
+   },
+   {
+    "who": "angry",
+    "text": "its a public road, allowed to film"
+   }
+  ],
+  "47": [
+   {
+    "who": "angry",
+    "text": "Knew it. There is always something."
+   },
+   {
+    "who": "tom",
+    "text": "Michelle if you genuinely raised that, it needs to go to the fire service, not a post."
+   },
+   {
+    "who": "amelia",
+    "text": "This is an ex employee making a serious allegation in the middle of an incident."
+   },
+   {
+    "who": "john",
+    "text": "Might be true, might not. Today is not the day."
+   }
+  ],
+  "52": [
+   {
+    "who": "tom",
+    "text": "Well said. Sharing this."
+   },
+   {
+    "who": "becky",
+    "text": "sorry. ive deleted mine."
+   }
+  ],
+  "54": [
+   {
+    "who": "amelia",
+    "text": "Going round the comms team straight to grieving families. Classy."
+   },
+   {
+    "who": "john",
+    "text": "That is literally his job though"
+   }
+  ],
+  "57": [
+   {
+    "who": "worried",
+    "text": "Can we take blankets down? Genuine offer."
+   },
+   {
+    "who": "neighbour",
+    "text": "We have a gazebo if it is any use to anyone."
+   }
+  ],
+  "61": [
+   {
+    "who": "nikki",
+    "text": "That does not necessarily mean anything bad. They will be transferring people."
+   },
+   {
+    "who": "becky",
+    "text": "thats what I was hoping"
+   }
+  ],
+  "63": [
+   {
+    "who": "karen",
+    "text": "I have now, finally. Keep ringing."
+   },
+   {
+    "who": "mohammed",
+    "text": "Nothing here either."
+   }
+  ],
+  "68": [
+   {
+    "who": "tracy",
+    "text": "Nobody has told us anything either. I am supposed to be on at 6."
+   },
+   {
+    "who": "nikki",
+    "text": "Surely someone can send one message to all staff?"
+   },
+   {
+    "who": "john",
+    "text": "They will be firefighting, literally. It will come."
+   }
+  ],
+  "70": [
+   {
+    "who": "paul",
+    "text": "\"approached for comment\" is doing a lot of work there"
+   },
+   {
+    "who": "amelia",
+    "text": "They are a small hospice, not a press office with a night shift."
+   }
+  ],
+  "75": [
+   {
+    "who": "sandra",
+    "text": "This is why I love this town 💛"
+   },
+   {
+    "who": "priya",
+    "text": "Sharing this."
+   }
+  ],
+  "77": [
+   {
+    "who": "amelia",
+    "text": "Oh Karen that is such a relief. 💛"
+   },
+   {
+    "who": "neighbour",
+    "text": "Thank goodness. Been thinking about you all afternoon."
+   },
+   {
+    "who": "nikki",
+    "text": "Best news I have read today."
+   }
+  ],
+  "79": [
+   {
+    "who": "john",
+    "text": "Well meant but they cannot just hand patients to volunteers in vans."
+   },
+   {
+    "who": "amelia",
+    "text": "Offer it to them properly rather than organising it on Facebook."
+   },
+   {
+    "who": "sandra",
+    "text": "Heart is in the right place though."
+   }
+  ],
+  "81": [
+   {
+    "who": "norris",
+    "text": "They have been carrying people out of a burning building."
+   },
+   {
+    "who": "viral",
+    "text": "Both things can be true."
+   }
+  ],
+  "88": [
+   {
+    "who": "amelia",
+    "text": "If the car park is full of patients and vehicles they cannot have people walking in."
+   },
+   {
+    "who": "karen",
+    "text": "Somebody should still come out and speak to them though."
+   },
+   {
+    "who": "tracy",
+    "text": "That is heartbreaking either way."
+   }
+  ],
+  "93": [
+   {
+    "who": "tom",
+    "text": "Agreed. Even three words would help."
+   },
+   {
+    "who": "john",
+    "text": "The person who runs the page is probably carrying a bed."
+   },
+   {
+    "who": "priya",
+    "text": "Fair, but someone in the building must be able to type."
+   }
+  ],
+  "96": [
+   {
+    "who": "amelia",
+    "text": "And where has this come from? You said casualties two hours ago."
+   },
+   {
+    "who": "becky",
+    "text": "hope its right this time"
+   }
+  ],
+  "99": [
+   {
+    "who": "sandra",
+    "text": "Thank you councillor. First clear thing anyone has said all afternoon."
+   },
+   {
+    "who": "nikki",
+    "text": "😭 thank god"
+   }
+  ],
+  "102": [
+   {
+    "who": "sandra",
+    "text": "Whatever they need. Just say the word."
+   },
+   {
+    "who": "priya",
+    "text": "Count me in."
+   },
+   {
+    "who": "tracy",
+    "text": "💛💛💛"
+   }
+  ],
+  "108": [
+   {
+    "who": "tom",
+    "text": "Good point. There are always fake pages after something like this."
+   },
+   {
+    "who": "norris",
+    "text": "Only give through their own website, everyone."
+   }
+  ],
+  "116": [
+   {
+    "who": "amelia",
+    "text": "That is a very fair way to put it."
+   },
+   {
+    "who": "karen",
+    "text": "Exactly this. The waiting was the worst part."
+   },
+   {
+    "who": "nikki",
+    "text": "Hope they read this one."
+   }
+  ],
+  "124": [
+   {
+    "who": "fiona",
+    "text": "I would ring in the morning before setting off."
+   },
+   {
+    "who": "neighbour",
+    "text": "Same question about the Wednesday group."
+   }
+  ],
+  "132": [
+   {
+    "who": "amelia",
+    "text": "Hospice at Home is still running as far as I know, it is the beds that are gone."
+   },
+   {
+    "who": "norris",
+    "text": "Ring them, they will find a way. They always do."
+   }
+  ],
+  "140": [
+   {
+    "who": "tracy",
+    "text": "Every one of them 👏"
+   },
+   {
+    "who": "gary",
+    "text": "Absolute credit to the place."
+   }
+  ]
+ },
+ "people": {
+  "liam": {
+   "name": "Liam Carr",
+   "handle": "@liamcarr92"
+  },
+  "darren": {
+   "name": "Darren Stubbs",
+   "handle": "@darrenstubbs"
+  },
+  "ryan": {
+   "name": "Ryan Stephens",
+   "handle": "@ryanstephens_"
+  },
+  "becky": {
+   "name": "Becky Turner",
+   "handle": "@beckyturner81"
+  },
+  "tracy": {
+   "name": "Tracy Hobbs",
+   "handle": "@tracyhobbs_hd"
+  },
+  "nikki": {
+   "name": "Nikki Rhodes",
+   "handle": "@nikkirhodes"
+  },
+  "owen": {
+   "name": "Owen Hughes",
+   "handle": "@owenhughes_"
+  },
+  "kevin": {
+   "name": "Kevin Park",
+   "handle": "@kevpark"
+  },
+  "sandra": {
+   "name": "Sandra Yates",
+   "handle": "@sandrayates"
+  },
+  "john": {
+   "name": "John Dobson",
+   "handle": "@jdobson_hd"
+  },
+  "mike": {
+   "name": "Mike Tanner",
+   "handle": "@miketanner"
+  },
+  "paul": {
+   "name": "Paul Okafor",
+   "handle": "@paulokafor"
+  },
+  "priya": {
+   "name": "Priya Sharma",
+   "handle": "@priyasharma_hd"
+  },
+  "fatima": {
+   "name": "Fatima Al-Hassan",
+   "handle": "@fatima_alh"
+  },
+  "gary": {
+   "name": "Gary Bolton",
+   "handle": "@garybolton_fc"
+  },
+  "dave": {
+   "name": "Dave Briggs",
+   "handle": "@davebriggs_hd"
+  },
+  "tom": {
+   "name": "Tom Ashworth",
+   "handle": "@tom_ashworth"
+  },
+  "neighbour": {
+   "name": "Helen Brookes",
+   "handle": "@brookes_dalton"
+  },
+  "business": {
+   "name": "Dalton Mini Market",
+   "handle": "@daltonminimkt"
+  },
+  "karen": {
+   "name": "Karen Whitfield",
+   "handle": "@karen_whitfield"
+  },
+  "diane": {
+   "name": "Diane Fletcher",
+   "handle": "@dianefletcher"
+  },
+  "amelia": {
+   "name": "Amelia Cross",
+   "handle": "@ameliacross"
+  },
+  "fiona": {
+   "name": "Fiona Macleod",
+   "handle": "@fionamacleod"
+  },
+  "mohammed": {
+   "name": "Mohammed Iqbal",
+   "handle": "@m_iqbal_hd"
+  },
+  "sarahm": {
+   "name": "Sarah Mitchell",
+   "handle": "@sarahmitchell"
+  },
+  "norris": {
+   "name": "Janet Norris",
+   "handle": "@janetnorris_"
+  },
+  "worried": {
+   "name": "Claire Beaumont",
+   "handle": "@clairebeaumont"
+  },
+  "examiner": {
+   "name": "Huddersfield Examiner",
+   "handle": "@ExaminerHD"
+  },
+  "regional": {
+   "name": "Calder Valley News",
+   "handle": "@CalderValleyNews"
+  },
+  "national": {
+   "name": "Northern Wire",
+   "handle": "@NorthernWire"
+  },
+  "reporter": {
+   "name": "James Whitmore",
+   "handle": "@jwhitmore_news"
+  },
+  "police": {
+   "name": "West Yorkshire Police",
+   "handle": "@WYPKirklees"
+  },
+  "fire": {
+   "name": "West Yorkshire Fire & Rescue",
+   "handle": "@WYFRS"
+  },
+  "councillor": {
+   "name": "Cllr James Walsh",
+   "handle": "@cllr_james_w"
+  },
+  "watch": {
+   "name": "Huddersfield Watch",
+   "handle": "@hudds_watch"
+  },
+  "viral": {
+   "name": "Yorkshire Incidents",
+   "handle": "@yorks_incidents"
+  },
+  "angry": {
+   "name": "Baz",
+   "handle": "@baz_hd1"
+  },
+  "exstaff": {
+   "name": "Michelle Dyson",
+   "handle": "@micheeed77"
+  },
+  "kirkwood": {
+   "name": "The Kirkwood",
+   "handle": "@TheKirkwoodHD"
+  }
+ }
+}
