@@ -5,7 +5,7 @@
    is rarely in the post itself, it is forty comments deep where the
    organisation is being talked about rather than talked to. */
 
-import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js?v=12';
+import { makeAvatar, richText, escapeHtml, agoLabel } from './util.js?v=14';
 
 /* One shared reply target handler, used by posts and by individual comments. */
 let replyHandler = () => {};

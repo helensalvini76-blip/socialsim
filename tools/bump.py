@@ -59,7 +59,7 @@ def main():
             changed.append('assets/js/' + name)
 
     # Entry points in the HTML
-    for page in ('jupiter.html',):
+    for page in ('jupiter.html', 'dashboard.html'):
         path = os.path.join(ROOT, page)
         if not os.path.exists(path):
             continue

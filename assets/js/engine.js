@@ -5,10 +5,10 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, THREADS } from './scenario-jupiter.js?v=12';
-import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=12';
-import { rnd, pick, sample, agoLabel } from './util.js?v=12';
-import { stream } from './rng.js?v=12';
+import { SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, THREADS } from './scenario-jupiter.js?v=14';
+import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=14';
+import { rnd, pick, sample, agoLabel } from './util.js?v=14';
+import { stream } from './rng.js?v=14';
 
 export class Engine {
   constructor(feed, opts = {}){
@@ -244,7 +244,9 @@ export class Engine {
     return id;
   }
 
-  /* The comms team replies to a post, or to one comment inside a thread. */
+  /* The comms team replies to a post, or to one comment inside a thread.
+     Logging and enquiry-marking happen in applyComment, so they occur on every
+     device rather than only the one that typed the reply. */
   participantReply(parent, text){
     const postId = parent.isComment ? (parent.parentPost && parent.parentPost.id) : parent.id;
     this._publishComment({
@@ -255,22 +257,6 @@ export class Engine {
       text,
       min: this.nowMin,
     });
-
-    const target = parent.isComment ? parent.parentPost : parent;
-    if (target){
-      target.answered = true;
-      target.answeredAt = this.nowMin;
-      target.answeredIn = this.nowMin - target.min;
-      const q = this.queue.find(i => i.id === target.id);
-      if (q){ q.answered = true; q.answeredIn = target.answeredIn; }
-    }
-
-    this.log.push({
-      min: this.nowMin, kind: 'comms-reply', who: 'The Kirkwood', plat: parent.plat, text,
-      inReplyTo: parent.persona.name,
-      waitedMin: target ? Number((target.answeredIn || 0).toFixed(1)) : null,
-    });
-
     this._scheduleReplyBack(parent);
     if (this.onCommsReply) this.onCommsReply(parent);
   }
@@ -303,6 +289,31 @@ export class Engine {
     const target = rec.parent ? this.findComment(rec.parent) : null;
     if (target) this.feed.commentReply(target, who, rec.text, rec.min, rec.id);
     else this.feed.comment(post, who, rec.text, rec.min, rec.id);
+
+    if (rec.who !== 'kirkwood') return;
+
+    // An organisational reply answers the post it sits under. Recording it here
+    // rather than where it was typed means the facilitator's dashboard and every
+    // other device agree on what has been answered and how long it took.
+    if (this._loggedReplies && this._loggedReplies.has(rec.id)) return;
+    (this._loggedReplies = this._loggedReplies || new Set()).add(rec.id);
+
+    post.answered = true;
+    post.answeredAt = rec.min;
+    post.answeredIn = Math.max(0, rec.min - post.min);
+    const q = this.queue.find(i => i.id === post.id);
+    if (q){ q.answered = true; q.answeredIn = post.answeredIn; }
+
+    this.log.push({
+      min: rec.min,
+      kind: 'comms-reply',
+      who: 'The Kirkwood',
+      plat: post.plat,
+      text: rec.text,
+      inReplyTo: (target ? target.persona.name : post.persona.name),
+      waitedMin: Number(post.answeredIn.toFixed(1)),
+    });
+    if (this.onCommsReply) this.onCommsReply(post);
   }
 
   /* ── Publishing ─────────────────────────────────────────────────── */

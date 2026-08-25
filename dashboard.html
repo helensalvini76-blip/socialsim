@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="build" content="14">
+<title>Exercise Jupiter — Facilitator</title>
+<link rel="stylesheet" href="assets/css/dashboard.css?v=14">
+</head>
+<body>
+
+<div id="top">
+  <div class="clock"><span id="tplus">T+000</span><span class="wall" id="wall">13:00</span></div>
+  <div class="phase">Phase <b id="phase">1</b> · <span id="phasename">Alarm &amp; escalation</span></div>
+
+  <button class="ctl play" id="play" title="Play / pause for everyone">❚❚</button>
+  <div class="speeds">
+    <button class="ctl on" data-speed="1">1×</button>
+    <button class="ctl" data-speed="10">10×</button>
+    <button class="ctl" data-speed="30">30×</button>
+    <button class="ctl" data-speed="90">90×</button>
+  </div>
+  <select class="ctl" id="jump">
+    <option value="">jump to phase…</option>
+    <option value="0">1 · Alarm (T+0)</option>
+    <option value="20">2 · Movement (T+20)</option>
+    <option value="45">3 · Clearing station (T+45)</option>
+    <option value="65">4 · Media peak (T+65)</option>
+    <option value="100">5 · Recovery (T+100)</option>
+  </select>
+
+  <div class="sp"></div>
+
+  <button class="ctl" id="wm" title="Show EXERCISE watermark on every post">Watermark</button>
+  <button class="ctl" id="export">Export debrief</button>
+  <button class="ctl danger" id="reset">Reset</button>
+  <div class="meta">
+    <div><span class="dot" id="dot"></span><span id="conn">connecting…</span></div>
+    <div id="buildtag">build ?</div>
+  </div>
+</div>
+
+<div id="cols">
+
+  <!-- Timeline -->
+  <div class="col">
+    <h2>Timeline <span class="count" id="tl-count">0</span></h2>
+    <div class="scroll" id="timeline"></div>
+  </div>
+
+  <!-- What the comms team is doing -->
+  <div class="col">
+    <h2>Comms team activity <span class="count" id="mon-count">0</span></h2>
+    <div class="scroll" id="monitor">
+      <div class="mon-empty">
+        Nothing from the comms team yet.<br>
+        Everything they post or reply to appears here as it happens.
+      </div>
+    </div>
+  </div>
+
+  <!-- Pressure and status -->
+  <div class="col">
+    <div class="scroll">
+
+      <div class="pane">
+        <h3>Indicators</h3>
+        <div class="ind"><span>First holding message</span><b id="i-first" class="idle">—</b></div>
+        <div class="ind"><span>Posts issued</span><b id="i-posts" class="idle">0</b></div>
+        <div class="ind"><span>Replies sent</span><b id="i-replies" class="idle">0</b></div>
+        <div class="ind"><span>Enquiries answered</span><b id="i-answered" class="idle">0</b></div>
+      </div>
+
+      <div class="pane">
+        <h3>Unanswered enquiries <span class="count" id="enq-count">0</span></h3>
+        <div id="enquiries"></div>
+      </div>
+
+      <div class="pane">
+        <h3>Quick-fire inject</h3>
+        <div class="qf-groups" id="qf-groups"></div>
+        <div id="qf-list"></div>
+      </div>
+
+      <div class="pane">
+        <h3>Custom inject</h3>
+        <div id="custom">
+          <div class="row">
+            <select id="c-who"></select>
+            <select id="c-plat">
+              <option value="fb">Facebook</option>
+              <option value="x">X</option>
+              <option value="ig">Instagram</option>
+            </select>
+          </div>
+          <textarea id="c-text" placeholder="Write an inject…"></textarea>
+          <button id="send" disabled>Send now</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module" src="assets/js/dashboard.js?v=14"></script>
+</body>
+</html>
