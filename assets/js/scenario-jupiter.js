@@ -112,7 +112,7 @@ export const SCRIPT = [
   {min:116,plat:'fb', who:'mohammed',  enquiry:true, text:'I would like to say that once someone did ring me they were very kind and very clear. It was the two hours before that were unbearable.', note:'Fair, measured criticism. Harder to dismiss than anger.'},
   {min:118,plat:'x',  who:'exstaff',   text:'not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.', note:'HIGHEST IMPACT ITEM. Unfalsifiable in the moment, no clean answer: do not deny, do not attack her, do not speculate on cause. Placed in recovery rather than during the evacuation — an ex-staff allegation realistically surfaces once an investigation is announced, not while crews are still on scene. A version is also in quick-fire if you want it earlier.'},
   {min:120,plat:'x',  who:'exstaff',   text:'glad everyones safe. still think theres questions to answer about that corridor.'},
-  {min:124,plat:'fb', who:'tracy',     enquiry:true, text:'Is the hospice open this week? I go to the bereavement group on a Thursday and nobody has said anything. Some of us have only just lost someone.', note:'Business continuity comms — the services nobody has thought about yet. Pairs with the staff channel question at T+104.'},
+  {min:124,plat:'fb', who:'tracy',     enquiry:true, text:'Will the bereavement group still be on next Wednesday? Nobody has said anything either way and some of us have only just lost someone.', note:'Business continuity comms — the services nobody has thought about yet. Pairs with the staff channel question at T+104.'},
   {min:128,plat:'x',  who:'regional',  text:'The Kirkwood confirmed no patients were injured in this afternoon’s fire. The hospice says its inpatient unit will remain closed while the building is assessed.'},
   {min:132,plat:'fb', who:'gary',      enquiry:true, text:'Genuine question — where do people go now if they need hospice care this week? Asking as a family who might need them.'},
   {min:136,plat:'ig', who:'kevin',     img:'images/jupiter/site-sq.jpg', text:'Dalton tonight. Everyone got out. 💛'},
@@ -237,9 +237,9 @@ export const CHANNEL_SCRIPT = [
    enquiry:true},
 
   {min:104,plat:'staff', who:'bereavement',
-   text:'What do I do about the bereavement group on Thursday? They just turn up — there is no booking list, so there is nobody for me to ring round. If we say nothing, people who have only just lost someone are going to arrive at a taped-off building.',
+   text:'What do I do about the bereavement group next Wednesday? I know it sounds a long way off, but they just turn up — there is no booking list and no numbers, so if it is not going ahead I have no way of telling anybody. And some of them lost someone on that unit.',
    enquiry:true,
-   note:'Business continuity comms — the service nobody has thought about yet. No booking list means it cannot be handled quietly by phone: only a proactive public message reaches them.'},
+   note:'Business continuity comms — the service nobody has thought about yet. The exercise runs on a Thursday, so the next group is six days out and the building may well be back by then. That is the point: nobody can say either way, and with no booking list the only thing that reaches these people is a public message. Watch for it being waved away as next week’s problem.'},
 
   {min:126,plat:'staff', who:'exec',
    text:'Everyone who was on shift today: thank you. Please make sure you check out before you leave and speak to your manager about cover tomorrow.'},
