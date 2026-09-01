@@ -11,7 +11,7 @@
    To change the passphrase, run hash('your new phrase') in the console and
    replace PASS_HASH below. */
 
-import { hash } from './rng.js?v=28';
+import { hash } from './rng.js?v=30';
 
 const PASS_HASH = 3032784028;          // "jupiter2026"
 const KEY = 'jupiter-facilitator-key';

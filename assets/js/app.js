@@ -4,12 +4,12 @@
    on a real phone. Multi-device sync, the facilitator dashboard and the enquiry
    channels come next and will replace the local clock with the shared one. */
 
-import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=28';
-import { connect } from './sync.js?v=28';
-import { Engine } from './engine.js?v=28';
-import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=28';
-import { ORG, persona } from './personas.js?v=28';
-import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=28';
+import { renderPost, refreshCounts, setReplyHandler, pushComment, pushCommentReply, setThreadClock } from './feeds.js?v=30';
+import { connect } from './sync.js?v=30';
+import { Engine } from './engine.js?v=30';
+import { PHASES, FIRE_LOCATION, TRENDING_BEFORE, TRENDING_AFTER, SUGGESTED } from './scenario-jupiter.js?v=30';
+import { ORG, persona } from './personas.js?v=30';
+import { makeAvatar, escapeHtml, richText, clockLabel, fmtCount, VERIFIED_SVG } from './util.js?v=30';
 
 const PLATFORMS = ['x', 'fb', 'ig', 'staff', 'inbox'];
 const screen  = document.getElementById('screen');
@@ -133,10 +133,19 @@ function buildNav(){
 const RAIL_TITLE = { x:'Trending in Huddersfield', fb:'Trending now', ig:'Suggested for you' };
 
 function buildRail(){
+  /* The staff channel and the enquiry inbox are not social platforms: no search,
+     no trending, no suggested accounts. Only the exercise note belongs there. */
+  if (current === 'staff' || current === 'inbox'){
+    rail.innerHTML =
+      `<div class="r-note">⚠ Exercise Jupiter — simulated environment. All accounts, posts ` +
+      `and news outlets shown here are fictional and exist only for this exercise.</div>`;
+    return;
+  }
+
   const searchLabel = { x:'Search', fb:'Search Facebook', ig:'Search' }[current] || 'Search';
   rail.innerHTML = `<div class="r-search">🔍 ${searchLabel}</div>`;
 
-  const trendCard = el('div', 'r-card', `<h3>${RAIL_TITLE[current]}</h3><div class="t-rows"></div>`);
+  const trendCard = el('div', 'r-card', `<h3>${RAIL_TITLE[current] || 'Trending now'}</h3><div class="t-rows"></div>`);
   rail.appendChild(trendCard);
 
   const accts = el('div', 'r-card', `<h3>Who to follow</h3>`);

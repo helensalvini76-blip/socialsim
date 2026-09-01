@@ -8,8 +8,8 @@
    Voice note: posts are deliberately written the way frightened people actually
    type — lowercase, missing apostrophes, mid-thought. Do not tidy them up. */
 
-export const FIRE_LOCATION = 'the link corridor near the day therapy unit';
-export const FIRE_LOCATION_SHORT = 'the link corridor';
+export const FIRE_LOCATION = 'the kitchen, where fire has got into the extraction ductwork above the ceiling';
+export const FIRE_LOCATION_SHORT = 'the kitchen';
 
 export const PHASES = [
   {id:1, name:'Alarm & escalation',     from:0,   to:25},
@@ -112,7 +112,7 @@ export const SCRIPT = [
   {min:116,plat:'fb', who:'mohammed',  enquiry:true, text:'I would like to say that once someone did ring me they were very kind and very clear. It was the two hours before that were unbearable.', note:'Fair, measured criticism. Harder to dismiss than anger.'},
   {min:118,plat:'x',  who:'exstaff',   text:'not surprised at all this. i worked there til 2 years ago and raised concerns about the fire doors on that corridor more than once. nothing was ever done.', note:'HIGHEST IMPACT ITEM. Unfalsifiable in the moment, no clean answer: do not deny, do not attack her, do not speculate on cause. Placed in recovery rather than during the evacuation — an ex-staff allegation realistically surfaces once an investigation is announced, not while crews are still on scene. A version is also in quick-fire if you want it earlier.'},
   {min:120,plat:'x',  who:'exstaff',   text:'glad everyones safe. still think theres questions to answer about that corridor.'},
-  {min:124,plat:'fb', who:'tracy',     enquiry:true, text:'Is the hospice open tomorrow? My mum has day therapy on Thursdays and nobody has said anything.', note:'Business continuity comms — the services nobody has thought about yet.'},
+  {min:124,plat:'fb', who:'tracy',     enquiry:true, text:'Is the hospice open this week? I go to the bereavement group on a Thursday and nobody has said anything. Some of us have only just lost someone.', note:'Business continuity comms — the services nobody has thought about yet. Pairs with the staff channel question at T+104.'},
   {min:128,plat:'x',  who:'regional',  text:'The Kirkwood confirmed no patients were injured in this afternoon’s fire. The hospice says its inpatient unit will remain closed while the building is assessed.'},
   {min:132,plat:'fb', who:'gary',      enquiry:true, text:'Genuine question — where do people go now if they need hospice care this week? Asking as a family who might need them.'},
   {min:136,plat:'ig', who:'kevin',     img:'images/jupiter/site-sq.jpg', text:'Dalton tonight. Everyone got out. 💛'},
@@ -211,7 +211,7 @@ export const CHANNEL_SCRIPT = [
    enquiry:true,
    note:'Staff seeking direction on family contact. If comms do not answer here, they will improvise.'},
 
-  {min:25, plat:'staff', who:'daytherapy',
+  {min:25, plat:'staff', who:'bereavement',
    text:'Looks serious – whole hospice being evacuated. My friend on shift says they are moving everyone out and nobody knows where they are going.',
    packRef:'T+25',
    note:'PACK T+25 — staff speculation, and the version that ends up on Facebook at T+25. Correcting this without a punitive tone is the test.'},
@@ -236,10 +236,10 @@ export const CHANNEL_SCRIPT = [
    text:'Getting a lot of offers of help coming into the fundraising inbox — vans, buildings, volunteers. Who is coordinating that? I do not want to say no to people.',
    enquiry:true},
 
-  {min:104,plat:'staff', who:'daytherapy',
-   text:'What do I tell Thursday day therapy? Twelve people are booked and several will already be arranging transport.',
+  {min:104,plat:'staff', who:'bereavement',
+   text:'What do I do about the bereavement group on Thursday? They just turn up — there is no booking list, so there is nobody for me to ring round. If we say nothing, people who have only just lost someone are going to arrive at a taped-off building.',
    enquiry:true,
-   note:'Business continuity comms — the service nobody has thought about yet.'},
+   note:'Business continuity comms — the service nobody has thought about yet. No booking list means it cannot be handled quietly by phone: only a proactive public message reaches them.'},
 
   {min:126,plat:'staff', who:'exec',
    text:'Everyone who was on shift today: thank you. Please make sure you check out before you leave and speak to your manager about cover tomorrow.'},
@@ -555,7 +555,7 @@ export const THREADS = {
   ],
   124: [
     {who:'fiona',     text:'I would ring in the morning before setting off.'},
-    {who:'neighbour', text:'Same question about the Wednesday group.'},
+    {who:'neighbour', text:'They cannot ring round either can they, nobody books on. People will just turn up.'},
   ],
   132: [
     {who:'amelia',    text:'Hospice at Home is still running as far as I know, it is the beds that are gone.'},

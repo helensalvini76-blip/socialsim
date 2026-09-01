@@ -5,10 +5,10 @@
    tight together, so the feed arrives in clusters and lulls rather than at a
    metronome tick. */
 
-import { SCRIPT, CHANNEL_SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, THREADS } from './scenario-jupiter.js?v=28';
-import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=28';
-import { rnd, pick, sample, agoLabel } from './util.js?v=28';
-import { stream } from './rng.js?v=28';
+import { SCRIPT, CHANNEL_SCRIPT, BASELINE, REACTIONS, REPLY_REACTIONS, PHASES, THREADS } from './scenario-jupiter.js?v=30';
+import { persona, ORG, PERSONAS as PERSONA_KEYS } from './personas.js?v=30';
+import { rnd, pick, sample, agoLabel } from './util.js?v=30';
+import { stream } from './rng.js?v=30';
 
 export class Engine {
   constructor(feed, opts = {}){

@@ -60,7 +60,7 @@ export const PERSONAS = {
   hcaJoy:    {name:'Joy Mensah',          handle:'HCA, IPU',               photo:'', type:'staff'},
   nurseSam:  {name:'Sam Okoro',           handle:'Staff Nurse',            photo:'', type:'staff'},
   fundraise: {name:'Bex Hartley',         handle:'Fundraising',            photo:'', type:'staff'},
-  daytherapy:{name:'Lorna Beckett',       handle:'Day Therapy',            photo:'', type:'staff'},
+  bereavement:{name:'Lorna Beckett',      handle:'Bereavement Support',    photo:'', type:'staff'},
   reception: {name:'Pauline Grant',       handle:'Reception',              photo:'', type:'staff'},
   exec:      {name:'Alison Frame',        handle:'Director of Care',       photo:'', type:'staff'},
 
